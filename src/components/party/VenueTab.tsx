@@ -84,24 +84,21 @@ const VenueTab: FC<VenueTabProps> = ({
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-4">
             <div className="bg-white/20 backdrop-blur-sm rounded-lg p-3 text-center">
               <div className="text-xs uppercase tracking-wide mb-1">Costo del Local</div>
-              <div className="text-2xl font-bold flex justify-center items-center">
-                <DollarSign size={18} className="mr-2 opacity-70" />
+              <div className="text-2xl font-bold">
                 S/ {venueCost.toFixed(2)}
               </div>
             </div>
             
             <div className="bg-white/20 backdrop-blur-sm rounded-lg p-3 text-center">
               <div className="text-xs uppercase tracking-wide mb-1">Costos Misceláneos</div>
-              <div className="text-2xl font-bold flex justify-center items-center">
-                <DollarSign size={18} className="mr-2 opacity-70" />
+              <div className="text-2xl font-bold">
                 S/ {miscCosts.toFixed(2)}
               </div>
             </div>
             
             <div className="bg-white/20 backdrop-blur-sm rounded-lg p-3 text-center">
               <div className="text-xs uppercase tracking-wide mb-1">Costo Total</div>
-              <div className="text-2xl font-bold flex justify-center items-center">
-                <DollarSign size={18} className="mr-2 opacity-70" />
+              <div className="text-2xl font-bold">
                 S/ {totalCost.toFixed(2)}
               </div>
             </div>

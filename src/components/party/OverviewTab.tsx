@@ -231,7 +231,6 @@ const OverviewTab: React.FC<OverviewTabProps> = ({
     return (
       <div className="bg-white rounded-xl border border-gray-200 p-5">
         <div className="flex items-center mb-5 text-lg font-medium text-primary">
-          <DollarSign className="w-6 h-6 text-success mr-3" />
           <h2>Resumen Financiero</h2>
         </div>
         

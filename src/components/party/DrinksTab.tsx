@@ -3,7 +3,7 @@
 import React from 'react';
 import { 
   Wine, Droplet, Snowflake, Package, CheckCircle, AlertCircle, 
-  TrendingUp, Users, DollarSign, Info, List
+  TrendingUp, Users, Info, List
 } from 'lucide-react';
 import Badge from '@/components/ui/Badge';
 import Button from '@/components/ui/Button';

@@ -222,7 +222,6 @@ const ReportsTab: React.FC<ReportsTabProps> = ({
             <div className="bg-white/20 backdrop-blur-sm rounded-lg p-3 text-center">
               <div className="text-xs uppercase tracking-wide mb-1">Ingresos Totales</div>
               <div className="text-2xl font-bold flex justify-center items-center">
-                <DollarSign size={18} className="mr-2 opacity-70" />
                 S/ {totalRevenue.toFixed(2)}
               </div>
             </div>
@@ -230,7 +229,6 @@ const ReportsTab: React.FC<ReportsTabProps> = ({
             <div className="bg-white/20 backdrop-blur-sm rounded-lg p-3 text-center">
               <div className="text-xs uppercase tracking-wide mb-1">Costos Totales</div>
               <div className="text-2xl font-bold flex justify-center items-center">
-                <DollarSign size={18} className="mr-2 opacity-70" />
                 S/ {totalCosts.toFixed(2)}
               </div>
             </div>

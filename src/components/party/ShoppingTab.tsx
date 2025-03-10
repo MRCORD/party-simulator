@@ -366,7 +366,7 @@ const ShoppingTab: React.FC<ShoppingTabProps> = ({
                     {item.size} {item.sizeUnit}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    S/ {item.cost.toFixed(2)}
+                    {item.cost.toFixed(2)}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                     {item.units}
@@ -375,7 +375,7 @@ const ShoppingTab: React.FC<ShoppingTabProps> = ({
                     {item.servings * item.units}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap font-medium text-gray-900">
-                    S/ {(item.cost * item.units).toFixed(2)}
+                    {(item.cost * item.units).toFixed(2)}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                     <button 
@@ -421,7 +421,7 @@ const ShoppingTab: React.FC<ShoppingTabProps> = ({
                     : `Total de ${getCategoryLabel(activeCategory)}:`}
                 </td>
                 <td className="px-6 py-4 text-gray-900 font-bold">
-                  S/ {getFilteredTotal().toFixed(2)}
+                  {getFilteredTotal().toFixed(2)}
                 </td>
                 <td></td>
               </tr>

@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { 
-  Utensils, Users, DollarSign, Beef, Salad, 
+  Utensils, Users, Beef, Salad, 
   CheckCircle, AlertCircle, TrendingUp, 
   Clipboard, List, UtensilsCrossed, Package
 } from 'lucide-react';
