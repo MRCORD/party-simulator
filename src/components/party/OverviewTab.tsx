@@ -408,8 +408,8 @@ const OverviewTab: React.FC<OverviewTabProps> = ({
       percent: item.value / total
     }));
     
-    const onPieEnter = (_data: unknown, index: number) => {
-      setActiveIndex(index);
+    const onPieEnter = (_data: unknown, _index: number) => {
+      setActiveIndex(_index);
     };
     
     const onPieLeave = () => {
