@@ -501,7 +501,6 @@ export default function PartySimulator() {
                 <span>{attendees} Asistentes</span>
               </div>
               <div className="bg-white/20 backdrop-blur-sm px-4 py-2 rounded-full flex items-center">
-                <DollarSign size={16} className="mr-2 text-blue-100" />
                 <span>S/ {ticketPrice} Entrada</span>
               </div>
               <div className={`px-4 py-2 rounded-full flex items-center ${isViable ? 'bg-success/80' : 'bg-error/80'}`}>
