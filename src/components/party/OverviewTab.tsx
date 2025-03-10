@@ -1,10 +1,10 @@
 import React from 'react';
 import { 
   Users, DollarSign, CheckCircle, AlertCircle, Wine, 
-  Utensils, Calendar, Info
+  Utensils, Calendar, Info, PieChart
 } from 'lucide-react';
 import { 
-  PieChart, Pie, Cell, Tooltip, BarChart, Bar, 
+  PieChart as RechartsPieChart, Pie, Cell, Tooltip, BarChart, Bar, 
   XAxis, YAxis, CartesianGrid, ResponsiveContainer, 
   Legend, LabelList, Sector
 } from 'recharts';
@@ -416,11 +416,14 @@ const OverviewTab: React.FC<OverviewTabProps> = ({
     
     return (
       <div className="bg-white rounded-xl border border-gray-200 p-4">
-        <h3 className="text-lg font-medium mb-4">Desglose de Costos</h3>
+        <div className="flex items-center mb-4">
+          <PieChart className="w-5 h-5 text-primary mr-2" />
+          <h3 className="text-lg font-medium">Distribución de Gastos</h3>
+        </div>
         
         <div className="w-full h-64">
           <ResponsiveContainer width="100%" height="100%">
-            <PieChart>
+            <RechartsPieChart>
               <Pie
                 activeIndex={activeIndex !== null ? [activeIndex] : []}
                 activeShape={renderActiveShape}
@@ -448,7 +451,7 @@ const OverviewTab: React.FC<OverviewTabProps> = ({
                 <tspan x="50%" dy="-0.5em" fontSize="16" fontWeight="bold">S/ {total.toFixed(0)}</tspan>
                 <tspan x="50%" dy="1.5em" fontSize="12" fill="#666">Total</tspan>
               </text>
-            </PieChart>
+            </RechartsPieChart>
           </ResponsiveContainer>
         </div>
       </div>
@@ -472,7 +475,10 @@ const OverviewTab: React.FC<OverviewTabProps> = ({
     
     return (
       <div className="bg-white rounded-xl border border-gray-200 p-4">
-        <h3 className="text-lg font-medium mb-4">Resumen Financiero</h3>
+        <div className="flex items-center mb-4">
+          <DollarSign className="w-5 h-5 text-primary mr-2" />
+          <h3 className="text-lg font-medium">Balance General</h3>
+        </div>
         
         <div className="w-full h-56">
           <ResponsiveContainer width="100%" height="100%">
