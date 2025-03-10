@@ -1,22 +1,13 @@
-"use client";
-
-import React, { useEffect } from 'react';
+import React from 'react';
 import { 
-  Users, DollarSign, CheckCircle, AlertCircle, Percent, 
-  Wine, Utensils, TrendingUp, ChevronUp, ChevronDown, 
-  Droplets, Flame, Sparkles
+  Users, DollarSign, CheckCircle, AlertCircle, Wine, 
+  Utensils, Calendar, Info
 } from 'lucide-react';
 import { 
   PieChart, Pie, Cell, Tooltip, BarChart, Bar, 
-  XAxis, YAxis, CartesianGrid, ResponsiveContainer,
-  Label, LabelList
+  XAxis, YAxis, CartesianGrid, ResponsiveContainer, 
+  Legend, LabelList, Sector
 } from 'recharts';
-import Card from '@/components/ui/Card';
-import Badge from '@/components/ui/Badge';
-import Button from '@/components/ui/Button';
-import StatusItem from './StatusItem';
-import { useTheme } from '@/components/ui/ThemeProvider';
-import StatusCard from '@/components/ui/StatusCard';
 
 interface CostBreakdownItem {
   name: string;
@@ -33,12 +24,16 @@ interface DrinkRequirements {
   hasEnoughMixers: boolean;
   hasEnoughIce: boolean;
   hasEnoughSupplies: boolean;
+  totalCost: number;
+  totalDrinks: number;
 }
 
 interface FoodRequirements {
   hasEnoughMeat: boolean;
   hasEnoughSides: boolean;
   hasEnoughCondiments: boolean;
+  totalCost: number;
+  totalServings: number;
 }
 
 interface OverviewTabProps {
@@ -65,6 +60,39 @@ interface OverviewTabProps {
   COLORS: string[];
 }
 
+// Types for chart components
+interface PieChartCustomizedLabelProps {
+  cx: number;
+  cy: number;
+  midAngle: number;
+  innerRadius: number;
+  outerRadius: number;
+  percent: number;
+  index: number;
+  name: string;
+  value: number;
+}
+
+interface PieChartActiveShapeProps {
+  cx: number;
+  cy: number;
+  innerRadius: number;
+  outerRadius: number;
+  startAngle: number;
+  endAngle: number;
+  fill: string;
+  payload: any;
+  percent: number;
+  value: number;
+  name: string;
+}
+
+interface CustomTooltipProps {
+  active?: boolean;
+  payload?: Array<any>;
+  label?: string;
+}
+
 const OverviewTab: React.FC<OverviewTabProps> = ({
   attendees, setAttendees,
   ticketPrice, setTicketPrice,
@@ -76,417 +104,588 @@ const OverviewTab: React.FC<OverviewTabProps> = ({
   calculateDrinkRequirements, calculateFoodRequirements, 
   getCategoryServings, COLORS
 }) => {
-  const theme = useTheme();
+  // Get calculated requirements
+  const drinkRequirements = calculateDrinkRequirements();
+  const foodRequirements = calculateFoodRequirements();
   
-  // Helper functions to handle state updates
-  const incrementAttendees = () => setAttendees(attendees + 1);
-  const decrementAttendees = () => setAttendees(Math.max(1, attendees - 1));
-  const incrementDrinksPerPerson = () => setDrinksPerPerson(drinksPerPerson + 1);
-  const decrementDrinksPerPerson = () => setDrinksPerPerson(Math.max(1, drinksPerPerson - 1));
-  const incrementFoodServings = () => setFoodServingsPerPerson(foodServingsPerPerson + 1);
-  const decrementFoodServings = () => setFoodServingsPerPerson(Math.max(1, foodServingsPerPerson - 1));
+  // Active section for the pie chart (for hover effect)
+  const [activeIndex, setActiveIndex] = React.useState<number | null>(null);
   
-  // Custom pie chart renderization for animation
-  const renderCustomizedLabel = ({ cx, cy, midAngle, innerRadius, outerRadius, percent, index }: any) => {
-    const RADIAN = Math.PI / 180;
-    const radius = outerRadius * 1.1;
-    const x = cx + radius * Math.cos(-midAngle * RADIAN);
-    const y = cy + radius * Math.sin(-midAngle * RADIAN);
-  
+  // Basic parameters card
+  const renderBasicParameters = () => {
     return (
-      <text 
-        x={x} 
-        y={y} 
-        fill={COLORS[index % COLORS.length]}
-        textAnchor={x > cx ? 'start' : 'end'} 
-        dominantBaseline="central"
-        className="text-xs font-medium"
-      >
-        {costBreakdown[index].name} ({`${(percent * 100).toFixed(0)}%`})
-      </text>
+      <div className="bg-white rounded-lg border border-gray-200 p-4">
+        <div className="flex items-center mb-4">
+          <Users className="w-5 h-5 text-blue-600 mr-2" />
+          <h2 className="text-base font-medium text-primary">Parámetros Básicos</h2>
+        </div>
+        
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+          <div>
+            <label className="block text-sm text-primary mb-1">Asistentes</label>
+            <div className="relative">
+              <input
+                type="number"
+                className="block w-full rounded border border-gray-300 py-2 px-3 text-gray-900 focus:border-blue-500 focus:outline-none focus:ring-blue-500"
+                value={attendees}
+                onChange={(e) => setAttendees(parseInt(e.target.value) || 1)}
+                min="1"
+                step="1"
+              />
+            </div>
+          </div>
+          
+          <div>
+            <label className="block text-sm text-primary mb-1">Precio de Entrada (S/)</label>
+            <div className="relative">
+              <div className="flex rounded shadow-sm">
+                <span className="inline-flex items-center rounded-l border border-r-0 border-gray-300 bg-gray-50 px-3 text-gray-500">S/</span>
+                <input
+                  type="number"
+                  className="block w-full rounded-r border border-gray-300 py-2 pl-1 pr-3 text-gray-900 focus:border-blue-500 focus:outline-none focus:ring-blue-500"
+                  value={ticketPrice}
+                  onChange={(e) => setTicketPrice(parseFloat(e.target.value) || 0)}
+                  min="0"
+                  step="1"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label className="block text-sm text-primary mb-1 flex items-center">
+              <Wine className="w-4 h-4 mr-1 text-blue-600" /> Bebidas por Persona
+            </label>
+            <div className="flex rounded shadow-sm">
+              <button 
+                className="inline-flex items-center rounded-l border border-gray-300 bg-gray-50 px-3 py-2 text-sm text-primary hover:bg-gray-100"
+                onClick={() => setDrinksPerPerson(Math.max(1, drinksPerPerson - 1))}
+              >
+                -
+              </button>
+              <input
+                type="text"
+                className="block w-full min-w-0 flex-1 text-center border-y border-gray-300 py-2 text-gray-900 focus:border-blue-500 focus:outline-none focus:ring-blue-500"
+                value={drinksPerPerson}
+                readOnly
+              />
+              <button 
+                className="inline-flex items-center rounded-r border border-gray-300 bg-gray-50 px-3 py-2 text-sm text-primary hover:bg-gray-100"
+                onClick={() => setDrinksPerPerson(drinksPerPerson + 1)}
+              >
+                +
+              </button>
+            </div>
+          </div>
+          
+          <div>
+            <label className="block text-sm text-primary mb-1 flex items-center">
+              <Utensils className="w-4 h-4 mr-1 text-blue-600" /> Porciones/Persona
+            </label>
+            <div className="flex rounded shadow-sm">
+              <button 
+                className="inline-flex items-center rounded-l border border-gray-300 bg-gray-50 px-3 py-2 text-sm text-primary hover:bg-gray-100"
+                onClick={() => setFoodServingsPerPerson(Math.max(1, foodServingsPerPerson - 1))}
+                aria-label="Decrementar porciones"
+              >
+                -
+              </button>
+              <input
+                type="text"
+                className="block w-full min-w-0 flex-1 text-center border-y border-gray-300 py-2 text-gray-900 focus:border-blue-500 focus:outline-none focus:ring-blue-500"
+                value={foodServingsPerPerson}
+                readOnly
+                aria-label="Porciones por persona"
+              />
+              <button 
+                className="inline-flex items-center rounded-r border border-gray-300 bg-gray-50 px-3 py-2 text-sm text-primary hover:bg-gray-100"
+                onClick={() => setFoodServingsPerPerson(foodServingsPerPerson + 1)}
+                aria-label="Incrementar porciones"
+              >
+                +
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
+  // Financial summary card
+  const renderFinancialSummary = () => {
+    return (
+      <div className="bg-white rounded-xl border border-gray-200 p-5">
+        <div className="flex items-center mb-5 text-lg font-medium text-primary">
+          <DollarSign className="w-6 h-6 text-green-600 mr-3" />
+          <h2>Resumen Financiero</h2>
+        </div>
+        
+        {/* Income & Costs - Main financial metrics in a group */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-5">
+          {/* Income and Costs Group */}
+          <div className="grid grid-cols-1 gap-3">
+            <div className="rounded-lg bg-green-50 p-4 border border-green-100 shadow-sm">
+              <div className="flex justify-between items-center">
+                <span className="text-lg font-medium text-primary">Ingresos:</span>
+                <span className="text-lg font-medium text-green-700">S/ {totalRevenue.toFixed(2)}</span>
+              </div>
+            </div>
+            
+            <div className="rounded-lg bg-red-50 p-4 border border-red-100 shadow-sm">
+              <div className="flex justify-between items-center">
+                <span className="text-lg font-medium text-primary">Costos:</span>
+                <span className="text-lg font-medium text-red-700">S/ {totalCosts.toFixed(2)}</span>
+              </div>
+            </div>
+            
+            <div className={`rounded-lg ${netProfit >= 0 ? 'bg-green-50 border-green-100' : 'bg-red-50 border-red-100'} p-4 border shadow-sm`}>
+              <div className="flex justify-between items-center">
+                <span className="text-lg font-medium text-primary">Ganancia:</span>
+                <span className={`text-lg font-medium ${netProfit >= 0 ? 'text-green-700' : 'text-red-700'}`}>
+                  S/ {netProfit.toFixed(2)}
+                </span>
+              </div>
+            </div>
+          </div>
+
+          {/* Planning Metrics Group */}
+          <div className="grid grid-cols-1 gap-3">
+            <div className="rounded-lg bg-blue-50 p-4 border border-blue-100 shadow-sm">
+              <div className="flex justify-between items-center">
+                <span className="text-lg font-medium text-primary">Costo/Persona:</span>
+                <span className="text-lg font-medium text-blue-700">S/ {perPersonCost.toFixed(2)}</span>
+              </div>
+            </div>
+            
+            <div className="rounded-lg bg-gray-50 p-4 border border-gray-200 shadow-sm">
+              <div className="flex justify-between items-center">
+                <span className="text-lg font-medium text-primary">Punto Equilibrio:</span>
+                <span className="text-lg font-medium text-gray-900">{breakEvenAttendees} personas</span>
+              </div>
+            </div>
+            
+            <div className="rounded-lg bg-blue-50 p-4 border border-blue-100 shadow-sm">
+              <div className="flex justify-between items-center">
+                <span className="text-lg font-medium text-primary">Entrada Mínima:</span>
+                <span className="text-lg font-medium text-blue-700">S/ {recommendedTicketPrice}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        {!isViable && (
+          <div className="bg-red-500 text-white rounded-lg p-4 shadow-md">
+            <div className="flex items-start">
+              <AlertCircle className="w-6 h-6 mr-3 mt-0.5 flex-shrink-0" />
+              <div>
+                <p className="font-medium text-lg">¡Fiesta No Viable Financieramente!</p>
+                <p className="mt-1">
+                  Aumenta el precio de entrada a al menos S/ {recommendedTicketPrice} para ser rentable.
+                </p>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
     );
   };
   
-  const CustomTooltip = ({ active, payload, label }: any) => {
+  // Custom active shape for pie chart with better hover effect
+  const renderActiveShape: any = (props: PieChartActiveShapeProps) => {
+    const { cx, cy, innerRadius, outerRadius, startAngle, endAngle, fill } = props;
+    
+    return (
+      <g>
+        <Sector
+          cx={cx}
+          cy={cy}
+          innerRadius={innerRadius}
+          outerRadius={outerRadius + 6}
+          startAngle={startAngle}
+          endAngle={endAngle}
+          fill={fill}
+        />
+        <Sector
+          cx={cx}
+          cy={cy}
+          startAngle={startAngle}
+          endAngle={endAngle}
+          innerRadius={outerRadius + 6}
+          outerRadius={outerRadius + 10}
+          fill={fill}
+        />
+      </g>
+    );
+  };
+  
+  // Enhanced custom tooltip for pie chart
+  const CustomTooltip: React.FC<CustomTooltipProps> = ({ active, payload, label }) => {
     if (active && payload && payload.length) {
+      const data = payload[0];
+      const totalValue = costBreakdown.reduce((sum, item) => sum + item.value, 0);
+      const percentage = ((data.value / totalValue) * 100).toFixed(1);
+      
       return (
-        <div className="bg-white p-3 border border-slate-200 rounded-lg shadow-lg">
-          <p className="font-medium text-slate-900">{payload[0].name}</p>
-          <p className="text-primary-dark">
-            <span className="font-bold">S/ {payload[0].value.toFixed(2)}</span>
+        <div className="bg-white p-3 border border-gray-200 shadow-lg rounded-md">
+          <p className="font-medium text-primary">{data.name}</p>
+          <p className="text-primary">
+            <span className="font-medium">S/ {data.value.toFixed(2)}</span>
           </p>
-          <p className="text-xs text-slate-500">
-            {(payload[0].payload.percent * 100).toFixed(1)}% del total
-          </p>
+          <p className="text-gray-600 text-sm">{percentage}% del total</p>
         </div>
       );
     }
     return null;
   };
   
-  return (
-    <div className="space-y-6 animate-fadeIn">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <Card hover variant="default">
-          <Card.Header 
-            title="Parámetros Básicos"
-            icon={<Users className="w-5 h-5 text-primary" />}
-            gradient
-          />
-          <Card.Content>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-              <div className="space-y-1 group">
-                <label className="block text-base font-medium text-slate-700 group-hover:text-primary transition-colors">Asistentes</label>
-                <div className="relative">
-                  <input
-                    type="number"
-                    className="block w-full rounded-lg border-slate-300 shadow-sm p-3 pr-16 border focus:border-primary focus:ring-2 focus:ring-primary/20 text-lg transition-all duration-300"
-                    value={attendees}
-                    onChange={(e) => setAttendees(parseInt(e.target.value) || 1)}
-                    min="1"
-                  />
-                  <div className="absolute right-0 top-0 h-full flex flex-col">
-                    <button 
-                      className="flex-1 px-3 bg-slate-100 hover:bg-slate-200 hover:text-primary border-l border-t border-r border-slate-300 rounded-tr-lg transition-colors"
-                      onClick={incrementAttendees}
-                    >
-                      <ChevronUp size={16} />
-                    </button>
-                    <button 
-                      className="flex-1 px-3 bg-slate-100 hover:bg-slate-200 hover:text-primary border-l border-b border-r border-slate-300 rounded-br-lg transition-colors"
-                      onClick={decrementAttendees}
-                    >
-                      <ChevronDown size={16} />
-                    </button>
-                  </div>
-                </div>
-              </div>
-              <div className="space-y-1 group">
-                <label className="block text-base font-medium text-slate-700 group-hover:text-primary transition-colors">Precio de Entrada (S/)</label>
-                <div className="relative">
-                  <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-500 group-hover:text-primary transition-colors">S/</span>
-                  <input
-                    type="number"
-                    className="block w-full rounded-lg border-slate-300 shadow-sm p-3 pl-8 border focus:border-primary focus:ring-2 focus:ring-primary/20 text-lg transition-all duration-300"
-                    value={ticketPrice}
-                    onChange={(e) => setTicketPrice(parseFloat(e.target.value) || 0)}
-                    min="0"
-                    step="1"
-                  />
-                </div>
-              </div>
-              <div className="space-y-1 group">
-                <label className="block text-base font-medium text-slate-700 group-hover:text-primary transition-colors flex items-center">
-                  <Wine className="w-4 h-4 mr-1 text-primary" /> Bebidas por Persona
-                </label>
-                <div className="flex rounded-lg shadow-sm border border-slate-300 overflow-hidden group-hover:border-primary transition-colors">
-                  <button 
-                    className="px-4 bg-slate-100 hover:bg-slate-200 hover:text-primary text-slate-700 border-r border-slate-300 flex items-center justify-center transition-colors"
-                    onClick={decrementDrinksPerPerson}
-                  >
-                    -
-                  </button>
-                  <input
-                    type="number"
-                    className="flex-1 p-3 border-0 focus:ring-0 text-center text-lg"
-                    value={drinksPerPerson}
-                    onChange={(e) => setDrinksPerPerson(parseInt(e.target.value) || 1)}
-                    min="1"
-                  />
-                  <button 
-                    className="px-4 bg-slate-100 hover:bg-slate-200 hover:text-primary text-slate-700 border-l border-slate-300 flex items-center justify-center transition-colors"
-                    onClick={incrementDrinksPerPerson}
-                  >
-                    +
-                  </button>
-                </div>
-              </div>
-              <div className="space-y-1 group">
-                <label className="block text-base font-medium text-slate-700 group-hover:text-primary transition-colors flex items-center">
-                  <Utensils className="w-4 h-4 mr-1 text-primary" /> Porciones/Persona
-                </label>
-                <div className="flex rounded-lg shadow-sm border border-slate-300 overflow-hidden group-hover:border-primary transition-colors">
-                  <button 
-                    className="px-4 bg-slate-100 hover:bg-slate-200 hover:text-primary text-slate-700 border-r border-slate-300 flex items-center justify-center transition-colors"
-                    onClick={decrementFoodServings}
-                  >
-                    -
-                  </button>
-                  <input
-                    type="number"
-                    className="flex-1 p-3 border-0 focus:ring-0 text-center text-lg"
-                    value={foodServingsPerPerson}
-                    onChange={(e) => setFoodServingsPerPerson(parseInt(e.target.value) || 1)}
-                    min="1"
-                  />
-                  <button 
-                    className="px-4 bg-slate-100 hover:bg-slate-200 hover:text-primary text-slate-700 border-l border-slate-300 flex items-center justify-center transition-colors"
-                    onClick={incrementFoodServings}
-                  >
-                    +
-                  </button>
-                </div>
-              </div>
-            </div>
-          </Card.Content>
-        </Card>
-        
-        <Card hover>
-          <Card.Header 
-            title="Resumen Financiero"
-            icon={<DollarSign className="w-5 h-5 text-success" />}
-            gradient
-          />
-          <Card.Content>
-            <div className="grid grid-cols-2 gap-y-3 gap-x-6">
-              <div className="flex items-center justify-between bg-success-light p-3 rounded-lg shadow-sm hover:shadow-md transition-all">
-                <span className="text-base font-medium text-slate-700 flex items-center">
-                  <DollarSign className="w-4 h-4 mr-1 text-success" /> Ingresos:
-                </span>
-                <span className="text-base font-bold text-success-dark">S/ {totalRevenue.toFixed(2)}</span>
-              </div>
-              
-              <div className="flex items-center justify-between bg-error-light p-3 rounded-lg shadow-sm hover:shadow-md transition-all">
-                <span className="text-base font-medium text-slate-700 flex items-center">
-                  <AlertCircle className="w-4 h-4 mr-1 text-error" /> Costos:
-                </span>
-                <span className="text-base font-bold text-error-dark">S/ {totalCosts.toFixed(2)}</span>
-              </div>
-              
-              <div className="flex items-center justify-between bg-slate-100 p-3 rounded-lg shadow-sm hover:shadow-md transition-all">
-                <span className="text-base font-medium text-slate-700 flex items-center">
-                  <Users className="w-4 h-4 mr-1 text-slate-500" /> Punto Equilibrio:
-                </span>
-                <span className="text-base font-bold text-slate-700">{breakEvenAttendees} personas</span>
-              </div>
-              
-              <div className="flex items-center justify-between bg-primary-light p-3 rounded-lg shadow-sm hover:shadow-md transition-all">
-                <span className="text-base font-medium text-slate-700 flex items-center">
-                  <Users className="w-4 h-4 mr-1 text-primary" /> Costo/Persona:
-                </span>
-                <span className="text-base font-bold text-primary-dark">S/ {perPersonCost.toFixed(2)}</span>
-              </div>
-              
-              <div className="flex items-center justify-between bg-primary-light p-3 rounded-lg shadow-sm hover:shadow-md transition-all">
-                <span className="text-base font-medium text-slate-700 flex items-center">
-                  <Sparkles className="w-4 h-4 mr-1 text-primary" /> Entrada Mínima:
-                </span>
-                <span className="text-base font-bold text-primary-dark">S/ {recommendedTicketPrice}</span>
-              </div>
-              
-              <div className={`flex items-center justify-between p-3 rounded-lg shadow-sm hover:shadow-md transition-all ${netProfit >= 0 ? 'bg-success-light' : 'bg-error-light'}`}>
-                <span className="text-base font-medium text-slate-700 flex items-center">
-                  <TrendingUp className="w-4 h-4 mr-1 text-slate-700" /> Ganancia:
-                </span>
-                <span className={`text-base font-bold ${netProfit >= 0 ? 'text-success-dark' : 'text-error-dark'}`}>
-                  S/ {netProfit.toFixed(2)}
-                </span>
-              </div>
-            </div>
-            
-            <div className="mt-4">
-              <Card variant="gradient">
-                <Card.Content className={`p-4 rounded-xl ${isViable ? theme.getGradient('success') : theme.getGradient('error')} shadow-md transform hover:scale-[1.02] transition-all duration-300`}>
-                  <div className="flex items-center">
-                    {isViable ? (
-                      <CheckCircle className="w-6 h-6 text-white mr-2" />
-                    ) : (
-                      <AlertCircle className="w-6 h-6 text-white mr-2" />
-                    )}
-                    <span className="font-bold text-white text-lg">
-                      {isViable ? '¡Fiesta Financieramente Viable!' : '¡Fiesta No Viable Financieramente!'}
-                    </span>
-                  </div>
-                  <p className="text-white text-base mt-2">
-                    {isViable
-                      ? `Tu fiesta generará una ganancia aproximada de S/ ${netProfit.toFixed(2)}.`
-                      : ticketPrice < recommendedTicketPrice 
-                        ? `Aumenta el precio de entrada a al menos S/ ${recommendedTicketPrice} para ser rentable.` 
-                        : `Necesitas al menos ${Math.max(0, breakEvenAttendees - attendees)} asistentes más para llegar al punto de equilibrio.`}
-                  </p>
-                </Card.Content>
-              </Card>
-            </div>
-          </Card.Content>
-        </Card>
-      </div>
-      
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <Card hover>
-          <Card.Header title="Desglose de Costos" gradient icon={<PieChart className="w-5 h-5 text-primary" />} />
-          <Card.Content className="h-80">
-            <ResponsiveContainer width="100%" height="100%">
-              <PieChart>
-                <Pie
-                  data={costBreakdown}
-                  cx="50%"
-                  cy="50%"
-                  labelLine={false}
-                  label={renderCustomizedLabel}
-                  outerRadius={100}
-                  fill="#8884d8"
-                  dataKey="value"
-                  paddingAngle={4}
-                  animationDuration={1500}
-                  animationBegin={300}
-                  className="hover:opacity-95"
-                >
-                  {costBreakdown.map((entry, index) => (
-                    <Cell 
-                      key={`cell-${index}`} 
-                      fill={COLORS[index % COLORS.length]} 
-                      className="hover:opacity-90 transition-opacity"
-                      stroke="#fff"
-                      strokeWidth={2}
-                    />
-                  ))}
-                </Pie>
-                <Tooltip content={<CustomTooltip />} />
-              </PieChart>
-            </ResponsiveContainer>
-          </Card.Content>
-        </Card>
-        
-        <Card hover>
-          <Card.Header title="Resumen Financiero" gradient icon={<BarChart className="w-5 h-5 text-primary" />} />
-          <Card.Content className="h-80">
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={financialOverview}>
-                <CartesianGrid strokeDasharray="3 3" strokeOpacity={0.2} />
-                <XAxis dataKey="name" tick={{ fill: '#64748b' }} />
-                <YAxis tick={{ fill: '#64748b' }} />
-                <Tooltip 
-                  formatter={(value: number) => [`S/ ${value.toFixed(2)}`, '']}
-                  contentStyle={{ 
-                    backgroundColor: 'white', 
-                    border: '1px solid #e2e8f0',
-                    borderRadius: '0.375rem',
-                    boxShadow: '0 2px 5px rgba(0,0,0,0.1)'
-                  }}
-                />
-                <Bar 
-                  dataKey="amount" 
-                  radius={[4, 4, 0, 0]}
-                  barSize={60}
-                  animationDuration={1500}
-                  animationBegin={300}
-                >
-                  {financialOverview.map((entry, index) => (
-                    <Cell 
-                      key={`cell-${index}`} 
-                      fill={index === 0 ? '#2563eb' : index === 1 ? '#f43f5e' : entry.amount >= 0 ? '#10b981' : '#f43f5e'} 
-                      className="hover:opacity-90 transition-opacity"
-                    />
-                  ))}
-                  <LabelList 
-                    dataKey="amount" 
-                    position="top" 
-                    formatter={(value: number) => `S/ ${value.toFixed(0)}`}
-                    style={{ fill: '#64748b', fontWeight: 'bold', fontSize: '12px' }}
-                  />
-                </Bar>
-              </BarChart>
-            </ResponsiveContainer>
-          </Card.Content>
-        </Card>
-      </div>
-      
-      <Card hover>
-        <Card.Header 
-          title="Estado General" 
-          icon={<CheckCircle className="w-5 h-5 text-primary" />}
-          gradient
+  // Custom label renderer for pie chart (outside labels with lines)
+  const renderCustomizedLabel = (props: PieChartCustomizedLabelProps) => {
+    const { cx, cy, midAngle, innerRadius, outerRadius, percent, index, name, value } = props;
+    const RADIAN = Math.PI / 180;
+    // Position the label further from the pie
+    const radius = outerRadius * 1.25;
+    const x = cx + radius * Math.cos(-midAngle * RADIAN);
+    const y = cy + radius * Math.sin(-midAngle * RADIAN);
+    
+    // For labels on the left side, align right, and for right side, align left
+    const textAnchor = x > cx ? 'start' : 'end';
+    
+    // Line from pie to label
+    const lineEnd = {
+      x: cx + (outerRadius + 10) * Math.cos(-midAngle * RADIAN),
+      y: cy + (outerRadius + 10) * Math.sin(-midAngle * RADIAN),
+    };
+    
+    return (
+      <g>
+        {/* Line from pie to label */}
+        <path 
+          d={`M${cx + outerRadius * Math.cos(-midAngle * RADIAN)},${cy + outerRadius * Math.sin(-midAngle * RADIAN)}L${lineEnd.x},${lineEnd.y}L${x},${y}`} 
+          stroke={COLORS[index % COLORS.length]}
+          fill="none"
         />
-        <Card.Content>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <Card variant="accent" accentColor="primary" hover>
-              <Card.Header title="Estado de Bebidas" icon={<Wine className="w-5 h-5 text-primary" />} />
-              <Card.Content className="space-y-4">
-                <StatusItem 
-                  title="Licores" 
-                  icon={<Wine size={18} />}
-                  isEnough={calculateDrinkRequirements().hasEnoughSpirits}
-                  currentAmount={getCategoryServings('spirits')}
-                  requiredAmount={attendees * drinksPerPerson}
+        
+        {/* Label text */}
+        <text 
+          x={x}
+          y={y} 
+          textAnchor={textAnchor} 
+          fill={COLORS[index % COLORS.length]}
+          dominantBaseline="central"
+          className="text-xs font-medium"
+        >
+          {name} (S/ {value.toFixed(0)})
+        </text>
+      </g>
+    );
+  };
+  
+  // Improved cost breakdown chart
+  const renderCostBreakdown = () => {
+    // Calculate total for percentages
+    const total = costBreakdown.reduce((sum, item) => sum + item.value, 0);
+    
+    // Prepare data with percentages
+    const chartData = costBreakdown.map((item, index) => ({
+      ...item,
+      color: COLORS[index % COLORS.length],
+      percent: item.value / total
+    }));
+    
+    const onPieEnter = (_: any, index: number) => {
+      setActiveIndex(index);
+    };
+    
+    const onPieLeave = () => {
+      setActiveIndex(null);
+    };
+    
+    return (
+      <div className="bg-white rounded-xl border border-gray-200 p-4">
+        <h3 className="text-lg font-medium mb-4">Desglose de Costos</h3>
+        
+        <div className="w-full h-64">
+          <ResponsiveContainer width="100%" height="100%">
+            <PieChart>
+              <Pie
+                activeIndex={activeIndex !== null ? [activeIndex] : []}
+                activeShape={renderActiveShape}
+                data={chartData}
+                cx="50%"
+                cy="50%"
+                innerRadius={60}
+                outerRadius={80}
+                paddingAngle={2}
+                dataKey="value"
+                labelLine={true}
+                label={renderCustomizedLabel}
+                onMouseEnter={onPieEnter}
+                onMouseLeave={onPieLeave}
+                isAnimationActive={true}
+              >
+                {chartData.map((entry, index) => (
+                  <Cell key={`cell-${index}`} fill={entry.color} />
+                ))}
+              </Pie>
+              <Tooltip content={<CustomTooltip />} />
+              
+              {/* Center label */}
+              <text x="50%" y="50%" textAnchor="middle" dominantBaseline="middle">
+                <tspan x="50%" dy="-0.5em" fontSize="16" fontWeight="bold">S/ {total.toFixed(0)}</tspan>
+                <tspan x="50%" dy="1.5em" fontSize="12" fill="#666">Total</tspan>
+              </text>
+            </PieChart>
+          </ResponsiveContainer>
+        </div>
+      </div>
+    );
+  };
+  
+  // Financial overview chart using actual financialOverview data
+  const renderFinancialOverview = () => {
+    const data = financialOverview.map((item, index) => {
+      let color = COLORS[0]; // Use first color for positives
+      if (item.name.includes('Costos')) {
+        color = COLORS[3]; // Use another color for costs
+      } else if (item.name.includes('Beneficio') || item.name.includes('Neto')) {
+        color = item.amount >= 0 ? COLORS[2] : COLORS[3]; // Different colors for profit vs loss
+      }
+      
+      return {
+        ...item,
+        color
+      };
+    });
+    
+    return (
+      <div className="bg-white rounded-xl border border-gray-200 p-4">
+        <h3 className="text-lg font-medium mb-4">Resumen Financiero</h3>
+        
+        <div className="w-full h-56">
+          <ResponsiveContainer width="100%" height="100%">
+            <BarChart
+              data={data}
+              margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
+            >
+              <CartesianGrid strokeDasharray="3 3" vertical={false} />
+              <XAxis dataKey="name" tick={{ fontSize: 12 }} />
+              <YAxis tick={{ fontSize: 12 }} />
+              <Tooltip
+                formatter={(value: number) => [`S/ ${value.toFixed(2)}`, '']}
+                cursor={{ fill: 'rgba(0, 0, 0, 0.05)' }}
+              />
+              <Bar dataKey="amount" radius={[4, 4, 0, 0]}>
+                {data.map((entry, index) => (
+                  <Cell key={`cell-${index}`} fill={entry.color} />
+                ))}
+                <LabelList 
+                  dataKey="amount" 
+                  position="top" 
+                  formatter={(value: number) => `S/ ${value.toFixed(0)}`}
+                  style={{ fontSize: '11px', fill: '#666' }} 
                 />
-                <StatusItem 
-                  title="Mezcladores" 
-                  icon={<Droplets size={18} />}
-                  isEnough={calculateDrinkRequirements().hasEnoughMixers}
-                  currentAmount={getCategoryServings('mixers')}
-                  requiredAmount={attendees * drinksPerPerson}
-                />
-                <StatusItem 
-                  title="Hielo" 
-                  icon={<Flame size={18} />}
-                  isEnough={calculateDrinkRequirements().hasEnoughIce}
-                  currentAmount={getCategoryServings('ice')}
-                  requiredAmount={attendees * drinksPerPerson}
-                />
-                <StatusItem 
-                  title="Suministros" 
-                  icon={<Wine size={18} />}
-                  isEnough={calculateDrinkRequirements().hasEnoughSupplies}
-                  currentAmount={getCategoryServings('supplies')}
-                  requiredAmount={attendees * drinksPerPerson}
-                />
-              </Card.Content>
-            </Card>
-            
-            <Card variant="accent" accentColor="warning" hover>
-              <Card.Header title="Estado de Comida" icon={<Utensils className="w-5 h-5 text-warning" />} />
-              <Card.Content className="space-y-4">
-                <StatusItem 
-                  title="Carne" 
-                  icon={<Utensils size={18} />}
-                  isEnough={calculateFoodRequirements().hasEnoughMeat}
-                  currentAmount={getCategoryServings('meat')}
-                  requiredAmount={attendees * foodServingsPerPerson}
-                />
-                <StatusItem 
-                  title="Guarniciones" 
-                  icon={<Utensils size={18} />}
-                  isEnough={calculateFoodRequirements().hasEnoughSides}
-                  currentAmount={getCategoryServings('sides')}
-                  requiredAmount={attendees * foodServingsPerPerson}
-                />
-                <StatusItem 
-                  title="Condimentos" 
-                  icon={<Utensils size={18} />}
-                  isEnough={calculateFoodRequirements().hasEnoughCondiments}
-                  currentAmount={getCategoryServings('condiments')}
-                  requiredAmount={attendees * foodServingsPerPerson}
-                />
-              </Card.Content>
-            </Card>
-            
-            <Card variant="gradient" hover>
-              <Card.Header title="Recomendaciones" icon={<TrendingUp className="w-5 h-5 text-primary" />} />
-              <Card.Content className="space-y-4">
-                <StatusCard
-                  title="Precio de Entrada"
-                  value={`S/ ${ticketPrice}`}
-                  status={ticketPrice >= recommendedTicketPrice ? 'active' : 'pending'}
-                  trend={ticketPrice >= recommendedTicketPrice ? 0 : ((recommendedTicketPrice - ticketPrice) / ticketPrice * 100)}
-                />
-                
-                <StatusCard
-                  title="Asistencia"
-                  value={`${attendees} personas`}
-                  status={attendees >= breakEvenAttendees ? 'active' : 'pending'}
-                  trend={attendees >= breakEvenAttendees ? 0 : ((breakEvenAttendees - attendees) / breakEvenAttendees * 100)}
-                />
-                
-                <StatusCard
-                  title="Viabilidad Global"
-                  value={isViable ? `Ganancia: S/${netProfit.toFixed(2)}` : `Pérdida: S/${Math.abs(netProfit).toFixed(2)}`}
-                  status={isViable ? 'active' : 'error'}
-                />
-              </Card.Content>
-            </Card>
+              </Bar>
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
+        
+        <div className="mt-2 grid grid-cols-3 gap-2 text-center">
+          {data.map((item, index) => (
+            <div key={index} className="text-sm">
+              <div className="font-medium">{item.name}</div>
+              <div className={`${item.amount < 0 ? 'text-red-600' : ''}`}>
+                S/ {item.amount < 0 ? `-${Math.abs(item.amount).toFixed(0)}` : item.amount.toFixed(0)}
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  };
+  
+  // Status section with actual data and equal card sizes
+  const renderStatusSection = () => {
+    const totalDrinkRequirement = attendees * drinksPerPerson;
+    const totalFoodRequirement = attendees * foodServingsPerPerson;
+    
+    const StatusRow = ({ title, current, total, isOk }: { title: string, current: number, total: number, isOk: boolean }) => (
+      <div className="flex justify-between items-center py-2">
+        <span className="text-sm">{title}</span>
+        <div className="flex items-center">
+          <span className="text-sm text-right w-16">{current}/{total}</span>
+          <span className={`ml-2 px-2 py-0.5 text-xs rounded ${isOk ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'} min-w-[48px] text-center`}>
+            {isOk ? 'OK' : 'Falta'}
+          </span>
+        </div>
+      </div>
+    );
+
+    // Check if everything is balanced (all requirements met)
+    const isEverythingBalanced = 
+      drinkRequirements.hasEnoughSpirits && 
+      drinkRequirements.hasEnoughMixers && 
+      drinkRequirements.hasEnoughIce && 
+      drinkRequirements.hasEnoughSupplies &&
+      foodRequirements.hasEnoughMeat &&
+      foodRequirements.hasEnoughSides &&
+      foodRequirements.hasEnoughCondiments;
+    
+    // Calculate percentages for recommendation bars
+    const ticketPricePercentage = Math.min(100, Math.max(0, (ticketPrice / recommendedTicketPrice) * 100));
+    const attendancePercentage = Math.min(100, Math.max(0, (attendees / breakEvenAttendees) * 100));
+    
+    // For overall viability, calculate a more nuanced percentage based on multiple factors
+    const viabilityFactors = [
+      ticketPrice >= recommendedTicketPrice ? 1 : 0,
+      attendees >= breakEvenAttendees ? 1 : 0,
+      isEverythingBalanced ? 1 : 0
+    ];
+    
+    const viabilityPercentage = (viabilityFactors.reduce((a, b) => a + b, 0) / viabilityFactors.length) * 100;
+    
+    return (
+      <div className="bg-white rounded-lg border border-gray-200 p-4">
+        <div className="flex items-center mb-4">
+          <Info className="w-5 h-5 text-blue-600 mr-2" />
+          <h2 className="text-base font-medium text-primary">Estado General</h2>
+        </div>
+        
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          {/* Drinks Status */}
+          <div className="rounded overflow-hidden border border-gray-200">
+            <div className="bg-blue-500 text-white px-3 py-2 flex items-center">
+              <Wine className="w-4 h-4 mr-2" />
+              <span className="font-medium">Estado de Bebidas</span>
+            </div>
+            <div className="p-3">
+              <StatusRow 
+                title="Licores" 
+                current={getCategoryServings('spirits')} 
+                total={totalDrinkRequirement} 
+                isOk={drinkRequirements.hasEnoughSpirits} 
+              />
+              <StatusRow 
+                title="Mezcladores" 
+                current={getCategoryServings('mixers')} 
+                total={totalDrinkRequirement} 
+                isOk={drinkRequirements.hasEnoughMixers} 
+              />
+              <StatusRow 
+                title="Hielo" 
+                current={getCategoryServings('ice')} 
+                total={totalDrinkRequirement} 
+                isOk={drinkRequirements.hasEnoughIce} 
+              />
+              <StatusRow 
+                title="Suministros" 
+                current={getCategoryServings('supplies')} 
+                total={totalDrinkRequirement} 
+                isOk={drinkRequirements.hasEnoughSupplies} 
+              />
+            </div>
           </div>
-        </Card.Content>
-      </Card>
+          
+          {/* Food Status */}
+          <div className="rounded overflow-hidden border border-gray-200">
+            <div className="bg-amber-500 text-white px-3 py-2 flex items-center">
+              <Utensils className="w-4 h-4 mr-2" />
+              <span className="font-medium">Estado de Comida</span>
+            </div>
+            <div className="p-3">
+              <StatusRow 
+                title="Carnes" 
+                current={getCategoryServings('meat')} 
+                total={totalFoodRequirement} 
+                isOk={foodRequirements.hasEnoughMeat} 
+              />
+              <StatusRow 
+                title="Guarniciones" 
+                current={getCategoryServings('sides')} 
+                total={totalFoodRequirement} 
+                isOk={foodRequirements.hasEnoughSides} 
+              />
+              <StatusRow 
+                title="Condimentos" 
+                current={getCategoryServings('condiments')} 
+                total={totalFoodRequirement} 
+                isOk={foodRequirements.hasEnoughCondiments} 
+              />
+            </div>
+          </div>
+          
+          {/* Recommendations - enhanced with better visualizations */}
+          <div className="rounded overflow-hidden border border-gray-200 md:col-span-1">
+            <div className="bg-blue-500 text-white px-3 py-2 flex items-center">
+              <Calendar className="w-4 h-4 mr-2" />
+              <span className="font-medium">Recomendaciones</span>
+            </div>
+            <div className="p-3">
+              <div className="mb-3">
+                <div className="flex justify-between text-xs mb-1">
+                  <span className="text-gray-600">Precio de Entrada</span>
+                  <span className={ticketPrice >= recommendedTicketPrice ? "text-green-600" : "text-red-600"}>
+                    {ticketPrice >= recommendedTicketPrice ? "Bueno" : "Muy bajo"}
+                  </span>
+                </div>
+                <div className="w-full h-2 bg-gray-200 rounded-full overflow-hidden">
+                  <div 
+                    className="bg-red-500" 
+                    style={{ width: `${ticketPricePercentage}%`, height: '100%' }}
+                  ></div>
+                </div>
+              </div>
+              
+              <div className="mb-3">
+                <div className="flex justify-between text-xs mb-1">
+                  <span className="text-gray-600">Asistencia</span>
+                  <span className={attendees >= breakEvenAttendees ? "text-green-600" : "text-yellow-600"}>
+                    {attendees >= breakEvenAttendees ? "Suficiente" : "Insuficiente"}
+                  </span>
+                </div>
+                <div className="w-full h-2 bg-gray-200 rounded-full overflow-hidden">
+                  <div 
+                    className="bg-yellow-500" 
+                    style={{ width: `${attendancePercentage}%`, height: '100%' }}
+                  ></div>
+                </div>
+              </div>
+              
+              <div>
+                <div className="flex justify-between text-xs mb-1">
+                  <span className="text-gray-600">Viabilidad Global</span>
+                  <span className={isViable ? "text-green-600" : "text-red-600"}>
+                    {isViable ? "Viable" : "No viable"}
+                  </span>
+                </div>
+                <div className="w-full h-2 bg-gray-200 rounded-full overflow-hidden">
+                  <div 
+                    className="bg-red-500" 
+                    style={{ width: `${viabilityPercentage}%`, height: '100%' }}
+                  ></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  };
+  
+  return (
+    <div className="space-y-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {renderBasicParameters()}
+        {renderFinancialSummary()}
+      </div>
+      
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {renderCostBreakdown()}
+        {renderFinancialOverview()}
+      </div>
+      
+      {renderStatusSection()}
     </div>
   );
 };
