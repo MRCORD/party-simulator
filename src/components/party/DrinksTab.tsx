@@ -21,12 +21,6 @@ interface DrinksTabProps {
   getRecommendedUnits: (category: string, totalDrinks: number) => number;
 }
 
-interface TableColumn {
-  accessor: keyof ShoppingItem;
-  Header: string;
-  Cell?: ({ value, row }: { value: unknown; row: ShoppingItem }) => React.ReactNode;
-}
-
 const DrinksTab: React.FC<DrinksTabProps> = ({
   attendees,
   drinksPerPerson,

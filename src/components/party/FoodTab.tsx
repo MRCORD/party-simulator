@@ -318,7 +318,7 @@ const FoodTab: React.FC<FoodTabProps> = ({
                     <Package className="mx-auto h-12 w-12 text-gray-400 mb-2" />
                     <p className="text-lg font-medium text-gray-900 mb-1">No hay artículos de comida</p>
                     <p className="text-sm">
-                      Agrega artículos de comida usando la pestaña "Compras"
+                      Agrega artículos de comida usando la pestaña &quot;Compras&quot;
                     </p>
                   </td>
                 </tr>

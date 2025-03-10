@@ -91,8 +91,10 @@ interface PieChartActiveShapeProps {
 
 interface CustomTooltipProps {
   active?: boolean;
-  payload?: Array<unknown>;
-  label?: string;
+  payload?: Array<{
+    name: string;
+    value: number;
+  }>;
 }
 
 const OverviewTab: React.FC<OverviewTabProps> = ({
@@ -333,9 +335,9 @@ const OverviewTab: React.FC<OverviewTabProps> = ({
   };
   
   // Enhanced custom tooltip for pie chart
-  const CustomTooltip: React.FC<CustomTooltipProps> = ({ active, payload, label }) => {
+  const CustomTooltip: React.FC<CustomTooltipProps> = ({ active, payload }) => {
     if (active && payload && payload.length) {
-      const data = payload[0] as any;
+      const data = payload[0];
       const totalValue = costBreakdown.reduce((sum, item) => sum + item.value, 0);
       const percentage = ((data.value / totalValue) * 100).toFixed(1);
       
@@ -353,8 +355,8 @@ const OverviewTab: React.FC<OverviewTabProps> = ({
   };
   
   // Custom label renderer for pie chart (outside labels with lines)
-  const renderCustomizedLabel = (props: PieChartCustomizedLabelProps & { index: number }) => {
-    const { cx, cy, midAngle, outerRadius, name, value, index } = props;
+  const renderCustomizedLabel = (props: PieChartCustomizedLabelProps) => {
+    const { cx, cy, midAngle, outerRadius, name, value } = props;
     const RADIAN = Math.PI / 180;
     // Position the label further from the pie
     const radius = outerRadius * 1.25;
@@ -375,7 +377,7 @@ const OverviewTab: React.FC<OverviewTabProps> = ({
         {/* Line from pie to label */}
         <path 
           d={`M${cx + outerRadius * Math.cos(-midAngle * RADIAN)},${cy + outerRadius * Math.sin(-midAngle * RADIAN)}L${lineEnd.x},${lineEnd.y}L${x},${y}`} 
-          stroke={COLORS[index % COLORS.length]}
+          stroke={COLORS[props.index % COLORS.length]}
           fill="none"
         />
         
@@ -384,7 +386,7 @@ const OverviewTab: React.FC<OverviewTabProps> = ({
           x={x}
           y={y} 
           textAnchor={textAnchor} 
-          fill={COLORS[index % COLORS.length]}
+          fill={COLORS[props.index % COLORS.length]}
           dominantBaseline="central"
           className="text-xs font-medium"
         >
@@ -406,7 +408,7 @@ const OverviewTab: React.FC<OverviewTabProps> = ({
       percent: item.value / total
     }));
     
-    const onPieEnter = (_: any, index: number) => {
+    const onPieEnter = (_data: unknown, index: number) => {
       setActiveIndex(index);
     };
     
