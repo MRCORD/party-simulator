@@ -2,15 +2,11 @@
 
 import React, { useState, useEffect } from 'react';
 import { 
-  Users, DollarSign, Wine, Utensils, MapPin, 
+  Users, Wine, Utensils, MapPin, 
   FileBarChart, ShoppingBag, AlertCircle, CheckCircle,
   Sparkles
 } from 'lucide-react';
-import Card from '@/components/ui/Card';
-import Badge from '@/components/ui/Badge';
-import Button from '@/components/ui/Button';
 import Tabs from '@/components/ui/Tabs';
-import PageHeader from '@/components/ui/PageHeader';
 import { useTheme } from '@/components/ui/ThemeProvider';
 
 // Import shared types
@@ -31,7 +27,6 @@ import ReportsTab from './ReportsTab';
 
 // Main component
 export default function PartySimulator() {
-  const theme = useTheme();
   
   // Tab state
   const [activeTab, setActiveTab] = useState<'overview'|'shopping'|'drinks'|'food'|'venue'|'reports'>('overview');
@@ -79,20 +74,6 @@ export default function PartySimulator() {
   const [perPersonCost, setPerPersonCost] = useState(0);
   const [isViable, setIsViable] = useState(false);
   const [recommendedTicketPrice, setRecommendedTicketPrice] = useState(0);
-  
-  // Function to calculate costs by category
-  const calculateCostsByCategory = () => {
-    const categoryCosts: { [key: string]: number } = {};
-    
-    shoppingItems.forEach(item => {
-      if (!categoryCosts[item.category]) {
-        categoryCosts[item.category] = 0;
-      }
-      categoryCosts[item.category] += item.cost * item.units;
-    });
-    
-    return categoryCosts;
-  };
   
   // Function to get total costs for a category
   const getCategoryTotal = (category: string) => {
@@ -249,7 +230,8 @@ export default function PartySimulator() {
     setRecommendedTicketPrice(calculatedRecommendedTicketPrice);
   }, [
     attendees, ticketPrice, venueCost, miscCosts,
-    shoppingItems, drinksPerPerson, foodServingsPerPerson
+    shoppingItems, drinksPerPerson, foodServingsPerPerson,
+    calculateDrinkRequirements, calculateFoodRequirements
   ]);
   
   // Cost breakdown for charts

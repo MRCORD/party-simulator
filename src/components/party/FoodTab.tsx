@@ -7,8 +7,6 @@ import {
   Clipboard, List, UtensilsCrossed, Package
 } from 'lucide-react';
 import Badge from '@/components/ui/Badge';
-import Button from '@/components/ui/Button';
-import Card from '@/components/ui/Card';
 import ProgressBar from '@/components/ui/ProgressBar';
 import { useTheme } from '@/components/ui/ThemeProvider';
 

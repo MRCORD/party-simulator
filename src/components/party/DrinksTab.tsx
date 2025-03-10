@@ -6,8 +6,6 @@ import {
   TrendingUp, Users, Info, List
 } from 'lucide-react';
 import Badge from '@/components/ui/Badge';
-import Button from '@/components/ui/Button';
-import Card from '@/components/ui/Card';
 import ProgressBar from '@/components/ui/ProgressBar';
 import { useTheme } from '@/components/ui/ThemeProvider';
 
@@ -26,7 +24,7 @@ interface DrinksTabProps {
 interface TableColumn {
   accessor: keyof ShoppingItem;
   Header: string;
-  Cell?: ({ value, row }: { value: any; row: ShoppingItem }) => React.ReactNode;
+  Cell?: ({ value, row }: { value: unknown; row: ShoppingItem }) => React.ReactNode;
 }
 
 const DrinksTab: React.FC<DrinksTabProps> = ({
@@ -372,7 +370,7 @@ const DrinksTab: React.FC<DrinksTabProps> = ({
                     <Package className="mx-auto h-12 w-12 text-gray-400 mb-2" />
                     <p className="text-lg font-medium text-gray-900 mb-1">No hay bebidas</p>
                     <p className="text-sm">
-                      Agrega bebidas usando la pestaña "Compras"
+                      Agrega bebidas usando la pestaña &quot;Compras&quot;
                     </p>
                   </td>
                 </tr>

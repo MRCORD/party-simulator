@@ -1,12 +1,12 @@
 import React from 'react';
 import { 
-  Users, DollarSign, CheckCircle, AlertCircle, Wine, 
+  Users, DollarSign, AlertCircle, Wine, 
   Utensils, Calendar, Info, PieChart
 } from 'lucide-react';
 import { 
   PieChart as RechartsPieChart, Pie, Cell, Tooltip, BarChart, Bar, 
   XAxis, YAxis, CartesianGrid, ResponsiveContainer, 
-  Legend, LabelList, Sector
+  LabelList, Sector
 } from 'recharts';
 import Button from '@/components/ui/Button';
 import { useTheme } from '@/components/ui/ThemeProvider';
@@ -83,7 +83,7 @@ interface PieChartActiveShapeProps {
   startAngle: number;
   endAngle: number;
   fill: string;
-  payload: any;
+  payload: unknown;
   percent: number;
   value: number;
   name: string;
@@ -91,7 +91,7 @@ interface PieChartActiveShapeProps {
 
 interface CustomTooltipProps {
   active?: boolean;
-  payload?: Array<any>;
+  payload?: Array<unknown>;
   label?: string;
 }
 
@@ -305,8 +305,8 @@ const OverviewTab: React.FC<OverviewTabProps> = ({
   };
   
   // Custom active shape for pie chart with better hover effect
-  const renderActiveShape: any = (props: PieChartActiveShapeProps) => {
-    const { cx, cy, innerRadius, outerRadius, startAngle, endAngle, fill } = props;
+  const renderActiveShape = (props: unknown) => {
+    const { cx, cy, innerRadius, outerRadius, startAngle, endAngle, fill } = props as PieChartActiveShapeProps;
     
     return (
       <g>
@@ -335,7 +335,7 @@ const OverviewTab: React.FC<OverviewTabProps> = ({
   // Enhanced custom tooltip for pie chart
   const CustomTooltip: React.FC<CustomTooltipProps> = ({ active, payload, label }) => {
     if (active && payload && payload.length) {
-      const data = payload[0];
+      const data = payload[0] as any;
       const totalValue = costBreakdown.reduce((sum, item) => sum + item.value, 0);
       const percentage = ((data.value / totalValue) * 100).toFixed(1);
       
@@ -353,8 +353,8 @@ const OverviewTab: React.FC<OverviewTabProps> = ({
   };
   
   // Custom label renderer for pie chart (outside labels with lines)
-  const renderCustomizedLabel = (props: PieChartCustomizedLabelProps) => {
-    const { cx, cy, midAngle, innerRadius, outerRadius, percent, index, name, value } = props;
+  const renderCustomizedLabel = (props: PieChartCustomizedLabelProps & { index: number }) => {
+    const { cx, cy, midAngle, outerRadius, name, value, index } = props;
     const RADIAN = Math.PI / 180;
     // Position the label further from the pie
     const radius = outerRadius * 1.25;
