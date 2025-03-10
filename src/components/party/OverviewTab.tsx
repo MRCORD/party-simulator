@@ -462,7 +462,7 @@ const OverviewTab: React.FC<OverviewTabProps> = ({
   
   // Financial overview chart using actual financialOverview data
   const renderFinancialOverview = () => {
-    const data = financialOverview.map((item, index) => {
+    const data = financialOverview.map((item) => {
       let color = COLORS[0]; // Use first color for positives
       if (item.name.includes('Costos')) {
         color = COLORS[3]; // Use another color for costs
