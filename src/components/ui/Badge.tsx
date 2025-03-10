@@ -1,3 +1,5 @@
+"use client";
+
 import React from 'react';
 import { useTheme } from './ThemeProvider';
 
@@ -79,12 +81,5 @@ const Badge = ({
     </span>
   );
 };
-
-// Usage examples:
-// <Badge>Default</Badge>
-// <Badge variant="primary">Primary</Badge>
-// <Badge variant="success" icon={<CheckCircle className="w-3 h-3" />}>Success</Badge>
-// <Badge variant="warning" size="lg">Warning</Badge>
-// <Badge variant="error" rounded="md">Error</Badge>
 
 export default Badge;
