@@ -9,6 +9,7 @@ import {
   Legend, LabelList, Sector
 } from 'recharts';
 import Button from '@/components/ui/Button';
+import { useTheme } from '@/components/ui/ThemeProvider';
 
 interface CostBreakdownItem {
   name: string;
@@ -105,6 +106,7 @@ const OverviewTab: React.FC<OverviewTabProps> = ({
   calculateDrinkRequirements, calculateFoodRequirements, 
   getCategoryServings, COLORS
 }) => {
+  const theme = useTheme();
   // Get calculated requirements
   const drinkRequirements = calculateDrinkRequirements();
   const foodRequirements = calculateFoodRequirements();
@@ -117,7 +119,7 @@ const OverviewTab: React.FC<OverviewTabProps> = ({
     return (
       <div className="bg-white rounded-lg border border-gray-200 p-4">
         <div className="flex items-center mb-4">
-          <Users className="w-5 h-5 text-blue-600 mr-2" />
+          <Users className="w-5 h-5 text-primary mr-2" />
           <h2 className="text-base font-medium text-primary">Parámetros Básicos</h2>
         </div>
         
@@ -229,7 +231,7 @@ const OverviewTab: React.FC<OverviewTabProps> = ({
     return (
       <div className="bg-white rounded-xl border border-gray-200 p-5">
         <div className="flex items-center mb-5 text-lg font-medium text-primary">
-          <DollarSign className="w-6 h-6 text-green-600 mr-3" />
+          <DollarSign className="w-6 h-6 text-success mr-3" />
           <h2>Resumen Financiero</h2>
         </div>
         
@@ -237,24 +239,24 @@ const OverviewTab: React.FC<OverviewTabProps> = ({
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-5">
           {/* Income and Costs Group */}
           <div className="grid grid-cols-1 gap-3">
-            <div className="rounded-lg bg-green-50 p-4 border border-green-100 shadow-sm">
+            <div className="rounded-lg bg-success-light p-4 border border-success shadow-sm">
               <div className="flex justify-between items-center">
                 <span className="text-lg font-medium text-primary">Ingresos:</span>
-                <span className="text-lg font-medium text-green-700">S/ {totalRevenue.toFixed(2)}</span>
+                <span className="text-lg font-medium text-success-dark">S/ {totalRevenue.toFixed(2)}</span>
               </div>
             </div>
             
-            <div className="rounded-lg bg-red-50 p-4 border border-red-100 shadow-sm">
+            <div className="rounded-lg bg-error-light p-4 border border-error shadow-sm">
               <div className="flex justify-between items-center">
                 <span className="text-lg font-medium text-primary">Costos:</span>
-                <span className="text-lg font-medium text-red-700">S/ {totalCosts.toFixed(2)}</span>
+                <span className="text-lg font-medium text-error-dark">S/ {totalCosts.toFixed(2)}</span>
               </div>
             </div>
             
-            <div className={`rounded-lg ${netProfit >= 0 ? 'bg-green-50 border-green-100' : 'bg-red-50 border-red-100'} p-4 border shadow-sm`}>
+            <div className={`rounded-lg ${netProfit >= 0 ? 'bg-success-light border-success' : 'bg-error-light border-error'} p-4 border shadow-sm`}>
               <div className="flex justify-between items-center">
                 <span className="text-lg font-medium text-primary">Ganancia:</span>
-                <span className={`text-lg font-medium ${netProfit >= 0 ? 'text-green-700' : 'text-red-700'}`}>
+                <span className={`text-lg font-medium ${netProfit >= 0 ? 'text-success-dark' : 'text-error-dark'}`}>
                   S/ {netProfit.toFixed(2)}
                 </span>
               </div>
@@ -263,10 +265,10 @@ const OverviewTab: React.FC<OverviewTabProps> = ({
 
           {/* Planning Metrics Group */}
           <div className="grid grid-cols-1 gap-3">
-            <div className="rounded-lg bg-blue-50 p-4 border border-blue-100 shadow-sm">
+            <div className="rounded-lg bg-primary-light p-4 border border-primary shadow-sm">
               <div className="flex justify-between items-center">
                 <span className="text-lg font-medium text-primary">Costo/Persona:</span>
-                <span className="text-lg font-medium text-blue-700">S/ {perPersonCost.toFixed(2)}</span>
+                <span className="text-lg font-medium text-primary-dark">S/ {perPersonCost.toFixed(2)}</span>
               </div>
             </div>
             
@@ -277,17 +279,17 @@ const OverviewTab: React.FC<OverviewTabProps> = ({
               </div>
             </div>
             
-            <div className="rounded-lg bg-blue-50 p-4 border border-blue-100 shadow-sm">
+            <div className="rounded-lg bg-primary-light p-4 border border-primary shadow-sm">
               <div className="flex justify-between items-center">
                 <span className="text-lg font-medium text-primary">Entrada Mínima:</span>
-                <span className="text-lg font-medium text-blue-700">S/ {recommendedTicketPrice}</span>
+                <span className="text-lg font-medium text-primary-dark">S/ {recommendedTicketPrice}</span>
               </div>
             </div>
           </div>
         </div>
         
         {!isViable && (
-          <div className="bg-red-500 text-white rounded-lg p-4 shadow-md">
+          <div className={`${theme.getGradient('error')} text-white rounded-lg p-4 shadow-md`}>
             <div className="flex items-start">
               <AlertCircle className="w-6 h-6 mr-3 mt-0.5 flex-shrink-0" />
               <div>
@@ -463,7 +465,6 @@ const OverviewTab: React.FC<OverviewTabProps> = ({
       } else if (item.name.includes('Beneficio') || item.name.includes('Neto')) {
         color = item.amount >= 0 ? COLORS[2] : COLORS[3]; // Different colors for profit vs loss
       }
-      
       return {
         ...item,
         color
@@ -559,14 +560,14 @@ const OverviewTab: React.FC<OverviewTabProps> = ({
     return (
       <div className="bg-white rounded-lg border border-gray-200 p-4">
         <div className="flex items-center mb-4">
-          <Info className="w-5 h-5 text-blue-600 mr-2" />
+          <Info className="w-5 h-5 text-primary mr-2" />
           <h2 className="text-base font-medium text-primary">Estado General</h2>
         </div>
         
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           {/* Drinks Status */}
           <div className="rounded overflow-hidden border border-gray-200">
-            <div className="bg-blue-500 text-white px-3 py-2 flex items-center">
+            <div className={`${theme.getGradient('primary')} text-white px-3 py-2 flex items-center`}>
               <Wine className="w-4 h-4 mr-2" />
               <span className="font-medium">Estado de Bebidas</span>
             </div>
@@ -600,7 +601,7 @@ const OverviewTab: React.FC<OverviewTabProps> = ({
           
           {/* Food Status */}
           <div className="rounded overflow-hidden border border-gray-200">
-            <div className="bg-amber-500 text-white px-3 py-2 flex items-center">
+            <div className={`${theme.getGradient('warning')} text-white px-3 py-2 flex items-center`}>
               <Utensils className="w-4 h-4 mr-2" />
               <span className="font-medium">Estado de Comida</span>
             </div>
@@ -628,7 +629,7 @@ const OverviewTab: React.FC<OverviewTabProps> = ({
           
           {/* Recommendations - enhanced with better visualizations */}
           <div className="rounded overflow-hidden border border-gray-200 md:col-span-1">
-            <div className="bg-blue-500 text-white px-3 py-2 flex items-center">
+            <div className={`${theme.getGradient('primary')} text-white px-3 py-2 flex items-center`}>
               <Calendar className="w-4 h-4 mr-2" />
               <span className="font-medium">Recomendaciones</span>
             </div>

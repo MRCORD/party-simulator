@@ -48,10 +48,10 @@ const DrinksTab: React.FC<DrinksTabProps> = ({
   // Get category icon for display
   const getCategoryIcon = (category: string) => {
     switch(category) {
-      case 'spirits': return <Wine className="w-4 h-4 text-blue-500" />;
-      case 'mixers': return <Droplet className="w-4 h-4 text-teal-500" />;
-      case 'ice': return <Snowflake className="w-4 h-4 text-blue-300" />;
-      case 'supplies': return <Package className="w-4 h-4 text-purple-500" />;
+      case 'spirits': return <Wine className="w-4 h-4 text-primary" />;
+      case 'mixers': return <Droplet className="w-4 h-4 text-accent-teal" />;
+      case 'ice': return <Snowflake className="w-4 h-4 text-primary-light" />;
+      case 'supplies': return <Package className="w-4 h-4 text-accent-pink" />;
       default: return null;
     }
   };
@@ -59,11 +59,11 @@ const DrinksTab: React.FC<DrinksTabProps> = ({
   // Get category background color
   const getCategoryColor = (category: string) => {
     switch(category) {
-      case 'spirits': return 'bg-blue-500';
-      case 'mixers': return 'bg-teal-500';
-      case 'ice': return 'bg-blue-300';
-      case 'supplies': return 'bg-purple-500';
-      default: return 'bg-gray-500';
+      case 'spirits': return 'bg-primary';
+      case 'mixers': return 'bg-accent-teal';
+      case 'ice': return 'bg-primary-light';
+      case 'supplies': return 'bg-accent-pink';
+      default: return 'bg-gray-400';
     }
   };
   
@@ -124,7 +124,7 @@ const DrinksTab: React.FC<DrinksTabProps> = ({
     <div className="space-y-6">
       {/* Main Planning Card */}
       <div className="bg-white rounded-xl shadow-lg overflow-hidden">
-        <div className="bg-gradient-to-r from-blue-600 to-blue-500 p-5 text-white">
+        <div className={`${theme.getGradient('primary')} p-5 text-white`}>
           <div className="flex items-center">
             <Wine className="w-6 h-6 mr-3" />
             <h2 className="text-xl font-bold">Planificación de Bebidas</h2>
@@ -169,7 +169,7 @@ const DrinksTab: React.FC<DrinksTabProps> = ({
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* Inventory Status */}
         <div className="bg-white rounded-xl shadow-md overflow-hidden">
-          <div className="bg-gradient-to-r from-blue-600 to-blue-500 px-4 py-3 text-white">
+          <div className={`${theme.getGradient('primary')} px-4 py-3 text-white`}>
             <div className="flex items-center">
               <CheckCircle className="w-5 h-5 mr-2" />
               <h3 className="font-medium">Estado del Inventario</h3>
@@ -218,7 +218,7 @@ const DrinksTab: React.FC<DrinksTabProps> = ({
         
         {/* Recommended Quantities */}
         <div className="bg-white rounded-xl shadow-md overflow-hidden">
-          <div className="bg-gradient-to-r from-blue-600 to-blue-500 px-4 py-3 text-white">
+          <div className={`${theme.getGradient('primary')} px-4 py-3 text-white`}>
             <div className="flex items-center">
               <TrendingUp className="w-5 h-5 mr-2" />
               <h3 className="font-medium">Cantidades Recomendadas</h3>
@@ -228,16 +228,16 @@ const DrinksTab: React.FC<DrinksTabProps> = ({
           <div className="p-4">
             <div className="grid grid-cols-2 gap-4">
               {/* Liquors Recommendation */}
-              <div className="bg-blue-50 rounded-lg p-4 border border-blue-100">
+              <div className="bg-primary-light/20 rounded-lg p-4 border border-primary-light">
                 <div className="flex items-center mb-2">
-                  <div className="w-8 h-8 rounded-full mr-3 flex items-center justify-center bg-blue-500 text-white">
+                  <div className="w-8 h-8 rounded-full mr-3 flex items-center justify-center bg-primary text-white">
                     <Wine size={16} />
                   </div>
                   <span className="font-medium">Licores</span>
                 </div>
                 
                 <div className="text-center mt-3">
-                  <div className="text-3xl font-bold text-blue-700">
+                  <div className="text-3xl font-bold text-primary">
                     {getRecommendedUnits('spirits', drinkRequirements.totalDrinks)}
                   </div>
                   <div className="text-sm text-gray-600">unidades</div>
@@ -261,16 +261,16 @@ const DrinksTab: React.FC<DrinksTabProps> = ({
               </div>
               
               {/* Mixers Recommendation */}
-              <div className="bg-blue-50 rounded-lg p-4 border border-blue-100">
+              <div className="bg-primary-light/20 rounded-lg p-4 border border-primary-light">
                 <div className="flex items-center mb-2">
-                  <div className="w-8 h-8 rounded-full mr-3 flex items-center justify-center bg-teal-500 text-white">
+                  <div className="w-8 h-8 rounded-full mr-3 flex items-center justify-center bg-accent-teal text-white">
                     <Droplet size={16} />
                   </div>
                   <span className="font-medium">Mezcladores</span>
                 </div>
                 
                 <div className="text-center mt-3">
-                  <div className="text-3xl font-bold text-blue-700">
+                  <div className="text-3xl font-bold text-primary">
                     {getRecommendedUnits('mixers', drinkRequirements.totalDrinks)}
                   </div>
                   <div className="text-sm text-gray-600">unidades</div>
@@ -294,10 +294,10 @@ const DrinksTab: React.FC<DrinksTabProps> = ({
               </div>
             </div>
             
-            <div className="bg-blue-50 rounded-lg p-4 mt-4 border border-blue-100">
+            <div className="bg-primary-light/20 rounded-lg p-4 mt-4 border border-primary-light">
               <div className="flex items-center">
-                <Info className="w-5 h-5 text-blue-500 mr-2" />
-                <span className="text-sm text-blue-800">
+                <Info className="w-5 h-5 text-primary mr-2" />
+                <span className="text-sm text-primary-dark">
                   Las cantidades recomendadas son calculadas en base al número de asistentes y bebidas por persona.
                 </span>
               </div>
@@ -308,7 +308,7 @@ const DrinksTab: React.FC<DrinksTabProps> = ({
       
       {/* Drinks Detail Table */}
       <div className="bg-white rounded-xl shadow-md overflow-hidden">
-        <div className="bg-gradient-to-r from-blue-600 to-blue-500 px-4 py-3 text-white">
+        <div className={`${theme.getGradient('primary')} px-4 py-3 text-white`}>
           <div className="flex items-center">
             <List className="w-5 h-5 mr-2" />
             <h3 className="font-medium">Detalle de Bebidas</h3>
@@ -395,7 +395,7 @@ const DrinksTab: React.FC<DrinksTabProps> = ({
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* Service Options */}
         <div className="bg-white rounded-xl shadow-md overflow-hidden">
-          <div className="bg-gradient-to-r from-blue-600 to-blue-500 px-4 py-3 text-white">
+          <div className={`${theme.getGradient('primary')} px-4 py-3 text-white`}>
             <h3 className="font-medium">Opciones de Servicio</h3>
           </div>
           
@@ -404,7 +404,7 @@ const DrinksTab: React.FC<DrinksTabProps> = ({
               {serviceTips.map((tip, index) => (
                 <div key={index} className="flex">
                   <div className="flex-shrink-0 flex items-start mt-0.5">
-                    <div className="flex-shrink-0 w-6 h-6 bg-blue-500 text-white rounded-full flex items-center justify-center mr-3">
+                    <div className="flex-shrink-0 w-6 h-6 bg-primary text-white rounded-full flex items-center justify-center mr-3">
                       {index + 1}
                     </div>
                   </div>
@@ -417,7 +417,7 @@ const DrinksTab: React.FC<DrinksTabProps> = ({
         
         {/* Cost Saving Tips */}
         <div className="bg-white rounded-xl shadow-md overflow-hidden">
-          <div className="bg-gradient-to-r from-green-600 to-green-500 px-4 py-3 text-white">
+          <div className={`${theme.getGradient('success')} px-4 py-3 text-white`}>
             <h3 className="font-medium">Ideas para Ahorrar Costos</h3>
           </div>
           
@@ -426,7 +426,7 @@ const DrinksTab: React.FC<DrinksTabProps> = ({
               {costSavingTips.map((tip, index) => (
                 <div key={index} className="flex">
                   <div className="flex-shrink-0 flex items-start mt-0.5">
-                    <div className="flex-shrink-0 w-6 h-6 bg-green-500 text-white rounded-full flex items-center justify-center mr-3">
+                    <div className="flex-shrink-0 w-6 h-6 bg-success text-white rounded-full flex items-center justify-center mr-3">
                       {index + 1}
                     </div>
                   </div>

@@ -473,10 +473,10 @@ export default function PartySimulator() {
   };
 
   return (
-    <div className="bg-gradient-to-br from-blue-50/70 to-white min-h-screen p-6">
+    <div className="bg-gradient-to-br from-primary-light/70 to-white min-h-screen p-6">
       <div className="max-w-7xl mx-auto">
-        {/* Enhanced Header */}
-        <div className="bg-gradient-to-r from-blue-600 to-blue-500 rounded-2xl mb-8 overflow-hidden shadow-lg">
+        {/* Enhanced Header with softer colors */}
+        <div className="bg-gradient-primary rounded-2xl mb-8 overflow-hidden shadow-lg">
           <div className="px-8 py-6 text-white relative overflow-hidden">
             {/* Background pattern */}
             <div className="absolute inset-0 opacity-10">
@@ -485,7 +485,7 @@ export default function PartySimulator() {
             </div>
             
             <div className="flex items-center">
-              <div className="bg-white text-blue-600 p-4 rounded-xl mr-4 shadow-md">
+              <div className="bg-white text-primary p-4 rounded-xl mr-4 shadow-md">
                 <Sparkles size={32} />
               </div>
               <div>
@@ -494,7 +494,7 @@ export default function PartySimulator() {
               </div>
             </div>
             
-            {/* Status pills */}
+            {/* Status pills with softer colors */}
             <div className="mt-6 flex flex-wrap gap-3">
               <div className="bg-white/20 backdrop-blur-sm px-4 py-2 rounded-full flex items-center">
                 <Users size={16} className="mr-2 text-blue-100" />
@@ -504,7 +504,7 @@ export default function PartySimulator() {
                 <DollarSign size={16} className="mr-2 text-blue-100" />
                 <span>S/ {ticketPrice} Entrada</span>
               </div>
-              <div className={`px-4 py-2 rounded-full flex items-center ${isViable ? 'bg-green-500/80' : 'bg-red-500/80'}`}>
+              <div className={`px-4 py-2 rounded-full flex items-center ${isViable ? 'bg-success/80' : 'bg-error/80'}`}>
                 {isViable ? 
                   <CheckCircle size={16} className="mr-2" /> : 
                   <AlertCircle size={16} className="mr-2" />

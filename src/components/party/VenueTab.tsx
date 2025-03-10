@@ -74,7 +74,7 @@ const VenueTab: FC<VenueTabProps> = ({
     <div className="space-y-6">
       {/* Main Venue Card */}
       <div className="bg-white rounded-xl shadow-lg overflow-hidden">
-        <div className="bg-gradient-to-r from-indigo-600 to-purple-500 p-5 text-white">
+        <div className={`${theme.getGradient('success')} p-5 text-white`}>
           <div className="flex items-center">
             <Building2 className="w-6 h-6 mr-3" />
             <h2 className="text-xl font-bold">Local y Misceláneos</h2>
@@ -115,7 +115,7 @@ const VenueTab: FC<VenueTabProps> = ({
       
       {/* Cost Input Section */}
       <div className="bg-white rounded-xl shadow-md overflow-hidden">
-        <div className="bg-gradient-to-r from-indigo-600 to-purple-500 px-4 py-3 text-white">
+        <div className={`${theme.getGradient('success')} px-4 py-3 text-white`}>
           <div className="flex items-center">
             <DollarSign className="w-5 h-5 mr-2" />
             <h3 className="font-medium">Costos del Local y Misceláneos</h3>
@@ -169,7 +169,7 @@ const VenueTab: FC<VenueTabProps> = ({
       
       {/* Common Venue Types */}
       <div className="bg-white rounded-xl shadow-md overflow-hidden">
-        <div className="bg-gradient-to-r from-indigo-600 to-purple-500 px-4 py-3 text-white">
+        <div className={`${theme.getGradient('success')} px-4 py-3 text-white`}>
           <div className="flex items-center">
             <MapPin className="w-5 h-5 mr-2" />
             <h3 className="font-medium">Tipos de Locales Comunes</h3>
@@ -179,8 +179,8 @@ const VenueTab: FC<VenueTabProps> = ({
         <div className="p-5">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             {venueTypes.map((venue, index) => (
-              <div key={index} className="bg-gray-50 rounded-lg border border-gray-100 overflow-hidden">
-                <div className="bg-indigo-500 px-4 py-2 text-white">
+              <div key={index} className="bg-success-light/20 rounded-lg border border-success-light overflow-hidden">
+                <div className="bg-success px-4 py-2 text-white">
                   <div className="font-medium">{venue.name}</div>
                 </div>
                 
@@ -204,7 +204,7 @@ const VenueTab: FC<VenueTabProps> = ({
                     <span className="text-sm text-gray-500 block mb-1">Características</span>
                     <div className="flex flex-wrap gap-1">
                       {venue.features.map((feature, i) => (
-                        <Badge key={i} size="sm" variant="primary">
+                        <Badge key={i} size="sm" variant="success">
                           {feature}
                         </Badge>
                       ))}
@@ -213,7 +213,7 @@ const VenueTab: FC<VenueTabProps> = ({
                   
                   <Button
                     variant="outline" 
-                    color="primary" 
+                    color="success" 
                     size="sm"
                     className="w-full mt-2"
                     onClick={() => setVenueCost(venue.cost)}
@@ -229,7 +229,7 @@ const VenueTab: FC<VenueTabProps> = ({
       
       {/* Venue Checklist */}
       <div className="bg-white rounded-xl shadow-md overflow-hidden">
-        <div className="bg-gradient-to-r from-indigo-600 to-purple-500 px-4 py-3 text-white">
+        <div className={`${theme.getGradient('success')} px-4 py-3 text-white`}>
           <div className="flex items-center">
             <Check className="w-5 h-5 mr-2" />
             <h3 className="font-medium">Lista de Verificación del Local</h3>
@@ -239,15 +239,15 @@ const VenueTab: FC<VenueTabProps> = ({
         <div className="p-5">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="space-y-3">
-              <h4 className="font-medium flex items-center text-indigo-800">
-                <Building2 className="w-4 h-4 mr-2 text-indigo-600" />
+              <h4 className="font-medium flex items-center text-success-dark">
+                <Building2 className="w-4 h-4 mr-2 text-success" />
                 Antes de Reservar
               </h4>
               <ul className="space-y-2 text-sm">
                 {venueChecklist.map((item, index) => (
                   <li key={index} className="flex items-start">
-                    <div className="flex-shrink-0 h-5 w-5 rounded border border-indigo-300 flex items-center justify-center mr-2 mt-0.5">
-                      <span className="h-3 w-3 rounded-sm bg-indigo-500"></span>
+                    <div className="flex-shrink-0 h-5 w-5 rounded border border-success-dark flex items-center justify-center mr-2 mt-0.5">
+                      <span className="h-3 w-3 rounded-sm bg-success"></span>
                     </div>
                     <span className="text-gray-700">{item}</span>
                   </li>
@@ -256,15 +256,15 @@ const VenueTab: FC<VenueTabProps> = ({
             </div>
             
             <div className="space-y-3">
-              <h4 className="font-medium flex items-center text-indigo-800">
-                <Calendar className="w-4 h-4 mr-2 text-indigo-600" />
+              <h4 className="font-medium flex items-center text-success-dark">
+                <Calendar className="w-4 h-4 mr-2 text-success" />
                 Día del Evento
               </h4>
               <ul className="space-y-2 text-sm">
                 {eventDayChecklist.map((item, index) => (
                   <li key={index} className="flex items-start">
-                    <div className="flex-shrink-0 h-5 w-5 rounded border border-indigo-300 flex items-center justify-center mr-2 mt-0.5">
-                      <span className="h-3 w-3 rounded-sm bg-indigo-500"></span>
+                    <div className="flex-shrink-0 h-5 w-5 rounded border border-success-dark flex items-center justify-center mr-2 mt-0.5">
+                      <span className="h-3 w-3 rounded-sm bg-success"></span>
                     </div>
                     <span className="text-gray-700">{item}</span>
                   </li>
@@ -277,7 +277,7 @@ const VenueTab: FC<VenueTabProps> = ({
       
       {/* Miscellaneous Items */}
       <div className="bg-white rounded-xl shadow-md overflow-hidden">
-        <div className="bg-gradient-to-r from-indigo-600 to-purple-500 px-4 py-3 text-white">
+        <div className={`${theme.getGradient('success')} px-4 py-3 text-white`}>
           <div className="flex items-center">
             <Package className="w-5 h-5 mr-2" />
             <h3 className="font-medium">Artículos Misceláneos</h3>
@@ -285,9 +285,9 @@ const VenueTab: FC<VenueTabProps> = ({
         </div>
         
         <div className="p-5">
-          <div className="bg-indigo-50 rounded-lg p-4 mb-4 flex items-start">
-            <Info className="w-5 h-5 text-indigo-600 mr-3 flex-shrink-0 mt-0.5" />
-            <p className="text-sm text-indigo-700">
+          <div className="bg-success-light rounded-lg p-4 mb-4 flex items-start">
+            <Info className="w-5 h-5 text-success-dark mr-3 flex-shrink-0 mt-0.5" />
+            <p className="text-sm text-success-dark">
               No olvides considerar estos artículos adicionales que pueden ser necesarios para el evento. Algunos locales podrían proporcionar algunos de estos elementos, confirma con anticipación.
             </p>
           </div>
@@ -295,7 +295,7 @@ const VenueTab: FC<VenueTabProps> = ({
           <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-2">
             {miscItems.map((item, index) => (
               <div key={index} className="flex items-center py-2 border-b border-gray-100">
-                <Check className="w-4 h-4 text-indigo-500 mr-2" />
+                <Check className="w-4 h-4 text-success mr-2" />
                 <span className="text-sm">{item}</span>
               </div>
             ))}

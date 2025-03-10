@@ -101,8 +101,8 @@ const ReportsTab: React.FC<ReportsTabProps> = ({
   // Helper to get badge style
   const getBadgeStyle = (isGood: boolean): string => {
     return isGood 
-      ? "bg-green-100 text-green-800 flex items-center"
-      : "bg-red-100 text-red-800 flex items-center";
+      ? "bg-success-light text-success-dark flex items-center"
+      : "bg-error-light text-error-dark flex items-center";
   };
   
   // Expense categories for visualizations
@@ -211,7 +211,7 @@ const ReportsTab: React.FC<ReportsTabProps> = ({
     <div className="space-y-6">
       {/* Main Reports Header */}
       <div className="bg-white rounded-xl shadow-lg overflow-hidden">
-        <div className="bg-gradient-to-r from-blue-600 to-blue-500 p-5 text-white">
+        <div className={`${theme.getGradient('primary')} p-5 text-white`}>
           <div className="flex items-center">
             <FileBarChart className="w-6 h-6 mr-3" />
             <h2 className="text-xl font-bold">Informes y Análisis</h2>
@@ -264,7 +264,7 @@ const ReportsTab: React.FC<ReportsTabProps> = ({
       
       {/* Enhanced Financial Summary Section */}
       <div className="bg-white rounded-xl shadow-md overflow-hidden">
-        <div className="bg-gradient-to-r from-blue-600 to-blue-500 px-4 py-3 text-white">
+        <div className={`${theme.getGradient('primary')} px-4 py-3 text-white`}>
           <div className="flex items-center">
             <FileText className="w-5 h-5 mr-2" />
             <h3 className="font-medium">Resumen Financiero</h3>
@@ -378,7 +378,7 @@ const ReportsTab: React.FC<ReportsTabProps> = ({
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* Expense Distribution */}
         <div className="bg-white rounded-xl shadow-md overflow-hidden">
-          <div className="bg-gradient-to-r from-blue-600 to-blue-500 px-4 py-3 text-white">
+          <div className={`${theme.getGradient('primary')} px-4 py-3 text-white`}>
             <div className="flex items-center">
               <PieChart className="w-5 h-5 mr-2" />
               <h3 className="font-medium">Distribución de Gastos</h3>
@@ -456,7 +456,7 @@ const ReportsTab: React.FC<ReportsTabProps> = ({
         <div className="space-y-4">
           {/* Beverage Data */}
           <div className="bg-white rounded-xl shadow-md overflow-hidden">
-            <div className="bg-gradient-to-r from-blue-600 to-blue-500 px-4 py-3 text-white">
+            <div className={`${theme.getGradient('primary')} px-4 py-3 text-white`}>
               <div className="flex items-center">
                 <BarChart className="w-5 h-5 mr-2" />
                 <h3 className="font-medium">Resumen de Bebidas</h3>
@@ -511,7 +511,7 @@ const ReportsTab: React.FC<ReportsTabProps> = ({
           
           {/* Food Data */}
           <div className="bg-white rounded-xl shadow-md overflow-hidden">
-            <div className="bg-gradient-to-r from-blue-600 to-blue-500 px-4 py-3 text-white">
+            <div className={`${theme.getGradient('warning')} px-4 py-3 text-white`}>
               <div className="flex items-center">
                 <BarChart className="w-5 h-5 mr-2" />
                 <h3 className="font-medium">Resumen de Comida</h3>
@@ -568,7 +568,7 @@ const ReportsTab: React.FC<ReportsTabProps> = ({
       
       {/* Financial Metrics and Recommendations */}
       <div className="bg-white rounded-xl shadow-md overflow-hidden">
-        <div className="bg-gradient-to-r from-blue-600 to-blue-500 px-4 py-3 text-white">
+        <div className={`${theme.getGradient('primary')} px-4 py-3 text-white`}>
           <div className="flex items-center">
             <Activity className="w-5 h-5 mr-2" />
             <h3 className="font-medium">Métricas Financieras</h3>
@@ -577,70 +577,70 @@ const ReportsTab: React.FC<ReportsTabProps> = ({
         
         <div className="p-4">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-3 mb-4">
-            <div className="bg-gray-50 rounded-lg p-3 border border-gray-200">
+            <div className="bg-primary-light/20 rounded-lg p-3 border border-primary-light">
               <div className="text-xs text-gray-500 mb-1">Costo por Persona</div>
               <div className="text-base font-medium text-gray-800">S/ {perPersonCost.toFixed(2)}</div>
               <div className="mt-1 flex items-center">
                 {ticketPrice >= perPersonCost ? (
-                  <span className="text-xs text-green-600 flex items-center">
+                  <span className="text-xs text-success-dark flex items-center">
                     <CheckCircle className="w-3 h-3 mr-1" /> Ingreso cubre costo
                   </span>
                 ) : (
-                  <span className="text-xs text-red-600 flex items-center">
+                  <span className="text-xs text-error-dark flex items-center">
                     <AlertCircle className="w-3 h-3 mr-1" /> Costo mayor que ingreso
                   </span>
                 )}
               </div>
             </div>
             
-            <div className="bg-gray-50 rounded-lg p-3 border border-gray-200">
+            <div className="bg-primary-light/20 rounded-lg p-3 border border-primary-light">
               <div className="text-xs text-gray-500 mb-1">Punto de Equilibrio</div>
               <div className="text-base font-medium text-gray-800">{breakEvenAttendees} asistentes</div>
               <div className="mt-1 flex items-center">
                 {attendees >= breakEvenAttendees ? (
-                  <span className="text-xs text-green-600 flex items-center">
+                  <span className="text-xs text-success-dark flex items-center">
                     <CheckCircle className="w-3 h-3 mr-1" /> Por encima del equilibrio
                   </span>
                 ) : (
-                  <span className="text-xs text-red-600 flex items-center">
+                  <span className="text-xs text-error-dark flex items-center">
                     <AlertCircle className="w-3 h-3 mr-1" /> Faltan {breakEvenAttendees - attendees}
                   </span>
                 )}
               </div>
             </div>
             
-            <div className="bg-gray-50 rounded-lg p-3 border border-gray-200">
+            <div className="bg-primary-light/20 rounded-lg p-3 border border-primary-light">
               <div className="text-xs text-gray-500 mb-1">Precio Recomendado</div>
               <div className="text-base font-medium text-gray-800">S/ {recommendedTicketPrice}</div>
               <div className="mt-1 flex items-center">
                 {ticketPrice >= recommendedTicketPrice ? (
-                  <span className="text-xs text-green-600 flex items-center">
+                  <span className="text-xs text-success-dark flex items-center">
                     <CheckCircle className="w-3 h-3 mr-1" /> Precio adecuado
                   </span>
                 ) : (
-                  <span className="text-xs text-amber-600 flex items-center">
+                  <span className="text-xs text-warning-dark flex items-center">
                     <AlertCircle className="w-3 h-3 mr-1" /> Aumentar en S/ {(recommendedTicketPrice - ticketPrice).toFixed(2)}
                   </span>
                 )}
               </div>
             </div>
             
-            <div className="bg-gray-50 rounded-lg p-3 border border-gray-200">
+            <div className="bg-primary-light/20 rounded-lg p-3 border border-primary-light">
               <div className="text-xs text-gray-500 mb-1">Margen de Beneficio</div>
-              <div className={`text-base font-medium ${profitMargin >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+              <div className={`text-base font-medium ${profitMargin >= 0 ? 'text-success' : 'text-error'}`}>
                 {profitMargin.toFixed(1)}%
               </div>
               <div className="mt-1 flex items-center">
                 {profitMargin >= 15 ? (
-                  <span className="text-xs text-green-600 flex items-center">
+                  <span className="text-xs text-success-dark flex items-center">
                     <CheckCircle className="w-3 h-3 mr-1" /> Excelente margen
                   </span>
                 ) : profitMargin >= 0 ? (
-                  <span className="text-xs text-amber-600 flex items-center">
+                  <span className="text-xs text-warning-dark flex items-center">
                     <AlertCircle className="w-3 h-3 mr-1" /> Margen positivo bajo
                   </span>
                 ) : (
-                  <span className="text-xs text-red-600 flex items-center">
+                  <span className="text-xs text-error-dark flex items-center">
                     <AlertCircle className="w-3 h-3 mr-1" /> Margen negativo
                   </span>
                 )}
@@ -654,16 +654,16 @@ const ReportsTab: React.FC<ReportsTabProps> = ({
             <div>
               <div className="flex justify-between mb-1">
                 <span className="text-sm text-gray-600">Costos vs. Ingresos</span>
-                <span className={`text-sm font-medium ${costRevenue <= 80 ? 'text-green-600' : costRevenue <= 100 ? 'text-amber-600' : 'text-red-600'}`}>
+                <span className={`text-sm font-medium ${costRevenue <= 80 ? 'text-success' : costRevenue <= 100 ? 'text-warning' : 'text-error'}`}>
                   {costRevenue.toFixed(1)}%
                 </span>
               </div>
               <div className="w-full bg-gray-200 rounded-full h-2.5">
                 <div 
                   className={`h-2.5 rounded-full ${
-                    costRevenue <= 80 ? 'bg-green-500' : 
-                    costRevenue <= 100 ? 'bg-amber-500' : 
-                    'bg-red-500'
+                    costRevenue <= 80 ? 'bg-success' : 
+                    costRevenue <= 100 ? 'bg-warning' : 
+                    'bg-error'
                   }`} 
                   style={{ width: `${Math.min(costRevenue, 100)}%` }}
                 ></div>
@@ -679,16 +679,16 @@ const ReportsTab: React.FC<ReportsTabProps> = ({
             <div>
               <div className="flex justify-between mb-1">
                 <span className="text-sm text-gray-600">Retorno de Inversión (ROI)</span>
-                <span className={`text-sm font-medium ${roi >= 20 ? 'text-green-600' : roi >= 0 ? 'text-amber-600' : 'text-red-600'}`}>
+                <span className={`text-sm font-medium ${roi >= 20 ? 'text-success' : roi >= 0 ? 'text-warning' : 'text-error'}`}>
                   {roi.toFixed(1)}%
                 </span>
               </div>
               <div className="w-full bg-gray-200 rounded-full h-2.5">
                 <div 
                   className={`h-2.5 rounded-full ${
-                    roi >= 20 ? 'bg-green-500' : 
-                    roi >= 0 ? 'bg-amber-500' : 
-                    'bg-red-500'
+                    roi >= 20 ? 'bg-success' : 
+                    roi >= 0 ? 'bg-warning' : 
+                    'bg-error'
                   }`} 
                   style={{ width: `${Math.min(Math.max(roi + 20, 0), 100)}%` }}
                 ></div>
@@ -705,7 +705,7 @@ const ReportsTab: React.FC<ReportsTabProps> = ({
       
       {/* Recommendations section */}
       <div className="bg-white rounded-xl shadow-md overflow-hidden">
-        <div className="bg-gradient-to-r from-blue-600 to-blue-500 px-4 py-3 text-white">
+        <div className={`${theme.getGradient('primary')} px-4 py-3 text-white`}>
           <div className="flex items-center">
             <Target className="w-5 h-5 mr-2" />
             <h3 className="font-medium">Recomendaciones Financieras</h3>
@@ -713,18 +713,18 @@ const ReportsTab: React.FC<ReportsTabProps> = ({
         </div>
         
         <div className="p-4">
-          <div className="bg-blue-50 rounded-lg p-4 border border-blue-100 mb-4">
-            <h5 className="font-medium text-blue-800 flex items-center mb-2">
+          <div className="bg-primary-light/20 rounded-lg p-4 border border-primary-light mb-4">
+            <h5 className="font-medium text-primary-dark flex items-center mb-2">
               <Info className="w-5 h-5 mr-2" />
               Diagnóstico Financiero
             </h5>
-            <p className="text-sm text-blue-700 mb-3">
+            <p className="text-sm text-primary-dark mb-3">
               {isViable 
                 ? 'El evento es financieramente viable con la estructura actual de costos e ingresos.' 
                 : 'El evento no es financieramente viable con la estructura actual de costos e ingresos.'}
             </p>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
-              <div className={`rounded-lg p-3 text-sm ${isViable ? 'bg-green-100 text-green-800' : 'bg-amber-100 text-amber-800'}`}>
+              <div className={`rounded-lg p-3 text-sm ${isViable ? 'bg-success-light text-success-dark' : 'bg-warning-light text-warning-dark'}`}>
                 <div className="font-medium mb-1">Estado Actual</div>
                 <div className="flex items-center">
                   {isViable ? (
@@ -735,13 +735,13 @@ const ReportsTab: React.FC<ReportsTabProps> = ({
                   <span>{isViable ? 'Viable' : 'No Viable'}</span>
                 </div>
               </div>
-              <div className={`rounded-lg p-3 text-sm ${attendees >= breakEvenAttendees ? 'bg-green-100 text-green-800' : 'bg-amber-100 text-amber-800'}`}>
+              <div className={`rounded-lg p-3 text-sm ${attendees >= breakEvenAttendees ? 'bg-success-light text-success-dark' : 'bg-warning-light text-warning-dark'}`}>
                 <div className="font-medium mb-1">Asistencia</div>
                 <div>
                   Actual: <span className="font-medium">{attendees}</span> / Necesaria: <span className="font-medium">{breakEvenAttendees}</span>
                 </div>
               </div>
-              <div className={`rounded-lg p-3 text-sm ${ticketPrice >= recommendedTicketPrice ? 'bg-green-100 text-green-800' : 'bg-amber-100 text-amber-800'}`}>
+              <div className={`rounded-lg p-3 text-sm ${ticketPrice >= recommendedTicketPrice ? 'bg-success-light text-success-dark' : 'bg-warning-light text-warning-dark'}`}>
                 <div className="font-medium mb-1">Precio de Entrada</div>
                 <div>
                   Actual: <span className="font-medium">S/ {ticketPrice.toFixed(2)}</span> / Recomendado: <span className="font-medium">S/ {recommendedTicketPrice.toFixed(2)}</span>
@@ -754,8 +754,8 @@ const ReportsTab: React.FC<ReportsTabProps> = ({
           <ul className="space-y-2">
             {ticketPrice < recommendedTicketPrice && (
               <li className="flex items-start">
-                <div className="flex-shrink-0 h-5 w-5 rounded-full border border-blue-300 flex items-center justify-center mr-2 mt-0.5">
-                  <span className="h-3 w-3 rounded-sm bg-blue-500"></span>
+                <div className="flex-shrink-0 h-5 w-5 rounded-full border border-primary flex items-center justify-center mr-2 mt-0.5">
+                  <span className="h-3 w-3 rounded-sm bg-primary"></span>
                 </div>
                 <span className="text-sm text-gray-700">
                   Aumentar el precio de la entrada a S/ {recommendedTicketPrice.toFixed(2)} (+S/ {(recommendedTicketPrice - ticketPrice).toFixed(2)}) para asegurar rentabilidad.
@@ -765,8 +765,8 @@ const ReportsTab: React.FC<ReportsTabProps> = ({
             
             {attendees < breakEvenAttendees && (
               <li className="flex items-start">
-                <div className="flex-shrink-0 h-5 w-5 rounded-full border border-blue-300 flex items-center justify-center mr-2 mt-0.5">
-                  <span className="h-3 w-3 rounded-sm bg-blue-500"></span>
+                <div className="flex-shrink-0 h-5 w-5 rounded-full border border-primary flex items-center justify-center mr-2 mt-0.5">
+                  <span className="h-3 w-3 rounded-sm bg-primary"></span>
                 </div>
                 <span className="text-sm text-gray-700">
                   Aumentar la asistencia a al menos {breakEvenAttendees} personas (+{breakEvenAttendees - attendees}) para alcanzar el punto de equilibrio.
@@ -776,8 +776,8 @@ const ReportsTab: React.FC<ReportsTabProps> = ({
             
             {drinkRequirements.totalCost > foodRequirements.totalCost * 3 && (
               <li className="flex items-start">
-                <div className="flex-shrink-0 h-5 w-5 rounded-full border border-blue-300 flex items-center justify-center mr-2 mt-0.5">
-                  <span className="h-3 w-3 rounded-sm bg-blue-500"></span>
+                <div className="flex-shrink-0 h-5 w-5 rounded-full border border-primary flex items-center justify-center mr-2 mt-0.5">
+                  <span className="h-3 w-3 rounded-sm bg-primary"></span>
                 </div>
                 <span className="text-sm text-gray-700">
                   Optimizar los costos de bebidas que representan un {((drinkRequirements.totalCost / totalCosts) * 100).toFixed(1)}% del presupuesto total.
@@ -787,8 +787,8 @@ const ReportsTab: React.FC<ReportsTabProps> = ({
             
             {profitMargin < 15 && profitMargin >= 0 && (
               <li className="flex items-start">
-                <div className="flex-shrink-0 h-5 w-5 rounded-full border border-blue-300 flex items-center justify-center mr-2 mt-0.5">
-                  <span className="h-3 w-3 rounded-sm bg-blue-500"></span>
+                <div className="flex-shrink-0 h-5 w-5 rounded-full border border-primary flex items-center justify-center mr-2 mt-0.5">
+                  <span className="h-3 w-3 rounded-sm bg-primary"></span>
                 </div>
                 <span className="text-sm text-gray-700">
                   Buscar formas de aumentar el margen de beneficio actual ({profitMargin.toFixed(1)}%) a al menos 15% para mejor rentabilidad.
@@ -797,8 +797,8 @@ const ReportsTab: React.FC<ReportsTabProps> = ({
             )}
             
             <li className="flex items-start">
-              <div className="flex-shrink-0 h-5 w-5 rounded-full border border-blue-300 flex items-center justify-center mr-2 mt-0.5">
-                <span className="h-3 w-3 rounded-sm bg-blue-500"></span>
+              <div className="flex-shrink-0 h-5 w-5 rounded-full border border-primary flex items-center justify-center mr-2 mt-0.5">
+                <span className="h-3 w-3 rounded-sm bg-primary"></span>
               </div>
               <span className="text-sm text-gray-700">
                 {isViable 

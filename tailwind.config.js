@@ -8,46 +8,46 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        // Primary colors
+        // Primary colors - softer blues
         primary: {
-          DEFAULT: '#2563eb',  // blue-600
-          light: '#dbeafe',    // blue-100
-          dark: '#1e3a8a',     // blue-900
-          secondary: '#3b82f6' // blue-500
+          DEFAULT: '#4f86f7',  // Softer blue
+          light: '#e0ecff',    // Lighter blue
+          dark: '#2c5282',     // Less intense dark blue
+          secondary: '#63b3ed' // Softer blue-500
         },
         
-        // Accent colors
+        // Accent colors - softer tones
         accent: {
-          teal: '#14b8a6',   // teal-500
-          amber: '#f59e0b',  // amber-500
-          pink: '#ec4899',   // pink-500
+          teal: '#4fd1c5',   // Softer teal
+          amber: '#f6ad55',  // Softer amber
+          pink: '#ed64a6',   // Softer pink
         },
         
-        // Semantic colors
+        // Semantic colors - less intense
         success: {
-          DEFAULT: '#10b981', // emerald-500
-          light: '#d1fae5',   // emerald-100
-          dark: '#065f46',    // emerald-800
+          DEFAULT: '#68d391', // Softer green
+          light: '#e6fffa',   // Light teal background
+          dark: '#2f855a',    // Softer dark green
         },
         warning: {
-          DEFAULT: '#f59e0b',  // amber-500
-          light: '#fef3c7',    // amber-100
-          dark: '#92400e',     // amber-800
+          DEFAULT: '#f6ad55',  // Softer amber
+          light: '#fffaf0',    // Softer amber background
+          dark: '#c05621',     // Softer dark amber
         },
         error: {
-          DEFAULT: '#f43f5e',  // rose-500
-          light: '#ffe4e6',    // rose-100
-          dark: '#9f1239',     // rose-800
+          DEFAULT: '#fc8181',  // Softer red
+          light: '#fff5f5',    // Softer red background
+          dark: '#c53030',     // Softer dark red
         },
         
         // Neutral colors kept as Tailwind defaults
       },
       
-      // Custom box shadows
+      // Custom box shadows - softer
       boxShadow: {
-        card: '0 2px 5px 0 rgba(0, 0, 0, 0.05)',
-        dropdown: '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)',
-        button: '0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06)',
+        card: '0 2px 5px 0 rgba(0, 0, 0, 0.03)',
+        dropdown: '0 10px 15px -3px rgba(0, 0, 0, 0.07), 0 4px 6px -2px rgba(0, 0, 0, 0.04)',
+        button: '0 1px 3px 0 rgba(0, 0, 0, 0.05), 0 1px 2px 0 rgba(0, 0, 0, 0.03)',
       },
       
       // Custom border radius
@@ -59,14 +59,19 @@ module.exports = {
       
       // Gradient backgrounds
       backgroundImage: {
-        'gradient-primary': 'linear-gradient(to right, var(--tw-gradient-stops))',
-        'gradient-primary-vertical': 'linear-gradient(to bottom, var(--tw-gradient-stops))',
+        'gradient-primary': 'linear-gradient(to right, var(--color-primary-blue), var(--color-primary-secondary))',
+        'gradient-success': 'linear-gradient(to right, var(--color-accent-teal), var(--color-success))',
+        'gradient-warning': 'linear-gradient(to right, var(--color-warning), var(--color-accent-amber))',
+        'gradient-error': 'linear-gradient(to right, var(--color-error), var(--color-accent-pink))',
       },
       
       // Animation
       animation: {
         'bounce-slow': 'bounce 3s infinite',
         'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+        'fadeIn': 'fadeIn 0.5s ease-out forwards',
+        'scaleIn': 'scaleIn 0.4s ease-out forwards',
+        'slideInRight': 'slideInRight 0.5s ease-out forwards',
       },
     },
   },

@@ -43,9 +43,9 @@ const FoodTab: React.FC<FoodTabProps> = ({
   // Get category icon
   const getCategoryIcon = (category: string) => {
     switch(category) {
-      case 'meat': return <Beef className="w-4 h-4 text-red-500" />;
-      case 'sides': return <Salad className="w-4 h-4 text-green-500" />;
-      case 'condiments': return <UtensilsCrossed className="w-4 h-4 text-amber-500" />;
+      case 'meat': return <Beef className="w-4 h-4 text-accent-amber" />;
+      case 'sides': return <Salad className="w-4 h-4 text-success" />;
+      case 'condiments': return <UtensilsCrossed className="w-4 h-4 text-warning" />;
       default: return <Package className="w-4 h-4 text-gray-500" />;
     }
   };
@@ -53,9 +53,9 @@ const FoodTab: React.FC<FoodTabProps> = ({
   // Get category color
   const getCategoryColor = (category: string) => {
     switch(category) {
-      case 'meat': return 'bg-red-500';
-      case 'sides': return 'bg-green-500';
-      case 'condiments': return 'bg-amber-500';
+      case 'meat': return 'bg-accent-amber';
+      case 'sides': return 'bg-success';
+      case 'condiments': return 'bg-warning';
       default: return 'bg-gray-500';
     }
   };
@@ -110,7 +110,7 @@ const FoodTab: React.FC<FoodTabProps> = ({
     <div className="space-y-6">
       {/* Main Planning Card */}
       <div className="bg-white rounded-xl shadow-lg overflow-hidden">
-        <div className="bg-gradient-to-r from-red-600 to-red-500 p-5 text-white">
+        <div className={`${theme.getGradient('warning')} p-5 text-white`}>
           <div className="flex items-center">
             <Utensils className="w-6 h-6 mr-3" />
             <h2 className="text-xl font-bold">Planificación de Comida</h2>
@@ -155,7 +155,7 @@ const FoodTab: React.FC<FoodTabProps> = ({
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* Inventory Status */}
         <div className="bg-white rounded-xl shadow-md overflow-hidden">
-          <div className="bg-gradient-to-r from-red-600 to-red-500 px-4 py-3 text-white">
+          <div className={`${theme.getGradient('warning')} px-4 py-3 text-white`}>
             <div className="flex items-center">
               <CheckCircle className="w-5 h-5 mr-2" />
               <h3 className="font-medium">Estado del Inventario</h3>
@@ -204,7 +204,7 @@ const FoodTab: React.FC<FoodTabProps> = ({
         
         {/* Basic Information */}
         <div className="bg-white rounded-xl shadow-md overflow-hidden">
-          <div className="bg-gradient-to-r from-red-600 to-red-500 px-4 py-3 text-white">
+          <div className={`${theme.getGradient('warning')} px-4 py-3 text-white`}>
             <div className="flex items-center">
               <TrendingUp className="w-5 h-5 mr-2" />
               <h3 className="font-medium">Información Básica</h3>
@@ -212,7 +212,7 @@ const FoodTab: React.FC<FoodTabProps> = ({
           </div>
           
           <div className="p-4">
-            <div className="bg-red-50 p-4 rounded-md space-y-2 mb-4">
+            <div className="bg-warning-light p-4 rounded-md space-y-2 mb-4">
               <div className="flex justify-between">
                 <span className="text-sm font-medium">Asistentes:</span>
                 <span className="text-sm">{attendees}</span>
@@ -229,23 +229,23 @@ const FoodTab: React.FC<FoodTabProps> = ({
             
             <h4 className="font-medium mb-2">Desglose de Costos</h4>
             <div className="space-y-2">
-              <div className="flex justify-between p-2 bg-red-500 text-white rounded">
+              <div className="flex justify-between p-2 bg-accent-amber text-white rounded">
                 <span className="text-sm font-medium">Carnes:</span>
                 <span className="text-sm">S/ {foodRequirements.meatCost.toFixed(2)}</span>
               </div>
-              <div className="flex justify-between p-2 bg-green-500 text-white rounded">
+              <div className="flex justify-between p-2 bg-success text-white rounded">
                 <span className="text-sm font-medium">Guarniciones:</span>
                 <span className="text-sm">S/ {foodRequirements.sidesCost.toFixed(2)}</span>
               </div>
-              <div className="flex justify-between p-2 bg-amber-500 text-white rounded">
+              <div className="flex justify-between p-2 bg-warning text-white rounded">
                 <span className="text-sm font-medium">Condimentos:</span>
                 <span className="text-sm">S/ {foodRequirements.condimentsCost.toFixed(2)}</span>
               </div>
-              <div className="flex justify-between p-2 bg-red-50 rounded font-medium">
+              <div className="flex justify-between p-2 bg-warning-light rounded font-medium">
                 <span>Costo Total de Comida:</span>
                 <span>S/ {foodRequirements.totalCost.toFixed(2)}</span>
               </div>
-              <div className="flex justify-between p-2 bg-amber-50 rounded">
+              <div className="flex justify-between p-2 bg-warning-light/50 rounded">
                 <span className="text-sm font-medium">Costo por persona:</span>
                 <span className="text-sm">S/ {(foodRequirements.totalCost / attendees).toFixed(2)}</span>
               </div>
@@ -256,7 +256,7 @@ const FoodTab: React.FC<FoodTabProps> = ({
       
       {/* Food Detail Table */}
       <div className="bg-white rounded-xl shadow-md overflow-hidden">
-        <div className="bg-gradient-to-r from-red-600 to-red-500 px-4 py-3 text-white">
+        <div className={`${theme.getGradient('warning')} px-4 py-3 text-white`}>
           <div className="flex items-center">
             <List className="w-5 h-5 mr-2" />
             <h3 className="font-medium">Detalle de Comida</h3>
@@ -341,7 +341,7 @@ const FoodTab: React.FC<FoodTabProps> = ({
       
       {/* Cooking Tips */}
       <div className="bg-white rounded-xl shadow-md overflow-hidden">
-        <div className="bg-gradient-to-r from-red-600 to-red-500 px-4 py-3 text-white">
+        <div className={`${theme.getGradient('warning')} px-4 py-3 text-white`}>
           <div className="flex items-center">
             <Clipboard className="w-5 h-5 mr-2" />
             <h3 className="font-medium">Consejos para la Parrillada</h3>
@@ -373,7 +373,7 @@ const FoodTab: React.FC<FoodTabProps> = ({
       
       {/* Recommended Quantities */}
       <div className="bg-white rounded-xl shadow-md overflow-hidden">
-        <div className="bg-gradient-to-r from-red-600 to-red-500 px-4 py-3 text-white">
+        <div className={`${theme.getGradient('warning')} px-4 py-3 text-white`}>
           <div className="flex items-center">
             <TrendingUp className="w-5 h-5 mr-2" />
             <h3 className="font-medium">Cantidades Recomendadas</h3>
@@ -383,9 +383,9 @@ const FoodTab: React.FC<FoodTabProps> = ({
         <div className="p-4">
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             {/* Meats */}
-            <div className="bg-red-50 rounded-lg p-4 border border-red-100">
+            <div className="bg-warning-light rounded-lg p-4 border border-accent-amber/30">
               <div className="flex items-center mb-3">
-                <div className="w-8 h-8 rounded-full bg-red-500 flex items-center justify-center mr-3 text-white">
+                <div className="w-8 h-8 rounded-full bg-accent-amber flex items-center justify-center mr-3 text-white">
                   <Beef size={16} />
                 </div>
                 <span className="font-medium">Carnes</span>
@@ -409,9 +409,9 @@ const FoodTab: React.FC<FoodTabProps> = ({
             </div>
             
             {/* Sides */}
-            <div className="bg-green-50 rounded-lg p-4 border border-green-100">
+            <div className="bg-success-light rounded-lg p-4 border border-success/30">
               <div className="flex items-center mb-3">
-                <div className="w-8 h-8 rounded-full bg-green-500 flex items-center justify-center mr-3 text-white">
+                <div className="w-8 h-8 rounded-full bg-success flex items-center justify-center mr-3 text-white">
                   <Salad size={16} />
                 </div>
                 <span className="font-medium">Guarniciones</span>
@@ -435,9 +435,9 @@ const FoodTab: React.FC<FoodTabProps> = ({
             </div>
             
             {/* Condiments */}
-            <div className="bg-amber-50 rounded-lg p-4 border border-amber-100">
+            <div className="bg-warning-light/50 rounded-lg p-4 border border-warning/30">
               <div className="flex items-center mb-3">
-                <div className="w-8 h-8 rounded-full bg-amber-500 flex items-center justify-center mr-3 text-white">
+                <div className="w-8 h-8 rounded-full bg-warning flex items-center justify-center mr-3 text-white">
                   <UtensilsCrossed size={16} />
                 </div>
                 <span className="font-medium">Condimentos</span>

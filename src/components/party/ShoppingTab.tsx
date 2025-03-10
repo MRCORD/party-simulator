@@ -45,7 +45,7 @@ const ShoppingTab: React.FC<ShoppingTabProps> = ({
   getItemsByCategory,
   jsonPreview
 }) => {
-  // Local state
+  const theme = useTheme();
   const [showForm, setShowForm] = useState(false);
   const [activeCategory, setActiveCategory] = useState('all');
   
@@ -80,11 +80,21 @@ const ShoppingTab: React.FC<ShoppingTabProps> = ({
     return category ? category.label : value;
   };
 
+  // Get header section with proper theme gradient
+  const headerClasses = theme.getGradient('primary') + ' p-5 text-white';
+
+  // Get form section with proper theme colors
+  const formClasses = 'p-5 bg-primary-light/10 border-b border-primary-light/20';
+
+  // Get filtered items and totals
+  const filteredItems = getFilteredItems();
+  const filteredTotal = getFilteredTotal();
+
   return (
     <div className="space-y-6">
       {/* Header Card */}
       <div className="bg-white rounded-xl shadow-lg overflow-hidden">
-        <div className="bg-gradient-to-r from-blue-600 to-blue-500 p-5 text-white">
+        <div className={headerClasses}>
           <div className="flex justify-between items-center">
             <div className="flex items-center">
               <ShoppingCart className="w-6 h-6 mr-3" />
@@ -127,7 +137,7 @@ const ShoppingTab: React.FC<ShoppingTabProps> = ({
         
         {/* Add/Edit Form - Conditionally shown */}
         {showForm && (
-          <div className="p-5 bg-blue-50 border-b border-blue-100">
+          <div className={formClasses}>
             <h3 className="text-lg font-bold text-blue-800 mb-4">
               {editingItem ? 'Editar Artículo' : 'Agregar Nuevo Artículo'}
             </h3>
@@ -279,12 +289,14 @@ const ShoppingTab: React.FC<ShoppingTabProps> = ({
         )}
         
         {/* Filter Tabs */}
-        <div className="flex border-b border-gray-200 overflow-x-auto px-4 pt-4">
+        <div className="flex border-b border-slate-200 overflow-x-auto px-4 pt-4">
           <button
             onClick={() => setActiveCategory('all')}
-            className={`px-4 py-2 font-medium text-sm rounded-t-lg ${activeCategory === 'all' 
-              ? 'bg-blue-500 text-white' 
-              : 'text-gray-600 hover:bg-gray-100'} mr-2`}
+            className={`px-4 py-2 font-medium text-sm rounded-t-lg ${
+              activeCategory === 'all' 
+                ? theme.getGradient('primary') + ' text-white' 
+                : 'text-slate-600 hover:bg-slate-100'
+            } mr-2`}
           >
             Todos
           </button>
@@ -299,8 +311,8 @@ const ShoppingTab: React.FC<ShoppingTabProps> = ({
                 onClick={() => setActiveCategory(category.value)}
                 className={`px-4 py-2 font-medium text-sm rounded-t-lg flex items-center ${
                   activeCategory === category.value 
-                    ? 'bg-blue-500 text-white' 
-                    : 'text-gray-600 hover:bg-gray-100'
+                    ? theme.getGradient('primary') + ' text-white' 
+                    : 'text-slate-600 hover:bg-slate-100'
                 } mr-2`}
               >
                 {getCategoryIcon(category.value)}
