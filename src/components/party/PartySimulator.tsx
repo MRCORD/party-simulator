@@ -3,7 +3,8 @@
 import React, { useState, useEffect } from 'react';
 import { 
   Users, DollarSign, Wine, Utensils, MapPin, 
-  FileBarChart, ShoppingBag, AlertCircle, CheckCircle 
+  FileBarChart, ShoppingBag, AlertCircle, CheckCircle,
+  Sparkles
 } from 'lucide-react';
 import Card from '@/components/ui/Card';
 import Badge from '@/components/ui/Badge';
@@ -259,7 +260,7 @@ export default function PartySimulator() {
     { name: 'Misceláneos', value: miscCosts }
   ];
   
-  const COLORS = ['var(--color-primary-blue)', 'var(--color-accent-teal)', 'var(--color-warning)', 'var(--color-accent-pink)', 'var(--color-success)', 'var(--color-primary-dark)'];
+  const COLORS = ['#2563eb', '#14b8a6', '#f59e0b', '#ec4899', '#10b981', '#1e3a8a'];
   
   // Financial overview data
   const financialOverview: FinancialOverviewItem[] = [
@@ -472,40 +473,53 @@ export default function PartySimulator() {
   };
 
   return (
-    <div className="bg-primary-light/30 to-white min-h-screen p-4">
+    <div className="bg-gradient-to-br from-blue-50/70 to-white min-h-screen p-6">
       <div className="max-w-7xl mx-auto">
-        <Card className={`${theme.getGradient('primary')} mb-6`}>
-          <Card.Content className="p-6 text-white">
-            <h2 className="text-3xl font-bold mb-2 flex items-center">
-              <span className="bg-white text-primary p-2 rounded-lg mr-3">🎉</span>
-              Simulador de Fiestas
-            </h2>
-            <p className="text-white/80 text-lg">Organiza, planifica y visualiza todos los aspectos de tu próxima fiesta</p>
-            
-            {/* Status summary */}
-            <div className="mt-4 p-3 bg-white/10 backdrop-blur-sm rounded-lg flex flex-wrap gap-2">
-              <Badge size="md" color="primary" className="bg-white/20 text-white">
-                <Users size={14} className="mr-1" />
-                {attendees} Asistentes
-              </Badge>
-              <Badge size="md" color="primary" className="bg-white/20 text-white">
-                <DollarSign size={14} className="mr-1" />
-                S/ {ticketPrice} Entrada
-              </Badge>
-              <Badge 
-                size="md" 
-                color={isViable ? 'success' : 'error'}
-                className={isViable ? 'bg-success/70' : 'bg-error/70'}
-              >
-                {isViable ? <CheckCircle size={14} className="mr-1" /> : <AlertCircle size={14} className="mr-1" />}
-                {isViable ? 'Viable' : 'No Viable'}
-              </Badge>
+        {/* Enhanced Header */}
+        <Card className="mb-8 overflow-hidden transform hover:scale-[1.01] transition-all duration-300">
+          <Card.Content className="bg-gradient-to-r from-primary-dark to-primary p-0">
+            <div className="px-8 py-6 text-white relative overflow-hidden">
+              {/* Background pattern */}
+              <div className="absolute inset-0 opacity-10">
+                <div className="absolute top-0 left-0 w-40 h-40 bg-white rounded-full -translate-x-1/2 -translate-y-1/2" />
+                <div className="absolute bottom-0 right-0 w-60 h-60 bg-white rounded-full translate-x-1/4 translate-y-1/4" />
+              </div>
+              
+              <div className="flex items-center">
+                <div className="bg-white text-primary p-4 rounded-xl mr-5 shadow-md">
+                  <Sparkles size={32} />
+                </div>
+                <div>
+                  <h1 className="text-3xl font-bold mb-1">Simulador de Fiestas</h1>
+                  <p className="text-blue-100 text-lg">Organiza, planifica y visualiza todos los aspectos de tu próxima fiesta</p>
+                </div>
+              </div>
+              
+              {/* Status pills */}
+              <div className="mt-6 flex flex-wrap gap-3">
+                <Badge size="md" color="primary" className="bg-white/20 backdrop-blur-sm text-white">
+                  <Users size={16} className="mr-2" />
+                  {attendees} Asistentes
+                </Badge>
+                <Badge size="md" color="primary" className="bg-white/20 backdrop-blur-sm text-white">
+                  <DollarSign size={16} className="mr-2" />
+                  S/ {ticketPrice} Entrada
+                </Badge>
+                <Badge 
+                  size="md" 
+                  color={isViable ? 'success' : 'error'}
+                  className={isViable ? 'bg-success/70' : 'bg-error/70'}
+                >
+                  {isViable ? <CheckCircle size={16} className="mr-2" /> : <AlertCircle size={16} className="mr-2" />}
+                  {isViable ? 'Viable' : 'No Viable'}
+                </Badge>
+              </div>
             </div>
           </Card.Content>
         </Card>
         
-        {/* Tabs */}
-        <div className="bg-white rounded-xl shadow-md p-1 mb-6">
+        {/* Improved Tab Navigation */}
+        <div className="bg-white rounded-xl shadow-md p-2 mb-8">
           <Tabs
             tabs={tabs}
             initialTab={getActiveTabIndex()}
@@ -514,6 +528,7 @@ export default function PartySimulator() {
             color="primary"
             size="md"
             fullWidth={false}
+            className="animate-fadeIn"
           />
         </div>
       </div>

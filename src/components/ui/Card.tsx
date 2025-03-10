@@ -2,7 +2,7 @@
 import React, { ReactNode } from 'react';
 import { useTheme } from './ThemeProvider';
 
-type CardVariant = 'default' | 'accent' | 'hover' | 'gradient';
+type CardVariant = 'default' | 'accent' | 'hover' | 'gradient' | 'glass';
 type AccentColor = 'primary' | 'success' | 'warning' | 'error';
 type ImagePosition = 'top' | 'bottom' | 'full';
 
@@ -21,6 +21,7 @@ interface CardHeaderProps extends React.HTMLAttributes<HTMLDivElement> {
   description?: string;
   icon?: ReactNode;
   gradient?: boolean;
+  centered?: boolean;
 }
 
 interface CardContentProps extends React.HTMLAttributes<HTMLDivElement> {
@@ -40,6 +41,7 @@ interface CardImageProps extends Omit<React.ImgHTMLAttributes<HTMLImageElement>,
   alt?: string;
   className?: string;
   position?: ImagePosition;
+  overlay?: boolean;
 }
 
 // Main Card component
@@ -54,15 +56,19 @@ const Card = ({
   const theme = useTheme();
   
   // Base card styles
-  const baseClasses = "bg-white rounded-xl border border-slate-100 shadow-sm";
+  const baseClasses = "bg-white rounded-xl border border-slate-100";
   
   // Variant modifiers
   const variantClasses = {
-    default: "",
-    accent: "",  // Handled separately with accentBar
-    hover: hover ? "transition-all hover:shadow-md" : "",
-    gradient: "bg-gradient-to-br from-slate-50 to-white",
+    default: "shadow-sm",
+    accent: "shadow-sm",  // Handled separately with accentBar
+    hover: "shadow-sm transition-all duration-300",
+    gradient: "bg-gradient-to-br from-slate-50 to-white shadow-sm",
+    glass: "backdrop-blur-sm bg-white/80 shadow-md"
   } as const;
+  
+  // Hover effect
+  const hoverClasses = hover ? "hover:shadow-md hover:border-slate-200 hover:translate-y-[-2px]" : "";
   
   // Use theme gradients for accent colors
   const accentColorMap = {
@@ -76,13 +82,14 @@ const Card = ({
   const classes = [
     baseClasses,
     variantClasses[variant],
+    hoverClasses,
     className
   ].filter(Boolean).join(' ');
   
   // For accent variant, we need to wrap with a div to show the accent
   if (variant === 'accent') {
     return (
-      <div className={`${classes} flex overflow-hidden ${hover ? "transition-all hover:shadow-md" : ""}`} {...props}>
+      <div className={`${classes} flex overflow-hidden ${hover ? "transition-all duration-300 hover:shadow-md hover:translate-y-[-2px]" : ""}`} {...props}>
         <div className={`w-2 ${accentColorMap[accentColor]}`}></div>
         <div className="flex-1">{children}</div>
       </div>
@@ -104,20 +111,22 @@ const CardHeader = ({
   description,
   icon,
   gradient = false,
+  centered = false,
   ...props 
 }: CardHeaderProps) => {
   const theme = useTheme();
   const baseClasses = "px-6 py-4";
+  const alignClasses = centered ? "text-center" : "";
   
   return (
-    <div className={`${baseClasses} ${className}`} {...props}>
+    <div className={`${baseClasses} ${alignClasses} ${className}`} {...props}>
       {(title || icon) ? (
-        <div className="flex items-center mb-2">
-          {icon && <span className="mr-2 text-primary">{icon}</span>}
+        <div className={`flex ${centered ? "justify-center" : ""} items-center mb-2`}>
+          {icon && <span className="mr-2 text-primary animate-fadeIn">{icon}</span>}
           {title && (
-            <h3 className={`font-semibold text-lg ${
+            <h3 className={`font-bold text-lg ${
               gradient ? theme.getGradientText('primary') : 'text-slate-800'
-            }`}>
+            } animate-fadeIn`}>
               {title}
             </h3>
           )}
@@ -125,7 +134,9 @@ const CardHeader = ({
       ) : null}
       
       {description && (
-        <p className="text-sm text-slate-500">{description}</p>
+        <p className="text-sm text-slate-500 animate-fadeIn">
+          {description}
+        </p>
       )}
       
       {children}
@@ -143,7 +154,7 @@ const CardContent = ({
   const baseClasses = noPadding ? "" : "px-6 py-4";
   
   return (
-    <div className={`${baseClasses} ${className}`} {...props}>
+    <div className={`${baseClasses} ${className} animate-fadeIn`} {...props}>
       {children}
     </div>
   );
@@ -172,6 +183,7 @@ const CardImage = ({
   alt = "",
   className = '',
   position = 'top',
+  overlay = false,
   ...props 
 }: CardImageProps) => {
   const baseClasses = "w-full";
@@ -182,13 +194,16 @@ const CardImage = ({
   } as const;
   
   return (
-    <div className={`overflow-hidden ${positionClasses[position]}`}>
+    <div className={`relative overflow-hidden ${positionClasses[position]}`}>
       <img 
         src={src} 
         alt={alt} 
-        className={`${baseClasses} ${className}`} 
+        className={`${baseClasses} ${className} transition-transform duration-700 hover:scale-105`} 
         {...props} 
       />
+      {overlay && (
+        <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+      )}
     </div>
   );
 };
