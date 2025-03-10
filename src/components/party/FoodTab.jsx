@@ -159,12 +159,12 @@ const FoodTab = ({
               .filter(item => ['meat', 'sides', 'condiments'].includes(item.category))
               .map(item => (
               <tr key={item.id} className="hover:bg-gray-50">
-                <td className="px-3 py-2 whitespace-nowrap text-sm font-medium text-gray-900">{item.name}</td>
-                <td className="px-3 py-2 whitespace-nowrap text-sm text-gray-500">{item.size} {item.sizeUnit}</td>
-                <td className="px-3 py-2 whitespace-nowrap text-sm text-gray-500">{item.units}</td>
-                <td className="px-3 py-2 whitespace-nowrap text-sm text-gray-500">{item.servings * item.units}</td>
-                <td className="px-3 py-2 whitespace-nowrap text-sm text-gray-500">S/ {item.cost.toFixed(2)}</td>
-                <td className="px-3 py-2 whitespace-nowrap text-sm text-gray-500">S/ {(item.cost * item.units).toFixed(2)}</td>
+                <td className="px-3 py-2 whitespace-nowrap text-sm font-medium text-black">{item.name}</td>
+                <td className="px-3 py-2 whitespace-nowrap text-sm font-medium text-black">{item.size} {item.sizeUnit}</td>
+                <td className="px-3 py-2 whitespace-nowrap text-sm font-medium text-black">{item.units}</td>
+                <td className="px-3 py-2 whitespace-nowrap text-sm font-medium text-black">{item.servings * item.units}</td>
+                <td className="px-3 py-2 whitespace-nowrap text-sm font-medium text-black">S/ {item.cost.toFixed(2)}</td>
+                <td className="px-3 py-2 whitespace-nowrap text-sm font-medium text-black">S/ {(item.cost * item.units).toFixed(2)}</td>
               </tr>
             ))}
           </tbody>

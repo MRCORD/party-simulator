@@ -1,26 +1,159 @@
 @import "tailwindcss";
 
 :root {
+  /* Base colors */
   --background: #ffffff;
-  --foreground: #111111;  /* Changed from #171717 to a darker color */
+  --foreground: #111111;
+  
+  /* Primary colors */
+  --color-primary-blue: #2563eb;     /* blue-600 */
+  --color-primary-light: #dbeafe;    /* blue-100 */
+  --color-primary-dark: #1e3a8a;     /* blue-900 */
+  --color-primary-secondary: #3b82f6; /* blue-500 */
+  
+  /* Accent colors */
+  --color-accent-teal: #14b8a6;   /* teal-500 */
+  --color-accent-amber: #f59e0b;  /* amber-500 */
+  --color-accent-pink: #ec4899;   /* pink-500 */
+  
+  /* Semantic colors */
+  --color-success: #10b981;       /* emerald-500 */
+  --color-success-light: #d1fae5; /* emerald-100 */
+  --color-success-dark: #065f46;  /* emerald-800 */
+  
+  --color-warning: #f59e0b;       /* amber-500 */
+  --color-warning-light: #fef3c7; /* amber-100 */
+  --color-warning-dark: #92400e;  /* amber-800 */
+  
+  --color-error: #f43f5e;         /* rose-500 */
+  --color-error-light: #ffe4e6;   /* rose-100 */
+  --color-error-dark: #9f1239;    /* rose-800 */
+  
+  /* Neutral colors */
+  --color-slate-50: #f8fafc;
+  --color-slate-100: #f1f5f9;
+  --color-slate-200: #e2e8f0;
+  --color-slate-300: #cbd5e1;
+  --color-slate-400: #94a3b8;
+  --color-slate-500: #64748b;
+  --color-slate-600: #475569;
+  --color-slate-700: #334155;
+  --color-slate-800: #1e293b;
+  --color-slate-900: #0f172a;
+  
+  /* Font families */
+  --font-sans: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  
+  /* Shadows */
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  
+  /* Border radius */
+  --radius-sm: 0.125rem;
+  --radius-md: 0.375rem;
+  --radius-lg: 0.5rem;
+  --radius-xl: 0.75rem;
+  --radius-2xl: 1rem;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
+/* Dark mode variables */
+/* @media (prefers-color-scheme: dark) {
   :root {
     --background: #0a0a0a;
-    --foreground: #f5f5f5;  /* Changed from #ededed to a brighter white */
+    --foreground: #f5f5f5;
   }
-}
+} */
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-sans);
+}
+
+/* Apply gradients */
+.bg-gradient-primary {
+  background: linear-gradient(to right, var(--color-primary-blue), var(--color-primary-secondary));
+}
+
+.bg-gradient-success {
+  background: linear-gradient(to right, var(--color-accent-teal), var(--color-success));
+}
+
+.bg-gradient-warning {
+  background: linear-gradient(to right, var(--color-warning), var(--color-accent-amber));
+}
+
+.bg-gradient-error {
+  background: linear-gradient(to right, var(--color-error), var(--color-accent-pink));
+}
+
+/* Text with gradient */
+.text-gradient-primary {
+  background: linear-gradient(to right, var(--color-primary-blue), var(--color-primary-secondary));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  color: transparent;
+}
+
+/* Global text contrast fixes */
+/* These will apply to all text elements without explicit color classes */
+p, span, div, li, td, th, label, h1, h2, h3, h4, h5, h6 {
+  color: var(--foreground);
+}
+
+/* Make sure table text is always visible */
+table td, table th {
+  color: var(--foreground);
+}
+
+/* Add base transition for interactive elements */
+button, a, input, select, textarea {
+  transition: all 0.2s ease-in-out;
+}
+
+/* Default scrollbar styling */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--color-slate-100);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-slate-300);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-slate-400);
+}
+
+/* Animation for gradient backgrounds */
+@keyframes gradient-animation {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+.animate-gradient {
+  background-size: 200% 200%;
+  animation: gradient-animation 3s ease infinite;
+}
+
+/* Utility classes for focus states */
+.focus-ring {
+  outline: none;
+  box-shadow: 0 0 0 2px var(--color-primary-blue), 0 0 0 4px var(--background);
 }

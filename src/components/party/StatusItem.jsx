@@ -4,7 +4,7 @@ const StatusItem = ({ title, isEnough, currentAmount, requiredAmount }) => (
   <div className={`text-sm flex justify-between items-center p-1 rounded ${isEnough ? 'text-green-800' : 'text-red-800'}`}>
     <span className="font-medium">{title}:</span>
     <div className="flex items-center">
-      <span>{currentAmount}/{requiredAmount} servings</span>
+      <span>{currentAmount}/{requiredAmount} porciones</span>
       {isEnough ? (
         <CheckCircle className="w-4 h-4 ml-1 text-green-500" />
       ) : (

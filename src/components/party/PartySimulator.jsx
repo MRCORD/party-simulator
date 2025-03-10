@@ -1,6 +1,7 @@
 "use client";
+
 import React, { useState, useEffect } from 'react';
-import { AlertCircle, CheckCircle } from 'lucide-react';
+import { Users, DollarSign, Wine, Utensils, MapPin, FileBarChart, ShoppingBag, AlertCircle, CheckCircle } from 'lucide-react';
 import OverviewTab from './OverviewTab';
 import ShoppingTab from './ShoppingTab';
 import DrinksTab from './DrinksTab';
@@ -20,11 +21,11 @@ export default function PartySimulator() {
     // Default items for demonstration
     { id: 1, name: 'Ron Cartavio', category: 'spirits', cost: 45, units: 1, size: '750', sizeUnit: 'ml', servings: 15 },
     { id: 2, name: 'Coca-Cola', category: 'mixers', cost: 30, units: 6, size: '1.5', sizeUnit: 'L', servings: 30 },
-    { id: 3, name: 'Ice Bags', category: 'ice', cost: 12, units: 1, size: '5', sizeUnit: 'kg', servings: 25 },
-    { id: 4, name: 'Chicken', category: 'meat', cost: 180, units: 1, size: '10', sizeUnit: 'kg', servings: 20 },
-    { id: 5, name: 'Potato Salad', category: 'sides', cost: 120, units: 1, size: '5', sizeUnit: 'kg', servings: 25 },
-    { id: 6, name: 'Sauces Pack', category: 'condiments', cost: 60, units: 1, size: '1', sizeUnit: 'pack', servings: 30 },
-    { id: 7, name: 'Red Cups', category: 'supplies', cost: 15, units: 100, size: '16', sizeUnit: 'oz', servings: 100 },
+    { id: 3, name: 'Hielo', category: 'ice', cost: 12, units: 1, size: '5', sizeUnit: 'kg', servings: 25 },
+    { id: 4, name: 'Pollo', category: 'meat', cost: 180, units: 1, size: '10', sizeUnit: 'kg', servings: 20 },
+    { id: 5, name: 'Ensalada de Papa', category: 'sides', cost: 120, units: 1, size: '5', sizeUnit: 'kg', servings: 25 },
+    { id: 6, name: 'Pack de Salsas', category: 'condiments', cost: 60, units: 1, size: '1', sizeUnit: 'pack', servings: 30 },
+    { id: 7, name: 'Vasos Rojos', category: 'supplies', cost: 15, units: 100, size: '16', sizeUnit: 'oz', servings: 100 },
   ]);
   
   // New item form
@@ -228,31 +229,31 @@ export default function PartySimulator() {
   
   // Cost breakdown for charts
   const costBreakdown = [
-    { name: 'Venue', value: venueCost },
-    { name: 'Drinks', value: calculateDrinkRequirements().totalCost },
-    { name: 'Food', value: calculateFoodRequirements().totalCost },
-    { name: 'Miscellaneous', value: miscCosts }
+    { name: 'Local', value: venueCost },
+    { name: 'Bebidas', value: calculateDrinkRequirements().totalCost },
+    { name: 'Comida', value: calculateFoodRequirements().totalCost },
+    { name: 'Misceláneos', value: miscCosts }
   ];
   
-  const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884d8', '#82ca9d'];
+  const COLORS = ['#4F46E5', '#06B6D4', '#F59E0B', '#EC4899', '#10B981', '#8B5CF6'];
   
   // Financial overview data
   const financialOverview = [
-    { name: 'Total Revenue', amount: totalRevenue },
-    { name: 'Total Costs', amount: totalCosts },
-    { name: 'Net Profit', amount: netProfit }
+    { name: 'Ingresos Totales', amount: totalRevenue },
+    { name: 'Costos Totales', amount: totalCosts },
+    { name: 'Beneficio Neto', amount: netProfit }
   ];
   
   // Shopping categories
   const categories = [
-    { value: 'spirits', label: 'Spirits' },
-    { value: 'mixers', label: 'Mixers' },
-    { value: 'ice', label: 'Ice' },
-    { value: 'meat', label: 'Meat' },
-    { value: 'sides', label: 'Sides' },
-    { value: 'condiments', label: 'Condiments' },
-    { value: 'supplies', label: 'Supplies' },
-    { value: 'other', label: 'Other' }
+    { value: 'spirits', label: 'Licores' },
+    { value: 'mixers', label: 'Mezcladores' },
+    { value: 'ice', label: 'Hielo' },
+    { value: 'meat', label: 'Carnes' },
+    { value: 'sides', label: 'Guarniciones' },
+    { value: 'condiments', label: 'Condimentos' },
+    { value: 'supplies', label: 'Suministros' },
+    { value: 'other', label: 'Otros' }
   ];
   
   // Size units
@@ -403,56 +404,64 @@ export default function PartySimulator() {
     }
   };
 
+  // Tabs configuration
+  const tabs = [
+    { id: 'overview', label: 'Resumen', icon: <Users size={18} /> },
+    { id: 'shopping', label: 'Compras', icon: <ShoppingBag size={18} /> },
+    { id: 'drinks', label: 'Bebidas', icon: <Wine size={18} /> },
+    { id: 'food', label: 'Comida', icon: <Utensils size={18} /> },
+    { id: 'venue', label: 'Local', icon: <MapPin size={18} /> },
+    { id: 'reports', label: 'Informes', icon: <FileBarChart size={18} /> },
+  ];
+
   return (
-    <div className="bg-gray-50 min-h-screen p-4">
+    <div className="bg-gradient-to-b from-indigo-50 to-white min-h-screen p-4">
       <div className="max-w-7xl mx-auto">
-        <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200 mb-6">
-          <h2 className="text-2xl font-bold text-gray-800 mb-2">Party Financial Simulator (PEN)</h2>
-          <p className="text-gray-600">Plan your party finances, shopping list, and requirements</p>
+        <div className="bg-gradient-to-r from-indigo-600 to-purple-600 p-6 rounded-xl shadow-lg mb-6 text-white">
+          <h2 className="text-3xl font-bold mb-2 flex items-center">
+            <span className="bg-white text-indigo-600 p-2 rounded-lg mr-3">🎉</span>
+            Simulador de Fiestas
+          </h2>
+          <p className="text-indigo-100 text-lg">Organiza, planifica y visualiza todos los aspectos de tu próxima fiesta</p>
+          
+          {/* Status summary */}
+          <div className="mt-4 p-3 bg-white/10 backdrop-blur-sm rounded-lg flex flex-wrap gap-2">
+            <div className="flex items-center px-3 py-1 bg-white/20 rounded-full text-sm">
+              <Users size={14} className="mr-1" />
+              <span>{attendees} Asistentes</span>
+            </div>
+            <div className="flex items-center px-3 py-1 bg-white/20 rounded-full text-sm">
+              <DollarSign size={14} className="mr-1" />
+              <span>S/ {ticketPrice} Entrada</span>
+            </div>
+            <div className={`flex items-center px-3 py-1 rounded-full text-sm ${isViable ? 'bg-green-500/70' : 'bg-red-500/70'}`}>
+              {isViable ? <CheckCircle size={14} className="mr-1" /> : <AlertCircle size={14} className="mr-1" />}
+              <span>{isViable ? 'Viable' : 'No Viable'}</span>
+            </div>
+          </div>
         </div>
         
         {/* Tabs */}
-        <div className="flex flex-wrap border-b border-gray-200 mb-6">
-          <button
-            className={`px-4 py-2 text-sm font-medium ${activeTab === 'overview' ? 'text-blue-600 border-b-2 border-blue-500' : 'text-gray-500 hover:text-gray-700'}`}
-            onClick={() => setActiveTab('overview')}
-          >
-            Overview
-          </button>
-          <button
-            className={`px-4 py-2 text-sm font-medium ${activeTab === 'shopping' ? 'text-blue-600 border-b-2 border-blue-500' : 'text-gray-500 hover:text-gray-700'}`}
-            onClick={() => setActiveTab('shopping')}
-          >
-            Shopping List
-          </button>
-          <button
-            className={`px-4 py-2 text-sm font-medium ${activeTab === 'drinks' ? 'text-blue-600 border-b-2 border-blue-500' : 'text-gray-500 hover:text-gray-700'}`}
-            onClick={() => setActiveTab('drinks')}
-          >
-            Drinks
-          </button>
-          <button
-            className={`px-4 py-2 text-sm font-medium ${activeTab === 'food' ? 'text-blue-600 border-b-2 border-blue-500' : 'text-gray-500 hover:text-gray-700'}`}
-            onClick={() => setActiveTab('food')}
-          >
-            Food & BBQ
-          </button>
-          <button
-            className={`px-4 py-2 text-sm font-medium ${activeTab === 'venue' ? 'text-blue-600 border-b-2 border-blue-500' : 'text-gray-500 hover:text-gray-700'}`}
-            onClick={() => setActiveTab('venue')}
-          >
-            Venue & Misc
-          </button>
-          <button
-            className={`px-4 py-2 text-sm font-medium ${activeTab === 'reports' ? 'text-blue-600 border-b-2 border-blue-500' : 'text-gray-500 hover:text-gray-700'}`}
-            onClick={() => setActiveTab('reports')}
-          >
-            Reports
-          </button>
+        <div className="flex overflow-x-auto md:flex-wrap bg-white rounded-xl shadow-md mb-6 p-1">
+          {tabs.map(tab => (
+            <button
+              key={tab.id}
+              className={`flex items-center px-4 py-3 text-sm md:text-base font-medium rounded-lg transition-all duration-200 mx-1 whitespace-nowrap
+                ${activeTab === tab.id 
+                  ? 'bg-indigo-600 text-white shadow-md' 
+                  : 'text-gray-700 hover:bg-indigo-100'}`}
+              onClick={() => setActiveTab(tab.id)}
+            >
+              <span className="mr-2">{tab.icon}</span>
+              {tab.label}
+            </button>
+          ))}
         </div>
         
         {/* Tab Content */}
-        {renderTab()}
+        <div className="transition-all duration-300 ease-in-out">
+          {renderTab()}
+        </div>
       </div>
     </div>
   );

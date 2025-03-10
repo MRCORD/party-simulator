@@ -14,7 +14,7 @@ const VenueTab = ({
         
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
-            <label className="block text-sm font-medium text-gray-700">Costo del Local (S/)</label>
+            <label className="block text-sm font-medium text-black">Costo del Local (S/)</label>
             <input
               type="number"
               className="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2 border focus:border-blue-500 focus:ring focus:ring-blue-200"
@@ -23,11 +23,11 @@ const VenueTab = ({
               min="0"
               step="1"
             />
-            <p className="mt-1 text-xs text-gray-500">Incluye todos los costos de alquiler del local, equipos y depósitos de seguridad</p>
+            <p className="mt-1 text-xs text-black">Incluye todos los costos de alquiler del local, equipos y depósitos de seguridad</p>
           </div>
           
           <div>
-            <label className="block text-sm font-medium text-gray-700">Costos Misceláneos (S/)</label>
+            <label className="block text-sm font-medium text-black">Costos Misceláneos (S/)</label>
             <input
               type="number"
               className="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2 border focus:border-blue-500 focus:ring focus:ring-blue-200"
@@ -36,7 +36,7 @@ const VenueTab = ({
               min="0"
               step="1"
             />
-            <p className="mt-1 text-xs text-gray-500">Incluye decoraciones, música, transporte, limpieza, etc.</p>
+            <p className="mt-1 text-xs text-black">Incluye decoraciones, música, transporte, limpieza, etc.</p>
           </div>
         </div>
       </div>

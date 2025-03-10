@@ -4,9 +4,9 @@ const StatusBar = ({ title, isEnough, currentAmount, requiredAmount }) => {
   return (
     <div className="mb-4">
       <div className="flex justify-between mb-1">
-        <span className="text-sm font-medium text-gray-700">{title}</span>
-        <span className="text-sm font-medium text-gray-700">
-          {currentAmount}/{requiredAmount} servings
+        <span className="text-sm font-medium text-black">{title}</span>
+        <span className="text-sm font-medium text-black">
+          {currentAmount}/{requiredAmount} porciones
         </span>
       </div>
       <div className="w-full bg-gray-200 rounded-full h-2.5">
@@ -17,9 +17,9 @@ const StatusBar = ({ title, isEnough, currentAmount, requiredAmount }) => {
       </div>
       <div className="text-xs mt-1 text-right">
         {isEnough ? (
-          <span className="text-green-600">Sufficient</span>
+          <span className="text-green-600">Suficiente</span>
         ) : (
-          <span className="text-red-600">Need {requiredAmount - currentAmount} more servings</span>
+          <span className="text-red-600">Necesita {requiredAmount - currentAmount} porciones más</span>
         )}
       </div>
     </div>
