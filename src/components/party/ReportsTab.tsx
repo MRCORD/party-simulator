@@ -56,7 +56,7 @@ interface TableColumn<T> {
   accessor: keyof T;
   Header: string;
   width?: string;
-  Cell?: ({ value }: { value: any }) => string;
+  Cell?: ({ value }: { value: any }) => React.ReactNode;
 }
 
 const ReportsTab: React.FC<ReportsTabProps> = ({

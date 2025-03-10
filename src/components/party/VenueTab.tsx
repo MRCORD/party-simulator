@@ -35,7 +35,7 @@ const VenueTab: FC<VenueTabProps> = ({
               <label className="block text-sm font-medium">Costo del Local (S/)</label>
               <input
                 type="number"
-                className={`mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2 border focus:border-primary ${theme.getFocusRing()}`}
+                className={`mt-1 block w-full rounded-md border-slate-300 shadow-sm p-2 border focus:border-primary ${theme.getFocusRing()}`}
                 value={venueCost}
                 onChange={(e) => setVenueCost(parseFloat(e.target.value) || 0)}
                 min="0"
@@ -48,7 +48,7 @@ const VenueTab: FC<VenueTabProps> = ({
               <label className="block text-sm font-medium">Costos Misceláneos (S/)</label>
               <input
                 type="number"
-                className={`mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2 border focus:border-primary ${theme.getFocusRing()}`}
+                className={`mt-1 block w-full rounded-md border-slate-300 shadow-sm p-2 border focus:border-primary ${theme.getFocusRing()}`}
                 value={miscCosts}
                 onChange={(e) => setMiscCosts(parseFloat(e.target.value) || 0)}
                 min="0"

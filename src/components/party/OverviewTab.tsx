@@ -91,30 +91,30 @@ const OverviewTab: React.FC<OverviewTabProps> = ({
         <Card hover>
           <Card.Header 
             title="Parámetros Básicos"
-            icon={<Users className="w-5 h-5 text-indigo-600" />}
+            icon={<Users className="w-5 h-5 text-primary" />}
             gradient
           />
           <Card.Content>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
               <div className="space-y-1">
-                <label className="block text-base font-medium text-gray-700">Asistentes</label>
+                <label className="block text-base font-medium text-slate-700">Asistentes</label>
                 <div className="relative">
                   <input
                     type="number"
-                    className={`block w-full rounded-lg border-gray-300 shadow-sm p-3 pr-16 border focus:border-indigo-500 ${theme.getFocusRing()} text-lg`}
+                    className={`block w-full rounded-lg border-slate-300 shadow-sm p-3 pr-16 border focus:border-primary ${theme.getFocusRing()} text-lg`}
                     value={attendees}
                     onChange={(e) => setAttendees(parseInt(e.target.value) || 1)}
                     min="1"
                   />
                   <div className="absolute right-0 top-0 h-full flex flex-col">
                     <button 
-                      className="flex-1 px-3 bg-gray-100 hover:bg-gray-200 border-l border-t border-r border-gray-300 rounded-tr-lg"
+                      className="flex-1 px-3 bg-slate-100 hover:bg-slate-200 border-l border-t border-r border-slate-300 rounded-tr-lg"
                       onClick={incrementAttendees}
                     >
                       <ChevronUp size={16} />
                     </button>
                     <button 
-                      className="flex-1 px-3 bg-gray-100 hover:bg-gray-200 border-l border-b border-r border-gray-300 rounded-br-lg"
+                      className="flex-1 px-3 bg-slate-100 hover:bg-slate-200 border-l border-b border-r border-slate-300 rounded-br-lg"
                       onClick={decrementAttendees}
                     >
                       <ChevronDown size={16} />
@@ -123,12 +123,12 @@ const OverviewTab: React.FC<OverviewTabProps> = ({
                 </div>
               </div>
               <div className="space-y-1">
-                <label className="block text-base font-medium text-gray-700">Precio de Entrada (S/)</label>
+                <label className="block text-base font-medium text-slate-700">Precio de Entrada (S/)</label>
                 <div className="relative">
-                  <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500">S/</span>
+                  <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-500">S/</span>
                   <input
                     type="number"
-                    className={`block w-full rounded-lg border-gray-300 shadow-sm p-3 pl-8 border focus:border-indigo-500 ${theme.getFocusRing()} text-lg`}
+                    className={`block w-full rounded-lg border-slate-300 shadow-sm p-3 pl-8 border focus:border-primary ${theme.getFocusRing()} text-lg`}
                     value={ticketPrice}
                     onChange={(e) => setTicketPrice(parseFloat(e.target.value) || 0)}
                     min="0"
@@ -137,12 +137,12 @@ const OverviewTab: React.FC<OverviewTabProps> = ({
                 </div>
               </div>
               <div className="space-y-1">
-                <label className="block text-base font-medium text-gray-700 flex items-center">
-                  <Wine className="w-4 h-4 mr-1 text-purple-600" /> Bebidas por Persona
+                <label className="block text-base font-medium text-slate-700 flex items-center">
+                  <Wine className="w-4 h-4 mr-1 text-primary" /> Bebidas por Persona
                 </label>
-                <div className="flex rounded-lg border border-gray-300 overflow-hidden">
+                <div className="flex rounded-lg border border-slate-300 overflow-hidden">
                   <button 
-                    className="px-4 bg-gray-100 hover:bg-gray-200 text-gray-700 border-r border-gray-300 flex items-center justify-center"
+                    className="px-4 bg-slate-100 hover:bg-slate-200 text-slate-700 border-r border-slate-300 flex items-center justify-center"
                     onClick={decrementDrinksPerPerson}
                   >
                     -
@@ -155,7 +155,7 @@ const OverviewTab: React.FC<OverviewTabProps> = ({
                     min="1"
                   />
                   <button 
-                    className="px-4 bg-gray-100 hover:bg-gray-200 text-gray-700 border-l border-gray-300 flex items-center justify-center"
+                    className="px-4 bg-slate-100 hover:bg-slate-200 text-slate-700 border-l border-slate-300 flex items-center justify-center"
                     onClick={incrementDrinksPerPerson}
                   >
                     +
@@ -163,12 +163,12 @@ const OverviewTab: React.FC<OverviewTabProps> = ({
                 </div>
               </div>
               <div className="space-y-1">
-                <label className="block text-base font-medium text-gray-700 flex items-center">
-                  <Utensils className="w-4 h-4 mr-1 text-orange-600" /> Porciones/Persona
+                <label className="block text-base font-medium text-slate-700 flex items-center">
+                  <Utensils className="w-4 h-4 mr-1 text-primary" /> Porciones/Persona
                 </label>
-                <div className="flex rounded-lg border border-gray-300 overflow-hidden">
+                <div className="flex rounded-lg border border-slate-300 overflow-hidden">
                   <button 
-                    className="px-4 bg-gray-100 hover:bg-gray-200 text-gray-700 border-r border-gray-300 flex items-center justify-center"
+                    className="px-4 bg-slate-100 hover:bg-slate-200 text-slate-700 border-r border-slate-300 flex items-center justify-center"
                     onClick={decrementFoodServings}
                   >
                     -
@@ -181,7 +181,7 @@ const OverviewTab: React.FC<OverviewTabProps> = ({
                     min="1"
                   />
                   <button 
-                    className="px-4 bg-gray-100 hover:bg-gray-200 text-gray-700 border-l border-gray-300 flex items-center justify-center"
+                    className="px-4 bg-slate-100 hover:bg-slate-200 text-slate-700 border-l border-slate-300 flex items-center justify-center"
                     onClick={incrementFoodServings}
                   >
                     +
@@ -195,39 +195,39 @@ const OverviewTab: React.FC<OverviewTabProps> = ({
         <Card hover>
           <Card.Header 
             title="Resumen Financiero"
-            icon={<DollarSign className="w-5 h-5 text-green-600" />}
+            icon={<DollarSign className="w-5 h-5 text-success" />}
             gradient
           />
           <Card.Content>
             <div className="grid grid-cols-2 gap-y-3 gap-x-6">
-              <div className="flex items-center justify-between bg-green-50 p-2 rounded-lg">
-                <span className="text-base font-medium text-gray-700">Ingresos:</span>
-                <span className="text-base font-bold text-green-700">S/ {totalRevenue.toFixed(2)}</span>
+              <div className="flex items-center justify-between bg-success-light p-2 rounded-lg">
+                <span className="text-base font-medium text-slate-700">Ingresos:</span>
+                <span className="text-base font-bold text-success-dark">S/ {totalRevenue.toFixed(2)}</span>
               </div>
               
-              <div className="flex items-center justify-between bg-red-50 p-2 rounded-lg">
-                <span className="text-base font-medium text-gray-700">Costos:</span>
-                <span className="text-base font-bold text-red-700">S/ {totalCosts.toFixed(2)}</span>
+              <div className="flex items-center justify-between bg-error-light p-2 rounded-lg">
+                <span className="text-base font-medium text-slate-700">Costos:</span>
+                <span className="text-base font-bold text-error-dark">S/ {totalCosts.toFixed(2)}</span>
               </div>
               
-              <div className="flex items-center justify-between bg-gray-50 p-2 rounded-lg">
-                <span className="text-base font-medium text-gray-700">Punto Equilibrio:</span>
-                <span className="text-base font-bold text-gray-700">{breakEvenAttendees} personas</span>
+              <div className="flex items-center justify-between bg-slate-100 p-2 rounded-lg">
+                <span className="text-base font-medium text-slate-700">Punto Equilibrio:</span>
+                <span className="text-base font-bold text-slate-700">{breakEvenAttendees} personas</span>
               </div>
               
-              <div className="flex items-center justify-between bg-blue-50 p-2 rounded-lg">
-                <span className="text-base font-medium text-gray-700">Costo/Persona:</span>
-                <span className="text-base font-bold text-blue-700">S/ {perPersonCost.toFixed(2)}</span>
+              <div className="flex items-center justify-between bg-primary-light p-2 rounded-lg">
+                <span className="text-base font-medium text-slate-700">Costo/Persona:</span>
+                <span className="text-base font-bold text-primary-dark">S/ {perPersonCost.toFixed(2)}</span>
               </div>
               
-              <div className="flex items-center justify-between bg-purple-50 p-2 rounded-lg">
-                <span className="text-base font-medium text-gray-700">Entrada Mínima:</span>
-                <span className="text-base font-bold text-purple-700">S/ {recommendedTicketPrice}</span>
+              <div className="flex items-center justify-between bg-primary-light p-2 rounded-lg">
+                <span className="text-base font-medium text-slate-700">Entrada Mínima:</span>
+                <span className="text-base font-bold text-primary-dark">S/ {recommendedTicketPrice}</span>
               </div>
               
-              <div className={`flex items-center justify-between p-2 rounded-lg ${netProfit >= 0 ? 'bg-green-50' : 'bg-red-50'}`}>
-                <span className="text-base font-medium text-gray-700">Ganancia:</span>
-                <span className={`text-base font-bold ${netProfit >= 0 ? 'text-green-700' : 'text-red-700'}`}>
+              <div className={`flex items-center justify-between p-2 rounded-lg ${netProfit >= 0 ? 'bg-success-light' : 'bg-error-light'}`}>
+                <span className="text-base font-medium text-slate-700">Ganancia:</span>
+                <span className={`text-base font-bold ${netProfit >= 0 ? 'text-success-dark' : 'text-error-dark'}`}>
                   S/ {netProfit.toFixed(2)}
                 </span>
               </div>
@@ -304,7 +304,7 @@ const OverviewTab: React.FC<OverviewTabProps> = ({
                   {financialOverview.map((entry, index) => (
                     <Cell 
                       key={`cell-${index}`} 
-                      fill={index === 0 ? '#4F46E5' : index === 1 ? '#EF4444' : entry.amount >= 0 ? '#10B981' : '#F43F5E'} 
+                      fill={index === 0 ? 'var(--color-primary-blue)' : index === 1 ? 'var(--color-error)' : entry.amount >= 0 ? 'var(--color-success)' : 'var(--color-error)'} 
                     />
                   ))}
                 </Bar>
@@ -317,13 +317,13 @@ const OverviewTab: React.FC<OverviewTabProps> = ({
       <Card>
         <Card.Header 
           title="Estado General" 
-          icon={<CheckCircle className="w-5 h-5 text-indigo-600" />}
+          icon={<CheckCircle className="w-5 h-5 text-primary" />}
           gradient
         />
         <Card.Content>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <Card variant="accent" accentColor="primary">
-              <Card.Header title="Estado de Bebidas" icon={<Wine className="w-5 h-5 text-indigo-600" />} />
+              <Card.Header title="Estado de Bebidas" icon={<Wine className="w-5 h-5 text-primary" />} />
               <Card.Content className="space-y-4">
                 <StatusItem 
                   title="Licores" 
@@ -357,7 +357,7 @@ const OverviewTab: React.FC<OverviewTabProps> = ({
             </Card>
             
             <Card variant="accent" accentColor="warning">
-              <Card.Header title="Estado de Comida" icon={<Utensils className="w-5 h-5 text-amber-600" />} />
+              <Card.Header title="Estado de Comida" icon={<Utensils className="w-5 h-5 text-warning" />} />
               <Card.Content className="space-y-4">
                 <StatusItem 
                   title="Carne" 
@@ -384,7 +384,7 @@ const OverviewTab: React.FC<OverviewTabProps> = ({
             </Card>
             
             <Card variant="gradient">
-              <Card.Header title="Recomendaciones" icon={<TrendingUp className="w-5 h-5 text-purple-600" />} />
+              <Card.Header title="Recomendaciones" icon={<TrendingUp className="w-5 h-5 text-primary" />} />
               <Card.Content className="space-y-4">
                 <StatusCard
                   title="Precio de Entrada"
