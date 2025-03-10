@@ -3,11 +3,10 @@
 import React, { FC } from 'react';
 import { 
   Building2, MapPin, DollarSign, Check, 
-  Clock, Calendar, Package, Users, Info
+  Calendar, Package, Info
 } from 'lucide-react';
 import Badge from '@/components/ui/Badge';
 import Button from '@/components/ui/Button';
-import Card from '@/components/ui/Card';
 import { useTheme } from '@/components/ui/ThemeProvider';
 
 interface VenueTabProps {

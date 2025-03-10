@@ -11,7 +11,6 @@ interface StatusBarProps {
   isEnough: boolean;
   currentAmount: number;
   requiredAmount: number;
-  colorClass?: string;
 }
 
 const StatusBar: React.FC<StatusBarProps> = ({ 
@@ -19,8 +18,7 @@ const StatusBar: React.FC<StatusBarProps> = ({
   icon, 
   isEnough, 
   currentAmount, 
-  requiredAmount,
-  colorClass
+  requiredAmount
 }) => {
   const theme = useTheme();
   const percentage = Math.min(100, (currentAmount / requiredAmount) * 100);

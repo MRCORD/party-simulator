@@ -2,7 +2,6 @@
 
 import React, { ReactNode } from 'react';
 import { CheckCircle, AlertCircle, Info, X } from 'lucide-react';
-import { useTheme } from './ThemeProvider';
 
 type AlertVariant = 'success' | 'warning' | 'error' | 'info';
 
