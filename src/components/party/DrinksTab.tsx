@@ -1,12 +1,10 @@
 "use client";
 
 import React from 'react';
-import { Wine, Droplet, Snowflake, Package, CheckCircle, AlertCircle, TrendingUp, Users } from 'lucide-react';
-import Card from '@/components/ui/Card';
-import Table from '@/components/ui/Table';
-import Badge from '@/components/ui/Badge';
-import StatusBar from './StatusBar';
-import { useTheme } from '@/components/ui/ThemeProvider';
+import { 
+  Wine, Droplet, Snowflake, Package, CheckCircle, AlertCircle, 
+  TrendingUp, Users, DollarSign, Info, List
+} from 'lucide-react';
 
 // Import shared types
 import { ShoppingItem, DrinkRequirements } from './types';
@@ -20,7 +18,6 @@ interface DrinksTabProps {
   getRecommendedUnits: (category: string, totalDrinks: number) => number;
 }
 
-// Add table column type after other interfaces
 interface TableColumn {
   accessor: keyof ShoppingItem;
   Header: string;
@@ -35,67 +32,100 @@ const DrinksTab: React.FC<DrinksTabProps> = ({
   getCategoryServings,
   getRecommendedUnits
 }) => {
-  const theme = useTheme();
   const drinkRequirements = calculateDrinkRequirements();
   
-  // Define columns for the drinks table with proper typing
-  const drinkColumns: TableColumn[] = [
-    { 
-      accessor: 'name', 
-      Header: 'Artículo',
-      Cell: ({ value, row }) => (
-        <div className="flex items-center">
-          {getCategoryIcon(row.category)}
-          <span className="ml-2">{value}</span>
-        </div>
-      )
-    },
-    { 
-      accessor: 'size', 
-      Header: 'Tamaño',
-      Cell: ({ value, row }) => `${value} ${row.sizeUnit}`
-    },
-    { accessor: 'units', Header: 'Unidades' },
-    { accessor: 'servings', Header: 'Porciones', Cell: ({ value, row }) => value * row.units },
-    { 
-      accessor: 'cost', 
-      Header: 'Precio',
-      Cell: ({ value }) => `S/ ${value.toFixed(2)}`
-    },
-    { 
-      accessor: 'totalCost', 
-      Header: 'Costo Total',
-      Cell: ({ value }) => `S/ ${value.toFixed(2)}`
-    }
-  ];
+  // Filter drinks-related items
+  const drinkItems = shoppingItems.filter(item => 
+    ['spirits', 'mixers', 'ice', 'supplies'].includes(item.category)
+  );
   
-  // Transform shopping items for the table
-  const drinkItems = shoppingItems
-    .filter(item => ['spirits', 'mixers', 'ice', 'supplies'].includes(item.category))
-    .map(item => ({
-      ...item,
-      totalCost: item.cost * item.units
-    }));
-  
-  // Helper function to get category icon - UPDATED to use theme colors
+  // Get category icon for display
   const getCategoryIcon = (category: string) => {
     switch(category) {
-      case 'spirits': return <Wine className="w-4 h-4 text-primary" />;
-      case 'mixers': return <Droplet className="w-4 h-4 text-primary" />;
-      case 'ice': return <Snowflake className="w-4 h-4 text-primary" />;
-      case 'supplies': return <Package className="w-4 h-4 text-slate-600" />;
+      case 'spirits': return <Wine className="w-4 h-4 text-blue-500" />;
+      case 'mixers': return <Droplet className="w-4 h-4 text-teal-500" />;
+      case 'ice': return <Snowflake className="w-4 h-4 text-blue-300" />;
+      case 'supplies': return <Package className="w-4 h-4 text-purple-500" />;
       default: return null;
     }
   };
   
+  // Get category background color
+  const getCategoryColor = (category: string) => {
+    switch(category) {
+      case 'spirits': return 'bg-blue-500';
+      case 'mixers': return 'bg-teal-500';
+      case 'ice': return 'bg-blue-300';
+      case 'supplies': return 'bg-purple-500';
+      default: return 'bg-gray-500';
+    }
+  };
+  
+  // Define inventory status items
+  const inventoryStatus = [
+    { 
+      category: 'spirits', 
+      label: 'Licores',
+      current: getCategoryServings('spirits'), 
+      required: drinkRequirements.totalDrinks, 
+      isEnough: drinkRequirements.hasEnoughSpirits,
+      icon: <Wine className="w-5 h-5 text-white" />
+    },
+    { 
+      category: 'mixers', 
+      label: 'Mezcladores',
+      current: getCategoryServings('mixers'), 
+      required: drinkRequirements.totalDrinks, 
+      isEnough: drinkRequirements.hasEnoughMixers,
+      icon: <Droplet className="w-5 h-5 text-white" />
+    },
+    { 
+      category: 'ice', 
+      label: 'Hielo',
+      current: getCategoryServings('ice'), 
+      required: drinkRequirements.totalDrinks, 
+      isEnough: drinkRequirements.hasEnoughIce,
+      icon: <Snowflake className="w-5 h-5 text-white" />
+    },
+    { 
+      category: 'supplies', 
+      label: 'Suministros',
+      current: getCategoryServings('supplies'), 
+      required: drinkRequirements.totalDrinks, 
+      isEnough: drinkRequirements.hasEnoughSupplies,
+      icon: <Package className="w-5 h-5 text-white" />
+    }
+  ];
+  
+  // Service tips
+  const serviceTips = [
+    "Instala una estación de bebidas autoservicio para reducir trabajo y mejorar la experiencia",
+    "Prepara cócteles por lote para ahorrar tiempo y asegurar consistencia en el sabor",
+    "Usa dispensadores para mezcladores comunes como gaseosas y jugos",
+    "Considera contratar un bartender si el presupuesto lo permite para una experiencia premium"
+  ];
+  
+  // Cost saving tips
+  const costSavingTips = [
+    "Compra licores en botellas más grandes para mejor valor por mililitro",
+    "Usa marcas económicas para cócteles donde el sabor se mezcla con otros ingredientes",
+    "Pide a los invitados que traigan sus licores preferidos (BYOB) para reducir costos",
+    "Compra hielo el día del evento para evitar que se derrita y ahorrar en cantidad",
+    "Ofrece un cóctel de la casa en lugar de un bar completo para simplificar y reducir costos"
+  ];
+
   return (
     <div className="space-y-6">
-      <Card variant="gradient">
-        <Card.Content className={`${theme.getGradient('primary')} p-6 rounded-xl shadow-lg text-white`}>
-          <h3 className="text-xl font-bold mb-4 flex items-center">
-            <Wine className="w-6 h-6 mr-2" /> Planificación de Bebidas
-          </h3>
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-4">
+      {/* Main Planning Card */}
+      <div className="bg-white rounded-xl shadow-lg overflow-hidden">
+        <div className="bg-gradient-to-r from-blue-600 to-blue-500 p-5 text-white">
+          <div className="flex items-center">
+            <Wine className="w-6 h-6 mr-3" />
+            <h2 className="text-xl font-bold">Planificación de Bebidas</h2>
+          </div>
+          
+          {/* Key metrics */}
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mt-4">
             <div className="bg-white/20 backdrop-blur-sm rounded-lg p-3 text-center">
               <div className="text-xs uppercase tracking-wide mb-1">Asistentes</div>
               <div className="text-2xl font-bold flex justify-center items-center">
@@ -103,6 +133,7 @@ const DrinksTab: React.FC<DrinksTabProps> = ({
                 {attendees}
               </div>
             </div>
+            
             <div className="bg-white/20 backdrop-blur-sm rounded-lg p-3 text-center">
               <div className="text-xs uppercase tracking-wide mb-1">Bebidas por Persona</div>
               <div className="text-2xl font-bold flex justify-center items-center">
@@ -110,268 +141,296 @@ const DrinksTab: React.FC<DrinksTabProps> = ({
                 {drinksPerPerson}
               </div>
             </div>
+            
             <div className="bg-white/20 backdrop-blur-sm rounded-lg p-3 text-center">
               <div className="text-xs uppercase tracking-wide mb-1">Total Bebidas</div>
               <div className="text-2xl font-bold">{drinkRequirements.totalDrinks}</div>
             </div>
+            
             <div className="bg-white/20 backdrop-blur-sm rounded-lg p-3 text-center">
               <div className="text-xs uppercase tracking-wide mb-1">Costo Total</div>
               <div className="text-2xl font-bold">S/ {drinkRequirements.totalCost.toFixed(2)}</div>
             </div>
           </div>
-          <div className="text-sm opacity-80">
-            El costo por persona para bebidas es aproximadamente <span className="font-bold text-white">S/ {(drinkRequirements.totalCost / attendees).toFixed(2)}</span>
+          
+          <div className="text-sm text-center mt-4 bg-white/10 p-2 rounded-lg">
+            El costo por persona para bebidas es aproximadamente <span className="font-bold">S/ {(drinkRequirements.totalCost / attendees).toFixed(2)}</span>
           </div>
-        </Card.Content>
-      </Card>
-      
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <Card>
-          <Card.Header 
-            title="Información Detallada" 
-            gradient
-            icon={<Wine className="w-5 h-5 text-primary" />}
-          />
-          <Card.Content>
-            <div className="space-y-6">
-              <div className="bg-primary-light p-4 rounded-lg space-y-3">
-                <h4 className="font-bold text-primary-dark border-b border-primary-light pb-2">Requerimientos Básicos</h4>
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="flex justify-between items-center">
-                    <span className="text-slate-700">Asistentes:</span>
-                    <span className="font-medium text-primary-dark">{attendees}</span>
-                  </div>
-                  <div className="flex justify-between items-center">
-                    <span className="text-slate-700">Bebidas por persona:</span>
-                    <span className="font-medium text-primary-dark">{drinksPerPerson}</span>
-                  </div>
-                  <div className="flex justify-between items-center">
-                    <span className="text-slate-700">Total de bebidas:</span>
-                    <span className="font-medium text-primary-dark">{drinkRequirements.totalDrinks}</span>
-                  </div>
-                  <div className="flex justify-between items-center">
-                    <span className="text-slate-700">Costo por persona:</span>
-                    <span className="font-medium text-success-dark">S/ {(drinkRequirements.totalCost / attendees).toFixed(2)}</span>
-                  </div>
-                </div>
-              </div>
-              
-              <div className="space-y-3">
-                <h4 className="font-bold text-primary-dark border-b border-slate-200 pb-2">Desglose de Costos</h4>
-                
-                <div className="grid gap-2">
-                  <div className={`flex items-center p-3 ${theme.getGradient('primary')} text-white rounded-lg`}>
-                    <Wine className="w-5 h-5 mr-3" />
-                    <span className="flex-1 font-medium">Licores:</span>
-                    <span className="text-white font-bold">S/ {drinkRequirements.spiritsCost.toFixed(2)}</span>
-                  </div>
-                  
-                  <div className={`flex items-center p-3 ${theme.getGradient('primary')} text-white rounded-lg`}>
-                    <Droplet className="w-5 h-5 mr-3" />
-                    <span className="flex-1 font-medium">Mezcladores:</span>
-                    <span className="text-white font-bold">S/ {drinkRequirements.mixersCost.toFixed(2)}</span>
-                  </div>
-                  
-                  <div className={`flex items-center p-3 ${theme.getGradient('success')} text-white rounded-lg`}>
-                    <Snowflake className="w-5 h-5 mr-3" />
-                    <span className="flex-1 font-medium">Hielo:</span>
-                    <span className="text-white font-bold">S/ {drinkRequirements.iceCost.toFixed(2)}</span>
-                  </div>
-                  
-                  <div className={`flex items-center p-3 ${theme.getGradient('warning')} text-white rounded-lg`}>
-                    <Package className="w-5 h-5 mr-3" />
-                    <span className="flex-1 font-medium">Suministros:</span>
-                    <span className="text-white font-bold">S/ {drinkRequirements.suppliesCost.toFixed(2)}</span>
-                  </div>
-                  
-                  <div className="flex items-center justify-between p-3 bg-success-light text-success-dark rounded-lg font-bold">
-                    <span>COSTO TOTAL DE BEBIDAS:</span>
-                    <span>S/ {drinkRequirements.totalCost.toFixed(2)}</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </Card.Content>
-        </Card>
-        
-        <Card>
-          <Card.Header 
-            title="Estado del Inventario"
-            gradient 
-            icon={<CheckCircle className="w-5 h-5 text-primary" />}
-          />
-          <Card.Content>
-            <div className="space-y-5">
-              <StatusBar 
-                title="Licores" 
-                icon={<Wine className="w-5 h-5 text-primary" />}
-                isEnough={drinkRequirements.hasEnoughSpirits}
-                currentAmount={getCategoryServings('spirits')}
-                requiredAmount={drinkRequirements.totalDrinks}
-              />
-              
-              <StatusBar 
-                title="Mezcladores" 
-                icon={<Droplet className="w-5 h-5 text-primary" />}
-                isEnough={drinkRequirements.hasEnoughMixers}
-                currentAmount={getCategoryServings('mixers')}
-                requiredAmount={drinkRequirements.totalDrinks}
-              />
-              
-              <StatusBar 
-                title="Hielo" 
-                icon={<Snowflake className="w-5 h-5 text-primary" />}
-                isEnough={drinkRequirements.hasEnoughIce}
-                currentAmount={getCategoryServings('ice')}
-                requiredAmount={drinkRequirements.totalDrinks}
-              />
-              
-              <StatusBar 
-                title="Suministros" 
-                icon={<Package className="w-5 h-5 text-slate-700" />}
-                isEnough={drinkRequirements.hasEnoughSupplies}
-                currentAmount={getCategoryServings('supplies')}
-                requiredAmount={drinkRequirements.totalDrinks}
-              />
-              
-              <h4 className="font-bold text-primary-dark border-b border-slate-200 pb-2 pt-2">Cantidades Recomendadas</h4>
-              
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <Card variant="default" className="bg-primary-light">
-                  <Card.Header className={`${theme.getGradient('primary')} text-white p-3 font-medium`}>
-                    <div className="flex items-center">
-                      <Wine className="w-4 h-4 mr-2" /> Licores
-                    </div>
-                  </Card.Header>
-                  <Card.Content className="p-3">
-                    <div className="flex justify-between items-center">
-                      <span className="text-primary-dark font-medium">Unidades necesarias:</span>
-                      <div className="flex items-center">
-                        <span className="font-bold text-primary-dark">
-                          {getRecommendedUnits('spirits', drinkRequirements.totalDrinks)}
-                        </span>
-                        {getRecommendedUnits('spirits', drinkRequirements.totalDrinks) > shoppingItems
-                          .filter(i => i.category === 'spirits')
-                          .reduce((sum, i) => sum + i.units, 0) ? (
-                          <Badge variant="error" size="sm" className="ml-2" icon={<AlertCircle size={12} />}>
-                            Falta
-                          </Badge>
-                        ) : (
-                          <Badge variant="success" size="sm" className="ml-2" icon={<CheckCircle size={12} />}>
-                            Completo
-                          </Badge>
-                        )}
-                      </div>
-                    </div>
-                  </Card.Content>
-                </Card>
-                
-                <Card variant="default" className="bg-primary-light">
-                  <Card.Header className={`${theme.getGradient('primary')} text-white p-3 font-medium`}>
-                    <div className="flex items-center">
-                      <Droplet className="w-4 h-4 mr-2" /> Mezcladores
-                    </div>
-                  </Card.Header>
-                  <Card.Content className="p-3">
-                    <div className="flex justify-between items-center">
-                      <span className="text-primary-dark font-medium">Unidades necesarias:</span>
-                      <div className="flex items-center">
-                        <span className="font-bold text-primary-dark">
-                          {getRecommendedUnits('mixers', drinkRequirements.totalDrinks)}
-                        </span>
-                        {getRecommendedUnits('mixers', drinkRequirements.totalDrinks) > shoppingItems
-                          .filter(i => i.category === 'mixers')
-                          .reduce((sum, i) => sum + i.units, 0) ? (
-                          <Badge variant="error" size="sm" className="ml-2" icon={<AlertCircle size={12} />}>
-                            Falta
-                          </Badge>
-                        ) : (
-                          <Badge variant="success" size="sm" className="ml-2" icon={<CheckCircle size={12} />}>
-                            Completo
-                          </Badge>
-                        )}
-                      </div>
-                    </div>
-                  </Card.Content>
-                </Card>
-              </div>
-            </div>
-          </Card.Content>
-        </Card>
+        </div>
       </div>
       
-      <Card>
-        <Card.Header 
-          title="Detalle de Bebidas" 
-          gradient
-          icon={<Wine className="w-5 h-5 text-primary" />}
-        />
-        <Card.Content>
-          <Table
-            data={drinkItems}
-            columns={drinkColumns}
-            hoverable
-          />
-        </Card.Content>
-      </Card>
-      
-      <Card>
-        <Card.Header 
-          title="Consejos para Planificar Bebidas" 
-          icon={<TrendingUp className="w-5 h-5 text-primary" />}
-        />
-        <Card.Content>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="bg-primary-light p-5 rounded-lg">
-              <h4 className="font-bold text-primary-dark mb-3 border-b border-primary-light/50 pb-2">Opciones de Servicio</h4>
-              <ul className="space-y-3">
-                <li className="flex items-start">
-                  <div className="flex-shrink-0 w-8 h-8 bg-primary text-white rounded-full flex items-center justify-center mr-3 mt-0.5">1</div>
-                  <p className="text-slate-800">Instala una estación de bebidas autoservicio para reducir trabajo y mejorar la experiencia</p>
-                </li>
-                <li className="flex items-start">
-                  <div className="flex-shrink-0 w-8 h-8 bg-primary text-white rounded-full flex items-center justify-center mr-3 mt-0.5">2</div>
-                  <p className="text-slate-800">Prepara cócteles por lote para ahorrar tiempo y asegurar consistencia en el sabor</p>
-                </li>
-                <li className="flex items-start">
-                  <div className="flex-shrink-0 w-8 h-8 bg-primary text-white rounded-full flex items-center justify-center mr-3 mt-0.5">3</div>
-                  <p className="text-slate-800">Usa dispensadores para mezcladores comunes como gaseosas y jugos</p>
-                </li>
-                <li className="flex items-start">
-                  <div className="flex-shrink-0 w-8 h-8 bg-primary text-white rounded-full flex items-center justify-center mr-3 mt-0.5">4</div>
-                  <p className="text-slate-800">Considera contratar un bartender si el presupuesto lo permite para una experiencia premium</p>
-                </li>
-              </ul>
-            </div>
-            
-            <div className="bg-success-light p-5 rounded-lg">
-              <h4 className="font-bold text-success-dark mb-3 border-b border-success-light/50 pb-2">Ideas para Ahorrar Costos</h4>
-              <ul className="space-y-3">
-                <li className="flex items-start">
-                  <div className="flex-shrink-0 w-8 h-8 bg-success text-white rounded-full flex items-center justify-center mr-3 mt-0.5">1</div>
-                  <p className="text-slate-800">Compra licores en botellas más grandes para mejor valor por mililitro</p>
-                </li>
-                <li className="flex items-start">
-                  <div className="flex-shrink-0 w-8 h-8 bg-success text-white rounded-full flex items-center justify-center mr-3 mt-0.5">2</div>
-                  <p className="text-slate-800">Usa marcas económicas para cócteles donde el sabor se mezcla con otros ingredientes</p>
-                </li>
-                <li className="flex items-start">
-                  <div className="flex-shrink-0 w-8 h-8 bg-success text-white rounded-full flex items-center justify-center mr-3 mt-0.5">3</div>
-                  <p className="text-slate-800">Pide a los invitados que traigan sus licores preferidos (BYOB) para reducir costos</p>
-                </li>
-                <li className="flex items-start">
-                  <div className="flex-shrink-0 w-8 h-8 bg-success text-white rounded-full flex items-center justify-center mr-3 mt-0.5">4</div>
-                  <p className="text-slate-800">Compra hielo el día del evento para evitar que se derrita y ahorrar en cantidad</p>
-                </li>
-                <li className="flex items-start">
-                  <div className="flex-shrink-0 w-8 h-8 bg-success text-white rounded-full flex items-center justify-center mr-3 mt-0.5">5</div>
-                  <p className="text-slate-800">Ofrece un cóctel de la casa en lugar de un bar completo para simplificar y reducir costos</p>
-                </li>
-              </ul>
+      {/* Two Column Layout for Inventory Status and Recommended Quantities */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {/* Inventory Status */}
+        <div className="bg-white rounded-xl shadow-md overflow-hidden">
+          <div className="bg-gradient-to-r from-blue-600 to-blue-500 px-4 py-3 text-white">
+            <div className="flex items-center">
+              <CheckCircle className="w-5 h-5 mr-2" />
+              <h3 className="font-medium">Estado del Inventario</h3>
             </div>
           </div>
-        </Card.Content>
-      </Card>
+          
+          <div className="p-4 space-y-4">
+            {inventoryStatus.map((item, index) => (
+              <div key={index} className="space-y-2">
+                <div className="flex justify-between items-center">
+                  <div className="flex items-center">
+                    <div className={`w-8 h-8 rounded-full mr-3 flex items-center justify-center ${getCategoryColor(item.category)}`}>
+                      {item.icon}
+                    </div>
+                    <span className="font-medium">{item.label}</span>
+                  </div>
+                  <div className="text-sm">
+                    <span className="font-medium">{item.current}</span>/{item.required} porciones
+                  </div>
+                </div>
+                
+                {/* Progress bar */}
+                <div className="w-full bg-gray-200 rounded-full h-2.5">
+                  <div 
+                    className={`h-2.5 rounded-full ${item.isEnough ? 'bg-green-500' : 'bg-red-500'}`}
+                    style={{ width: `${Math.min(100, (item.current / item.required) * 100)}%` }}
+                  ></div>
+                </div>
+                
+                {/* Status indicator */}
+                <div className="flex justify-end">
+                  {item.isEnough ? (
+                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                      <CheckCircle className="w-3 h-3 mr-1" /> Suficiente
+                    </span>
+                  ) : (
+                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
+                      <AlertCircle className="w-3 h-3 mr-1" /> Necesita {item.required - item.current} más
+                    </span>
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+        
+        {/* Recommended Quantities */}
+        <div className="bg-white rounded-xl shadow-md overflow-hidden">
+          <div className="bg-gradient-to-r from-blue-600 to-blue-500 px-4 py-3 text-white">
+            <div className="flex items-center">
+              <TrendingUp className="w-5 h-5 mr-2" />
+              <h3 className="font-medium">Cantidades Recomendadas</h3>
+            </div>
+          </div>
+          
+          <div className="p-4">
+            <div className="grid grid-cols-2 gap-4">
+              {/* Liquors Recommendation */}
+              <div className="bg-blue-50 rounded-lg p-4 border border-blue-100">
+                <div className="flex items-center mb-2">
+                  <div className="w-8 h-8 rounded-full mr-3 flex items-center justify-center bg-blue-500 text-white">
+                    <Wine size={16} />
+                  </div>
+                  <span className="font-medium">Licores</span>
+                </div>
+                
+                <div className="text-center mt-3">
+                  <div className="text-3xl font-bold text-blue-700">
+                    {getRecommendedUnits('spirits', drinkRequirements.totalDrinks)}
+                  </div>
+                  <div className="text-sm text-gray-600">unidades</div>
+                </div>
+                
+                <div className="mt-3 flex justify-center">
+                  <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                    getRecommendedUnits('spirits', drinkRequirements.totalDrinks) > shoppingItems
+                      .filter(i => i.category === 'spirits')
+                      .reduce((sum, i) => sum + i.units, 0)
+                      ? 'bg-red-100 text-red-800'
+                      : 'bg-green-100 text-green-800'
+                  }`}>
+                    {getRecommendedUnits('spirits', drinkRequirements.totalDrinks) > shoppingItems
+                      .filter(i => i.category === 'spirits')
+                      .reduce((sum, i) => sum + i.units, 0)
+                      ? 'Necesita más'
+                      : 'Completo'}
+                  </span>
+                </div>
+              </div>
+              
+              {/* Mixers Recommendation */}
+              <div className="bg-blue-50 rounded-lg p-4 border border-blue-100">
+                <div className="flex items-center mb-2">
+                  <div className="w-8 h-8 rounded-full mr-3 flex items-center justify-center bg-teal-500 text-white">
+                    <Droplet size={16} />
+                  </div>
+                  <span className="font-medium">Mezcladores</span>
+                </div>
+                
+                <div className="text-center mt-3">
+                  <div className="text-3xl font-bold text-blue-700">
+                    {getRecommendedUnits('mixers', drinkRequirements.totalDrinks)}
+                  </div>
+                  <div className="text-sm text-gray-600">unidades</div>
+                </div>
+                
+                <div className="mt-3 flex justify-center">
+                  <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                    getRecommendedUnits('mixers', drinkRequirements.totalDrinks) > shoppingItems
+                      .filter(i => i.category === 'mixers')
+                      .reduce((sum, i) => sum + i.units, 0)
+                      ? 'bg-red-100 text-red-800'
+                      : 'bg-green-100 text-green-800'
+                  }`}>
+                    {getRecommendedUnits('mixers', drinkRequirements.totalDrinks) > shoppingItems
+                      .filter(i => i.category === 'mixers')
+                      .reduce((sum, i) => sum + i.units, 0)
+                      ? 'Necesita más'
+                      : 'Completo'}
+                  </span>
+                </div>
+              </div>
+            </div>
+            
+            <div className="bg-blue-50 rounded-lg p-4 mt-4 border border-blue-100">
+              <div className="flex items-center">
+                <Info className="w-5 h-5 text-blue-500 mr-2" />
+                <span className="text-sm text-blue-800">
+                  Las cantidades recomendadas son calculadas en base al número de asistentes y bebidas por persona.
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      {/* Drinks Detail Table */}
+      <div className="bg-white rounded-xl shadow-md overflow-hidden">
+        <div className="bg-gradient-to-r from-blue-600 to-blue-500 px-4 py-3 text-white">
+          <div className="flex items-center">
+            <List className="w-5 h-5 mr-2" />
+            <h3 className="font-medium">Detalle de Bebidas</h3>
+          </div>
+        </div>
+        
+        <div className="overflow-x-auto">
+          <table className="min-w-full divide-y divide-gray-200">
+            <thead className="bg-gray-50">
+              <tr>
+                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Artículo
+                </th>
+                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Tamaño
+                </th>
+                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Unidades
+                </th>
+                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Porciones
+                </th>
+                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Precio
+                </th>
+                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Costo Total
+                </th>
+              </tr>
+            </thead>
+            <tbody className="bg-white divide-y divide-gray-200">
+              {drinkItems.map((item) => (
+                <tr key={item.id} className="hover:bg-gray-50">
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <div className="flex items-center">
+                      {getCategoryIcon(item.category)}
+                      <span className="ml-2 font-medium text-gray-900">{item.name}</span>
+                    </div>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    {item.size} {item.sizeUnit}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    {item.units}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    {item.servings * item.units}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    S/ {item.cost.toFixed(2)}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap font-medium text-gray-900">
+                    S/ {(item.cost * item.units).toFixed(2)}
+                  </td>
+                </tr>
+              ))}
+              
+              {drinkItems.length === 0 && (
+                <tr>
+                  <td colSpan={6} className="px-6 py-10 text-center text-gray-500">
+                    <Package className="mx-auto h-12 w-12 text-gray-400 mb-2" />
+                    <p className="text-lg font-medium text-gray-900 mb-1">No hay bebidas</p>
+                    <p className="text-sm">
+                      Agrega bebidas usando la pestaña "Compras"
+                    </p>
+                  </td>
+                </tr>
+              )}
+            </tbody>
+            {/* Total Row */}
+            <tfoot>
+              <tr className="bg-gray-50 font-medium">
+                <td colSpan={5} className="px-6 py-4 text-right text-gray-700">Total:</td>
+                <td className="px-6 py-4 text-gray-900 font-bold">
+                  S/ {drinkRequirements.totalCost.toFixed(2)}
+                </td>
+              </tr>
+            </tfoot>
+          </table>
+        </div>
+      </div>
+      
+      {/* Planning Tips */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {/* Service Options */}
+        <div className="bg-white rounded-xl shadow-md overflow-hidden">
+          <div className="bg-gradient-to-r from-blue-600 to-blue-500 px-4 py-3 text-white">
+            <h3 className="font-medium">Opciones de Servicio</h3>
+          </div>
+          
+          <div className="p-4">
+            <div className="space-y-4">
+              {serviceTips.map((tip, index) => (
+                <div key={index} className="flex">
+                  <div className="flex-shrink-0 flex items-start mt-0.5">
+                    <div className="flex-shrink-0 w-6 h-6 bg-blue-500 text-white rounded-full flex items-center justify-center mr-3">
+                      {index + 1}
+                    </div>
+                  </div>
+                  <p className="text-sm text-gray-700">{tip}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+        
+        {/* Cost Saving Tips */}
+        <div className="bg-white rounded-xl shadow-md overflow-hidden">
+          <div className="bg-gradient-to-r from-green-600 to-green-500 px-4 py-3 text-white">
+            <h3 className="font-medium">Ideas para Ahorrar Costos</h3>
+          </div>
+          
+          <div className="p-4">
+            <div className="space-y-4">
+              {costSavingTips.map((tip, index) => (
+                <div key={index} className="flex">
+                  <div className="flex-shrink-0 flex items-start mt-0.5">
+                    <div className="flex-shrink-0 w-6 h-6 bg-green-500 text-white rounded-full flex items-center justify-center mr-3">
+                      {index + 1}
+                    </div>
+                  </div>
+                  <p className="text-sm text-gray-700">{tip}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   );
 };
