@@ -9,7 +9,7 @@ interface ThemeContextType {
   getGradient: (type?: ThemeType) => string;
   getGradientText: (type?: ThemeType) => string;
   getStatusBadge: (status: StatusType) => string;
-  getFocusRing: (color?: ThemeType) => string;
+  getFocusRing: () => string;
 }
 
 // Create theme context
@@ -44,7 +44,7 @@ const theme: ThemeContextType = {
   },
   
   // Focus utilities
-  getFocusRing: (color = 'primary') => {
+  getFocusRing: () => {
     return 'focus-ring';
   }
 };

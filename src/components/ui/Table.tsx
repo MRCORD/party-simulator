@@ -6,13 +6,15 @@ import { useTheme } from './ThemeProvider';
 interface TableColumn<T> {
   accessor: keyof T;
   Header: ReactNode;
-  Cell?: (props: { value: any; row: T }) => ReactNode;
+  Cell?: (props: { value: T[keyof T]; row: T }) => ReactNode;
   sortable?: boolean;
   sortFn?: (a: T, b: T) => number;
   width?: string;
 }
 
-interface TableProps<T extends Record<string, any>> extends React.HTMLAttributes<HTMLTableElement> {
+type RenderableValue = string | number | boolean | null | undefined;
+
+interface TableProps<T extends Record<string, RenderableValue>> extends React.HTMLAttributes<HTMLTableElement> {
   data: T[];
   columns: TableColumn<T>[];
   striped?: boolean;
@@ -31,7 +33,7 @@ interface SortConfig {
   direction: 'asc' | 'desc';
 }
 
-function Table<T extends Record<string, any>>({
+function Table<T extends Record<string, RenderableValue>>({
   data = [],
   columns = [],
   striped = false,
@@ -73,6 +75,12 @@ function Table<T extends Record<string, any>>({
       const aValue = a[sortConfig.key as keyof T];
       const bValue = b[sortConfig.key as keyof T];
       
+      // Handle null/undefined values
+      if (aValue == null && bValue == null) return 0;
+      if (aValue == null) return sortConfig.direction === 'asc' ? 1 : -1;
+      if (bValue == null) return sortConfig.direction === 'asc' ? -1 : 1;
+      
+      // Compare non-null values
       if (aValue < bValue) {
         return sortConfig.direction === 'asc' ? -1 : 1;
       }

@@ -1,7 +1,6 @@
 "use client";
 import React, { ReactNode } from 'react';
 import { useTheme } from './ThemeProvider';
-import Card from './Card';
 import { TrendingUp, TrendingDown, CheckCircle, AlertCircle, Clock } from 'lucide-react';
 
 type StatusType = 'active' | 'inactive' | 'pending' | 'error';
