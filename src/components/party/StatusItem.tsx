@@ -15,16 +15,19 @@ interface StatusItemProps {
 
 const StatusItem: React.FC<StatusItemProps> = ({ title, icon, isEnough, currentAmount, requiredAmount }) => {
   const theme = useTheme();
+  const statusType = isEnough ? 'active' : 'error';
   
   return (
     <div className="flex justify-between items-center p-1 rounded">
       <div className="flex items-center">
-        {icon && <span className="mr-2">{icon}</span>}
+        {icon && <span className={`mr-2 ${isEnough ? 'text-success-500' : 'text-error-500'}`}>{icon}</span>}
         <span className="font-medium">{title}:</span>
       </div>
       
       <div className="flex items-center">
-        <span className="mr-2">{currentAmount}/{requiredAmount} porciones</span>
+        <span className={`mr-2 ${theme.getStatusBadge(statusType)} px-2 py-0.5 rounded-md text-sm`}>
+          {currentAmount}/{requiredAmount} porciones
+        </span>
         {isEnough ? (
           <Badge 
             variant="success" 

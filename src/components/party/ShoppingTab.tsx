@@ -6,6 +6,10 @@ import {
   Save, Package, ChevronDown, X,
   Wine, Droplets, Snowflake, Beef, Salad, Utensils, DollarSign
 } from 'lucide-react';
+import Badge from '@/components/ui/Badge';
+import Button from '@/components/ui/Button';
+import Card from '@/components/ui/Card';
+import { useTheme } from '@/components/ui/ThemeProvider';
 
 // Import shared types
 import { ShoppingItem, Category } from './types';

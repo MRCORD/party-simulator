@@ -2,6 +2,7 @@ import React from 'react';
 import Card from '@/components/ui/Card';
 import Table from '@/components/ui/Table';
 import Badge from '@/components/ui/Badge';
+import Button from '@/components/ui/Button';
 import { useTheme } from '@/components/ui/ThemeProvider';
 import { 
   FileBarChart, TrendingUp, DollarSign, Users, 
@@ -813,14 +814,22 @@ const ReportsTab: React.FC<ReportsTabProps> = ({
       <div className="bg-white rounded-lg shadow p-4 flex justify-between items-center">
         <span className="text-sm text-gray-600">Exportar informe completo para compartir</span>
         <div className="flex space-x-3">
-          <button className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 flex items-center">
+          <Button
+            variant="gradient"
+            color="primary"
+            size="md"
+          >
             <FileText className="w-4 h-4 mr-2" />
             PDF
-          </button>
-          <button className="px-4 py-2 bg-blue-100 text-blue-800 rounded-lg hover:bg-blue-200 flex items-center">
+          </Button>
+          <Button
+            variant="ghost"
+            color="primary"
+            size="md"
+          >
             <ChevronDown className="w-4 h-4 mr-2" />
             Excel
-          </button>
+          </Button>
         </div>
       </div>
     </div>

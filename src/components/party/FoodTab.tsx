@@ -6,6 +6,11 @@ import {
   CheckCircle, AlertCircle, TrendingUp, 
   Clipboard, List, UtensilsCrossed, Package
 } from 'lucide-react';
+import Badge from '@/components/ui/Badge';
+import Button from '@/components/ui/Button';
+import Card from '@/components/ui/Card';
+import ProgressBar from '@/components/ui/ProgressBar';
+import { useTheme } from '@/components/ui/ThemeProvider';
 
 // Import shared types
 import { ShoppingItem, FoodRequirements } from './types';
@@ -27,6 +32,7 @@ const FoodTab: React.FC<FoodTabProps> = ({
   getCategoryServings,
   getRecommendedUnits
 }) => {
+  const theme = useTheme();
   const foodRequirements = calculateFoodRequirements();
   
   // Filter food-related items
@@ -172,23 +178,23 @@ const FoodTab: React.FC<FoodTabProps> = ({
                 </div>
                 
                 {/* Progress bar */}
-                <div className="w-full bg-gray-200 rounded-full h-2.5">
-                  <div 
-                    className={`h-2.5 rounded-full ${item.isEnough ? 'bg-green-500' : 'bg-red-500'}`}
-                    style={{ width: `${Math.min(100, (item.current / item.required) * 100)}%` }}
-                  ></div>
-                </div>
+                <ProgressBar
+                  value={Math.min(100, (item.current / item.required) * 100)}
+                  max={100}
+                  color={item.isEnough ? "success" : "error"}
+                  showLabel={false}
+                />
                 
                 {/* Status indicator */}
                 <div className="flex justify-end">
                   {item.isEnough ? (
-                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                      <CheckCircle className="w-3 h-3 mr-1" /> Suficiente
-                    </span>
+                    <Badge variant="success" size="sm" icon={<CheckCircle className="w-3 h-3 mr-1" />}>
+                      Suficiente
+                    </Badge>
                   ) : (
-                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
-                      <AlertCircle className="w-3 h-3 mr-1" /> Necesita {item.required - item.current} más
-                    </span>
+                    <Badge variant="error" size="sm" icon={<AlertCircle className="w-3 h-3 mr-1" />}>
+                      Necesita {item.required - item.current} más
+                    </Badge>
                   )}
                 </div>
               </div>

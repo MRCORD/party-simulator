@@ -8,6 +8,7 @@ import {
   XAxis, YAxis, CartesianGrid, ResponsiveContainer, 
   Legend, LabelList, Sector
 } from 'recharts';
+import Button from '@/components/ui/Button';
 
 interface CostBreakdownItem {
   name: string;
@@ -159,24 +160,30 @@ const OverviewTab: React.FC<OverviewTabProps> = ({
               <Wine className="w-4 h-4 mr-1 text-blue-600" /> Bebidas por Persona
             </label>
             <div className="flex rounded shadow-sm">
-              <button 
-                className="inline-flex items-center rounded-l border border-gray-300 bg-gray-50 px-3 py-2 text-sm text-primary hover:bg-gray-100"
+              <Button
+                variant="outline"
+                color="primary"
+                size="sm"
                 onClick={() => setDrinksPerPerson(Math.max(1, drinksPerPerson - 1))}
+                className="rounded-r-none"
               >
                 -
-              </button>
+              </Button>
               <input
                 type="text"
                 className="block w-full min-w-0 flex-1 text-center border-y border-gray-300 py-2 text-gray-900 focus:border-blue-500 focus:outline-none focus:ring-blue-500"
                 value={drinksPerPerson}
                 readOnly
               />
-              <button 
-                className="inline-flex items-center rounded-r border border-gray-300 bg-gray-50 px-3 py-2 text-sm text-primary hover:bg-gray-100"
+              <Button
+                variant="outline"
+                color="primary"
+                size="sm"
                 onClick={() => setDrinksPerPerson(drinksPerPerson + 1)}
+                className="rounded-l-none"
               >
                 +
-              </button>
+              </Button>
             </div>
           </div>
           
@@ -185,13 +192,15 @@ const OverviewTab: React.FC<OverviewTabProps> = ({
               <Utensils className="w-4 h-4 mr-1 text-blue-600" /> Porciones/Persona
             </label>
             <div className="flex rounded shadow-sm">
-              <button 
-                className="inline-flex items-center rounded-l border border-gray-300 bg-gray-50 px-3 py-2 text-sm text-primary hover:bg-gray-100"
+              <Button
+                variant="outline"
+                color="primary"
+                size="sm"
                 onClick={() => setFoodServingsPerPerson(Math.max(1, foodServingsPerPerson - 1))}
-                aria-label="Decrementar porciones"
+                className="rounded-r-none"
               >
                 -
-              </button>
+              </Button>
               <input
                 type="text"
                 className="block w-full min-w-0 flex-1 text-center border-y border-gray-300 py-2 text-gray-900 focus:border-blue-500 focus:outline-none focus:ring-blue-500"
@@ -199,13 +208,15 @@ const OverviewTab: React.FC<OverviewTabProps> = ({
                 readOnly
                 aria-label="Porciones por persona"
               />
-              <button 
-                className="inline-flex items-center rounded-r border border-gray-300 bg-gray-50 px-3 py-2 text-sm text-primary hover:bg-gray-100"
+              <Button
+                variant="outline"
+                color="primary"
+                size="sm"
                 onClick={() => setFoodServingsPerPerson(foodServingsPerPerson + 1)}
-                aria-label="Incrementar porciones"
+                className="rounded-l-none"
               >
                 +
-              </button>
+              </Button>
             </div>
           </div>
         </div>

@@ -27,15 +27,16 @@ const StatusBar: React.FC<StatusBarProps> = ({
   
   // Map isEnough to appropriate theme color
   const statusColor = isEnough ? 'success' : 'error';
+  const statusType = isEnough ? 'active' : 'error';
   
   return (
     <div className="mb-4">
       <div className="flex justify-between mb-1">
         <div className="flex items-center">
-          {icon && <span className="mr-2">{icon}</span>}
+          {icon && <span className={`mr-2 ${isEnough ? 'text-success-500' : 'text-error-500'}`}>{icon}</span>}
           <span className="text-sm font-medium">{title}</span>
         </div>
-        <span className="text-sm font-medium">
+        <span className={`text-sm font-medium ${theme.getStatusBadge(statusType)}`}>
           {currentAmount}/{requiredAmount} porciones
         </span>
       </div>

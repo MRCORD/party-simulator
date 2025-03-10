@@ -5,6 +5,10 @@ import {
   Building2, MapPin, DollarSign, Check, 
   Clock, Calendar, Package, Users, Info
 } from 'lucide-react';
+import Badge from '@/components/ui/Badge';
+import Button from '@/components/ui/Button';
+import Card from '@/components/ui/Card';
+import { useTheme } from '@/components/ui/ThemeProvider';
 
 interface VenueTabProps {
   attendees: number;
@@ -21,6 +25,8 @@ const VenueTab: FC<VenueTabProps> = ({
   miscCosts,
   setMiscCosts
 }) => {
+  const theme = useTheme();
+  
   // Calculate total cost
   const totalCost = venueCost + miscCosts;
   
@@ -79,24 +85,24 @@ const VenueTab: FC<VenueTabProps> = ({
             <div className="bg-white/20 backdrop-blur-sm rounded-lg p-3 text-center">
               <div className="text-xs uppercase tracking-wide mb-1">Costo del Local</div>
               <div className="text-2xl font-bold flex justify-center items-center">
-                <Building2 size={18} className="mr-2 opacity-70" />
+                <DollarSign size={18} className="mr-2 opacity-70" />
                 S/ {venueCost.toFixed(2)}
               </div>
             </div>
             
             <div className="bg-white/20 backdrop-blur-sm rounded-lg p-3 text-center">
-              <div className="text-xs uppercase tracking-wide mb-1">Misceláneos</div>
+              <div className="text-xs uppercase tracking-wide mb-1">Costos Misceláneos</div>
               <div className="text-2xl font-bold flex justify-center items-center">
-                <Package size={18} className="mr-2 opacity-70" />
+                <DollarSign size={18} className="mr-2 opacity-70" />
                 S/ {miscCosts.toFixed(2)}
               </div>
             </div>
             
             <div className="bg-white/20 backdrop-blur-sm rounded-lg p-3 text-center">
-              <div className="text-xs uppercase tracking-wide mb-1">Asistentes</div>
+              <div className="text-xs uppercase tracking-wide mb-1">Costo Total</div>
               <div className="text-2xl font-bold flex justify-center items-center">
-                <Users size={18} className="mr-2 opacity-70" />
-                {attendees}
+                <DollarSign size={18} className="mr-2 opacity-70" />
+                S/ {totalCost.toFixed(2)}
               </div>
             </div>
           </div>
@@ -119,35 +125,43 @@ const VenueTab: FC<VenueTabProps> = ({
         <div className="p-5">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
-              <label className="block text-sm font-medium mb-1">Costo del Local (S/)</label>
-              <div className="relative">
-                <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500">S/</span>
-                <input
-                  type="number"
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm py-2 pl-10 pr-3 focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+              <label className="block text-sm font-medium text-gray-700 mb-2">Costo del Local</label>
+              <div className="relative mt-1 rounded-md shadow-sm">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <span className="text-gray-500 sm:text-sm">S/</span>
+                </div>
+                <input 
+                  type="number" 
+                  className="focus:ring-indigo-500 focus:border-indigo-500 block w-full pl-10 pr-12 sm:text-sm border-gray-300 rounded-md"
+                  placeholder="0.00"
                   value={venueCost}
                   onChange={(e) => setVenueCost(parseFloat(e.target.value) || 0)}
-                  min="0"
-                  step="1"
                 />
               </div>
-              <p className="mt-1 text-xs text-gray-500">Incluye todos los costos de alquiler del local, equipos y depósitos de seguridad</p>
+              
+              <p className="mt-2 text-sm text-gray-500">
+                Este es el costo base del alquiler del local.
+              </p>
             </div>
             
             <div>
-              <label className="block text-sm font-medium mb-1">Costos Misceláneos (S/)</label>
-              <div className="relative">
-                <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500">S/</span>
-                <input
-                  type="number"
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm py-2 pl-10 pr-3 focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+              <label className="block text-sm font-medium text-gray-700 mb-2">Costos Misceláneos</label>
+              <div className="relative mt-1 rounded-md shadow-sm">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <span className="text-gray-500 sm:text-sm">S/</span>
+                </div>
+                <input 
+                  type="number" 
+                  className="focus:ring-indigo-500 focus:border-indigo-500 block w-full pl-10 pr-12 sm:text-sm border-gray-300 rounded-md"
+                  placeholder="0.00"
                   value={miscCosts}
                   onChange={(e) => setMiscCosts(parseFloat(e.target.value) || 0)}
-                  min="0"
-                  step="1"
                 />
               </div>
-              <p className="mt-1 text-xs text-gray-500">Incluye decoraciones, música, transporte, limpieza, etc.</p>
+              
+              <p className="mt-2 text-sm text-gray-500">
+                Costos adicionales como depósitos, limpieza, seguridad, etc.
+              </p>
             </div>
           </div>
         </div>
@@ -165,34 +179,47 @@ const VenueTab: FC<VenueTabProps> = ({
         <div className="p-5">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             {venueTypes.map((venue, index) => (
-              <div key={index} className="border border-gray-200 rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow">
-                <div className="bg-indigo-50 px-4 py-3 border-b border-indigo-100">
-                  <h4 className="font-medium text-indigo-800">{venue.name}</h4>
+              <div key={index} className="bg-gray-50 rounded-lg border border-gray-100 overflow-hidden">
+                <div className="bg-indigo-500 px-4 py-2 text-white">
+                  <div className="font-medium">{venue.name}</div>
                 </div>
-                <div className="p-4">
-                  <div className="flex justify-between text-sm mb-1">
-                    <span className="text-gray-600">Costo aproximado:</span>
+                
+                <div className="p-4 space-y-3">
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm text-gray-500">Costo</span>
                     <span className="font-medium">S/ {venue.cost}</span>
                   </div>
-                  <div className="flex justify-between text-sm mb-1">
-                    <span className="text-gray-600">Capacidad:</span>
+                  
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm text-gray-500">Capacidad</span>
                     <span className="font-medium">{venue.capacity} personas</span>
                   </div>
-                  <div className="flex justify-between text-sm mb-3">
-                    <span className="text-gray-600">Duración típica:</span>
+                  
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm text-gray-500">Duración</span>
                     <span className="font-medium">{venue.hours} horas</span>
                   </div>
                   
-                  <div className="mt-3">
-                    <span className="text-xs font-medium text-gray-600 block mb-2">Características comunes:</span>
+                  <div>
+                    <span className="text-sm text-gray-500 block mb-1">Características</span>
                     <div className="flex flex-wrap gap-1">
                       {venue.features.map((feature, i) => (
-                        <span key={i} className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-indigo-100 text-indigo-800">
+                        <Badge key={i} size="sm" variant="primary">
                           {feature}
-                        </span>
+                        </Badge>
                       ))}
                     </div>
                   </div>
+                  
+                  <Button
+                    variant="outline" 
+                    color="primary" 
+                    size="sm"
+                    className="w-full mt-2"
+                    onClick={() => setVenueCost(venue.cost)}
+                  >
+                    Usar este costo
+                  </Button>
                 </div>
               </div>
             ))}
@@ -213,7 +240,7 @@ const VenueTab: FC<VenueTabProps> = ({
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="space-y-3">
               <h4 className="font-medium flex items-center text-indigo-800">
-                <Clock className="w-4 h-4 mr-2 text-indigo-600" />
+                <Building2 className="w-4 h-4 mr-2 text-indigo-600" />
                 Antes de Reservar
               </h4>
               <ul className="space-y-2 text-sm">
@@ -260,18 +287,16 @@ const VenueTab: FC<VenueTabProps> = ({
         <div className="p-5">
           <div className="bg-indigo-50 rounded-lg p-4 mb-4 flex items-start">
             <Info className="w-5 h-5 text-indigo-600 mr-3 flex-shrink-0 mt-0.5" />
-            <p className="text-sm text-indigo-800">
-              No olvides incluir estos artículos en tu planificación. Algunos pueden estar disponibles en el local, pero es mejor verificar con anticipación.
+            <p className="text-sm text-indigo-700">
+              No olvides considerar estos artículos adicionales que pueden ser necesarios para el evento. Algunos locales podrían proporcionar algunos de estos elementos, confirma con anticipación.
             </p>
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-2">
             {miscItems.map((item, index) => (
               <div key={index} className="flex items-center py-2 border-b border-gray-100">
-                <div className="flex-shrink-0 h-5 w-5 rounded-full bg-indigo-100 flex items-center justify-center mr-3">
-                  <span className="h-2 w-2 rounded-full bg-indigo-600"></span>
-                </div>
-                <span className="text-sm text-gray-700">{item}</span>
+                <Check className="w-4 h-4 text-indigo-500 mr-2" />
+                <span className="text-sm">{item}</span>
               </div>
             ))}
           </div>
