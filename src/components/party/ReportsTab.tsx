@@ -1,5 +1,4 @@
 "use client";
-
 import React from 'react';
 import Card from '@/components/ui/Card';
 import Table from '@/components/ui/Table';
@@ -7,7 +6,60 @@ import Badge from '@/components/ui/Badge';
 import { useTheme } from '@/components/ui/ThemeProvider';
 import { FileBarChart, TrendingUp, DollarSign, Users } from 'lucide-react';
 
-const ReportsTab = ({
+interface ShoppingItem {
+  category: 'spirits' | 'mixers' | 'ice' | 'supplies' | 'meat' | 'sides' | 'condiments' | 'other';
+  cost: number;
+  units: number;
+}
+
+interface DrinkRequirements {
+  totalCost: number;
+}
+
+interface FoodRequirements {
+  totalCost: number;
+}
+
+interface FinancialData {
+  category: string;
+  cost: number;
+  perPerson: number;
+  percentage: number | string;
+}
+
+interface CategoryData {
+  category: string;
+  items: number;
+  cost: number;
+}
+
+interface ReportsTabProps {
+  venueCost: number;
+  attendees: number;
+  ticketPrice: number;
+  totalCosts: number;
+  totalRevenue: number;
+  netProfit: number;
+  perPersonCost: number;
+  breakEvenAttendees: number;
+  recommendedTicketPrice: number;
+  isViable: boolean;
+  calculateDrinkRequirements: () => DrinkRequirements;
+  calculateFoodRequirements: () => FoodRequirements;
+  drinksPerPerson: number;
+  foodServingsPerPerson: number;
+  shoppingItems: ShoppingItem[];
+  getCategoryTotal: (category: string) => number;
+}
+
+interface TableColumn<T> {
+  accessor: keyof T;
+  Header: string;
+  width?: string;
+  Cell?: ({ value }: { value: any }) => string;
+}
+
+const ReportsTab: React.FC<ReportsTabProps> = ({
   venueCost,
   attendees,
   ticketPrice,
@@ -28,7 +80,7 @@ const ReportsTab = ({
   const theme = useTheme();
   
   // Define columns for the first table
-  const financialColumns = [
+  const financialColumns: TableColumn<FinancialData>[] = [
     { 
       accessor: 'category', 
       Header: 'Categoría',
@@ -47,12 +99,12 @@ const ReportsTab = ({
     { 
       accessor: 'percentage', 
       Header: '% del Total',
-      Cell: ({ value }) => `${value.toFixed(1)}%`
+      Cell: ({ value }) => typeof value === 'number' ? `${value.toFixed(1)}%` : value
     }
   ];
   
   // Financial summary data
-  const financialData = [
+  const financialData: FinancialData[] = [
     {
       category: 'Local',
       cost: venueCost,
@@ -98,7 +150,7 @@ const ReportsTab = ({
   ];
   
   // Define columns for the beverage table
-  const beverageColumns = [
+  const beverageColumns: TableColumn<CategoryData>[] = [
     { accessor: 'category', Header: 'Categoría' },
     { accessor: 'items', Header: 'Artículos' },
     { 
@@ -109,7 +161,7 @@ const ReportsTab = ({
   ];
   
   // Beverage data
-  const beverageData = [
+  const beverageData: CategoryData[] = [
     {
       category: 'Licores',
       items: shoppingItems.filter(i => i.category === 'spirits').length,
@@ -133,7 +185,7 @@ const ReportsTab = ({
   ];
   
   // Define columns for the food table
-  const foodColumns = [
+  const foodColumns: TableColumn<CategoryData>[] = [
     { accessor: 'category', Header: 'Categoría' },
     { accessor: 'items', Header: 'Artículos' },
     { 
@@ -144,7 +196,7 @@ const ReportsTab = ({
   ];
   
   // Food data
-  const foodData = [
+  const foodData: CategoryData[] = [
     {
       category: 'Carnes',
       items: shoppingItems.filter(i => i.category === 'meat').length,

@@ -12,6 +12,14 @@ import Tabs from '@/components/ui/Tabs';
 import PageHeader from '@/components/ui/PageHeader';
 import { useTheme } from '@/components/ui/ThemeProvider';
 
+// Import shared types
+import { 
+  ShoppingItem,
+  CostBreakdownItem,
+  FinancialOverviewItem,
+  Category
+} from './types';
+
 // Import tab components
 import OverviewTab from './OverviewTab';
 import ShoppingTab from './ShoppingTab';
@@ -25,33 +33,34 @@ export default function PartySimulator() {
   const theme = useTheme();
   
   // Tab state
-  const [activeTab, setActiveTab] = useState('overview');
+  const [activeTab, setActiveTab] = useState<'overview'|'shopping'|'drinks'|'food'|'venue'|'reports'>('overview');
   
   // JSON data for shopping items
-  const [shoppingItems, setShoppingItems] = useState([
+  const [shoppingItems, setShoppingItems] = useState<ShoppingItem[]>([
     // Default items for demonstration
-    { id: 1, name: 'Ron Cartavio', category: 'spirits', cost: 45, units: 1, size: '750', sizeUnit: 'ml', servings: 15 },
-    { id: 2, name: 'Coca-Cola', category: 'mixers', cost: 30, units: 6, size: '1.5', sizeUnit: 'L', servings: 30 },
-    { id: 3, name: 'Hielo', category: 'ice', cost: 12, units: 1, size: '5', sizeUnit: 'kg', servings: 25 },
-    { id: 4, name: 'Pollo', category: 'meat', cost: 180, units: 1, size: '10', sizeUnit: 'kg', servings: 20 },
-    { id: 5, name: 'Ensalada de Papa', category: 'sides', cost: 120, units: 1, size: '5', sizeUnit: 'kg', servings: 25 },
-    { id: 6, name: 'Pack de Salsas', category: 'condiments', cost: 60, units: 1, size: '1', sizeUnit: 'pack', servings: 30 },
-    { id: 7, name: 'Vasos Rojos', category: 'supplies', cost: 15, units: 100, size: '16', sizeUnit: 'oz', servings: 100 },
+    { id: '1', name: 'Ron Cartavio', category: 'spirits', cost: 45, units: 1, size: 750, sizeUnit: 'ml', servings: 15, totalCost: 45 },
+    { id: '2', name: 'Coca-Cola', category: 'mixers', cost: 30, units: 6, size: 1.5, sizeUnit: 'L', servings: 30, totalCost: 180 },
+    { id: '3', name: 'Hielo', category: 'ice', cost: 12, units: 1, size: 5, sizeUnit: 'kg', servings: 25, totalCost: 12 },
+    { id: '4', name: 'Pollo', category: 'meat', cost: 180, units: 1, size: 10, sizeUnit: 'kg', servings: 20, totalCost: 180 },
+    { id: '5', name: 'Ensalada de Papa', category: 'sides', cost: 120, units: 1, size: 5, sizeUnit: 'kg', servings: 25, totalCost: 120 },
+    { id: '6', name: 'Pack de Salsas', category: 'condiments', cost: 60, units: 1, size: 1, sizeUnit: 'pack', servings: 30, totalCost: 60 },
+    { id: '7', name: 'Vasos Rojos', category: 'supplies', cost: 15, units: 100, size: 16, sizeUnit: 'oz', servings: 100, totalCost: 1500 },
   ]);
   
-  // New item form
-  const [newItem, setNewItem] = useState({
+  // New item form - using Omit to exclude 'id' property which is generated
+  const [newItem, setNewItem] = useState<Omit<ShoppingItem, 'id'>>({
     name: '',
     category: 'spirits',
     cost: 0,
     units: 1,
-    size: '0',
+    size: 0,
     sizeUnit: 'ml',
-    servings: 0
+    servings: 0,
+    totalCost: 0
   });
   
   // Editing state
-  const [editingItem, setEditingItem] = useState(null);
+  const [editingItem, setEditingItem] = useState<ShoppingItem | null>(null);
   
   // Basic parameters
   const [attendees, setAttendees] = useState(40);
@@ -72,7 +81,7 @@ export default function PartySimulator() {
   
   // Function to calculate costs by category
   const calculateCostsByCategory = () => {
-    const categoryCosts = {};
+    const categoryCosts: { [key: string]: number } = {};
     
     shoppingItems.forEach(item => {
       if (!categoryCosts[item.category]) {
@@ -85,21 +94,21 @@ export default function PartySimulator() {
   };
   
   // Function to get total costs for a category
-  const getCategoryTotal = (category) => {
+  const getCategoryTotal = (category: string) => {
     return shoppingItems
       .filter(item => item.category === category)
       .reduce((sum, item) => sum + (item.cost * item.units), 0);
   };
   
   // Function to get total servings for a category
-  const getCategoryServings = (category) => {
+  const getCategoryServings = (category: string) => {
     return shoppingItems
       .filter(item => item.category === category)
       .reduce((sum, item) => sum + (item.servings * item.units), 0);
   };
   
   // Function to calculate if we have enough servings
-  const hasEnoughServings = (category, requiredServings) => {
+  const hasEnoughServings = (category: string, requiredServings: number) => {
     const totalServings = getCategoryServings(category);
     return totalServings >= requiredServings;
   };
@@ -149,23 +158,25 @@ export default function PartySimulator() {
   // Function to add a new item
   const addItem = () => {
     if (newItem.name && newItem.cost > 0) {
-      const newId = shoppingItems.length > 0 ? Math.max(...shoppingItems.map(item => item.id)) + 1 : 1;
-      setShoppingItems([...shoppingItems, { ...newItem, id: newId }]);
+      const newId = shoppingItems.length > 0 ? (Math.max(...shoppingItems.map(item => parseInt(item.id))) + 1).toString() : '1';
+      const totalCost = newItem.cost * newItem.units;
+      setShoppingItems([...shoppingItems, { ...newItem, id: newId, totalCost }]);
       // Reset form
       setNewItem({
         name: '',
         category: 'spirits',
         cost: 0,
         units: 1,
-        size: '0',
+        size: 0,
         sizeUnit: 'ml',
-        servings: 0
+        servings: 0,
+        totalCost: 0
       });
     }
   };
   
   // Function to start editing an item
-  const startEdit = (item) => {
+  const startEdit = (item: ShoppingItem) => {
     setEditingItem(item);
     setNewItem({ ...item });
   };
@@ -173,8 +184,9 @@ export default function PartySimulator() {
   // Function to save edited item
   const saveEdit = () => {
     if (editingItem && newItem.name && newItem.cost > 0) {
+      const totalCost = newItem.cost * newItem.units;
       setShoppingItems(shoppingItems.map(item => 
-        item.id === editingItem.id ? { ...newItem, id: item.id } : item
+        item.id === editingItem.id ? { ...newItem, id: item.id, totalCost } : item
       ));
       setEditingItem(null);
       // Reset form
@@ -183,20 +195,21 @@ export default function PartySimulator() {
         category: 'spirits',
         cost: 0,
         units: 1,
-        size: '0',
+        size: 0,
         sizeUnit: 'ml',
-        servings: 0
+        servings: 0,
+        totalCost: 0
       });
     }
   };
   
   // Function to delete an item
-  const deleteItem = (id) => {
+  const deleteItem = (id: string) => {
     setShoppingItems(shoppingItems.filter(item => item.id !== id));
   };
   
   // Get recommended units based on needs
-  const getRecommendedUnits = (category, requiredServings) => {
+  const getRecommendedUnits = (category: string, requiredServings: number) => {
     const items = shoppingItems.filter(item => item.category === category);
     if (items.length === 0) return 0;
     
@@ -239,7 +252,7 @@ export default function PartySimulator() {
   ]);
   
   // Cost breakdown for charts
-  const costBreakdown = [
+  const costBreakdown: CostBreakdownItem[] = [
     { name: 'Local', value: venueCost },
     { name: 'Bebidas', value: calculateDrinkRequirements().totalCost },
     { name: 'Comida', value: calculateFoodRequirements().totalCost },
@@ -249,14 +262,14 @@ export default function PartySimulator() {
   const COLORS = ['#4F46E5', '#06B6D4', '#F59E0B', '#EC4899', '#10B981', '#8B5CF6'];
   
   // Financial overview data
-  const financialOverview = [
+  const financialOverview: FinancialOverviewItem[] = [
     { name: 'Ingresos Totales', amount: totalRevenue },
     { name: 'Costos Totales', amount: totalCosts },
     { name: 'Beneficio Neto', amount: netProfit }
   ];
   
   // Shopping categories
-  const categories = [
+  const categories: Category[] = [
     { value: 'spirits', label: 'Licores' },
     { value: 'mixers', label: 'Mezcladores' },
     { value: 'ice', label: 'Hielo' },
@@ -268,7 +281,7 @@ export default function PartySimulator() {
   ];
   
   // Size units
-  const sizeUnits = {
+  const sizeUnits: { [key: string]: string[] } = {
     spirits: ['ml', 'L'],
     mixers: ['ml', 'L'],
     ice: ['kg', 'lb'],
@@ -281,7 +294,7 @@ export default function PartySimulator() {
   
   // Group items by category for the shopping list
   const getItemsByCategory = () => {
-    const grouped = {};
+    const grouped: { [key: string]: ShoppingItem[] } = {};
     categories.forEach(cat => {
       grouped[cat.value] = shoppingItems.filter(item => item.category === cat.value);
     });
@@ -292,20 +305,26 @@ export default function PartySimulator() {
   const jsonPreview = JSON.stringify(shoppingItems, null, 2);
   
   // Function to handle form input changes
-  const handleInputChange = (e) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     if (name === 'category') {
-      // Reset size unit when category changes
+      // set category with cast to our allowed union type
       setNewItem({
         ...newItem,
-        [name]: value,
-        sizeUnit: sizeUnits[value][0]
+        [name]: value as ShoppingItem['category'],
+        sizeUnit: sizeUnits[value as keyof typeof sizeUnits][0]
       });
     } else {
       setNewItem({
         ...newItem,
-        [name]: name === 'cost' || name === 'units' || name === 'servings' ? 
-          (value === '' ? '' : Number(value)) : value
+        [name]: name === 'cost' || name === 'units' || name === 'servings' || name === 'size' || name === 'totalCost' ? 
+          (value === '' ? 0 : parseFloat(value)) : value,
+        // Recalculate totalCost whenever cost or units change
+        ...(name === 'cost' || name === 'units' ? { 
+          totalCost: name === 'cost' 
+            ? parseFloat(value || '0') * newItem.units 
+            : newItem.cost * parseFloat(value || '0') 
+        } : {})
       });
     }
   };
@@ -369,7 +388,9 @@ export default function PartySimulator() {
         <DrinksTab 
           attendees={attendees}
           drinksPerPerson={drinksPerPerson}
-          shoppingItems={shoppingItems}
+          shoppingItems={shoppingItems.filter(item => 
+            ['spirits','mixers','ice','supplies'].includes(item.category)
+          )}
           calculateDrinkRequirements={calculateDrinkRequirements}
           getCategoryServings={getCategoryServings}
           getRecommendedUnits={getRecommendedUnits}
@@ -383,7 +404,9 @@ export default function PartySimulator() {
         <FoodTab 
           attendees={attendees}
           foodServingsPerPerson={foodServingsPerPerson}
-          shoppingItems={shoppingItems}
+          shoppingItems={shoppingItems.filter(item => 
+            ['meat','sides','condiments'].includes(item.category)
+          )}
           calculateFoodRequirements={calculateFoodRequirements}
           getCategoryServings={getCategoryServings}
           getRecommendedUnits={getRecommendedUnits}
@@ -430,22 +453,22 @@ export default function PartySimulator() {
   ];
 
   // Map tab labels to their index for handling active tab
-  const tabMap = {
-    'overview': 0,
-    'shopping': 1,
-    'drinks': 2, 
-    'food': 3,
-    'venue': 4,
-    'reports': 5
+  const tabMap: { [key in 'overview'|'shopping'|'drinks'|'food'|'venue'|'reports']: number } = {
+    overview: 0,
+    shopping: 1,
+    drinks: 2, 
+    food: 3,
+    venue: 4,
+    reports: 5
   };
   
   // Helper to convert activeTab string to tab index
   const getActiveTabIndex = () => tabMap[activeTab] || 0;
   
   // Handle tab change by index
-  const handleTabChange = (index) => {
+  const handleTabChange = (index: number) => {
     const tabKeys = Object.keys(tabMap);
-    setActiveTab(tabKeys[index]);
+    setActiveTab(tabKeys[index] as 'overview'|'shopping'|'drinks'|'food'|'venue'|'reports');
   };
 
   return (

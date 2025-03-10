@@ -1,15 +1,23 @@
 "use client";
 
-import React from 'react';
+import React, { FC } from 'react';
 import Card from '@/components/ui/Card';
 import { useTheme } from '@/components/ui/ThemeProvider';
 import { Building2, Check, Clock, Calendar, Package } from 'lucide-react';
 
-const VenueTab = ({
+interface VenueTabProps {
+  attendees: number;
+  venueCost: number;
+  setVenueCost: (cost: number) => void;
+  miscCosts: number;
+  setMiscCosts: (cost: number) => void;
+}
+
+const VenueTab: FC<VenueTabProps> = ({
   attendees,
   venueCost,
   setVenueCost,
-  miscCosts, 
+  miscCosts,
   setMiscCosts
 }) => {
   const theme = useTheme();

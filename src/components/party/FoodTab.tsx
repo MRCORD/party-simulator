@@ -8,9 +8,28 @@ import Badge from '@/components/ui/Badge';
 import StatusBar from './StatusBar';
 import { useTheme } from '@/components/ui/ThemeProvider';
 
-const FoodTab = ({
-  attendees, foodServingsPerPerson, 
-  shoppingItems, 
+// Import shared types
+import { ShoppingItem, FoodRequirements } from './types';
+
+interface FoodTabProps {
+  attendees: number;
+  foodServingsPerPerson: number;
+  shoppingItems: ShoppingItem[];
+  calculateFoodRequirements: () => FoodRequirements;
+  getCategoryServings: (category: string) => number;
+  getRecommendedUnits: (category: string, totalServings: number) => number;
+}
+
+interface TableColumn {
+  accessor: keyof ShoppingItem;
+  Header: string;
+  Cell?: ({ value, row }: { value: any; row: ShoppingItem }) => React.ReactNode;
+}
+
+const FoodTab: React.FC<FoodTabProps> = ({
+  attendees,
+  foodServingsPerPerson,
+  shoppingItems,
   calculateFoodRequirements,
   getCategoryServings,
   getRecommendedUnits
@@ -19,7 +38,7 @@ const FoodTab = ({
   const foodRequirements = calculateFoodRequirements();
   
   // Define columns for the food items table
-  const foodColumns = [
+  const foodColumns: TableColumn[] = [
     { 
       accessor: 'name', 
       Header: 'Artículo'
@@ -46,14 +65,6 @@ const FoodTab = ({
       Cell: ({ value }) => `S/ ${value.toFixed(2)}`
     }
   ];
-  
-  // Transform shopping items for the table
-  const foodItems = shoppingItems
-    .filter(item => ['meat', 'sides', 'condiments'].includes(item.category))
-    .map(item => ({
-      ...item,
-      totalCost: item.cost * item.units
-    }));
   
   return (
     <div className="space-y-6">
@@ -193,7 +204,7 @@ const FoodTab = ({
         />
         <Card.Content>
           <Table
-            data={foodItems}
+            data={shoppingItems}
             columns={foodColumns}
             striped
             hoverable

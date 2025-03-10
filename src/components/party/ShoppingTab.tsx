@@ -11,34 +11,42 @@ import Table from '@/components/ui/Table';
 import Alert from '@/components/ui/Alert';
 import { useTheme } from '@/components/ui/ThemeProvider';
 
-const ShoppingTab = ({
+// Import shared types
+import { ShoppingItem, Category } from './types';
+
+interface ShoppingTabProps {
+  newItem: Omit<ShoppingItem, 'id'>;
+  shoppingItems: ShoppingItem[];
+  categories: Category[];
+  sizeUnits: Record<string, string[]>;
+  editingItem: ShoppingItem | null;
+  handleInputChange: (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => void;
+  addItem: () => void;
+  saveEdit: () => void;
+  startEdit: (item: ShoppingItem) => void;
+  deleteItem: (id: string) => void;
+  getCategoryTotal: (category: string) => number;
+  getItemsByCategory: () => Record<string, ShoppingItem[]>;
+  jsonPreview: string;
+}
+
+const ShoppingTab: React.FC<ShoppingTabProps> = ({
   newItem, 
   shoppingItems,
   categories, sizeUnits,
   editingItem, 
   handleInputChange,
   addItem, saveEdit, startEdit, deleteItem,
-  getCategoryTotal
+  getCategoryTotal,
+  getItemsByCategory,
+  jsonPreview
 }) => {
   const theme = useTheme();
   
-  // Group items by category for the shopping list
-  const getItemsByCategory = () => {
-    const grouped = {};
-    categories.forEach(cat => {
-      const items = shoppingItems.filter(item => item.category === cat.value);
-      if (items.length > 0) {
-        grouped[cat.value] = items;
-      }
-    });
-    return grouped;
-  };
-
   const groupedItems = getItemsByCategory();
-  const jsonPreview = JSON.stringify(shoppingItems, null, 2);
   
   // Category icons
-  const getCategoryIcon = (category) => {
+  const getCategoryIcon = (category: string) => {
     switch(category) {
       case 'spirits': return <Wine className="w-4 h-4 text-purple-600" />;
       case 'mixers': return <Droplets className="w-4 h-4 text-blue-600" />;
@@ -52,8 +60,10 @@ const ShoppingTab = ({
     }
   };
   
-  // Custom icons for categories
-  function Wine(props) {
+  // Custom icons (add Props interfaces)
+  interface IconProps extends React.SVGProps<SVGSVGElement> {}
+  
+  function Wine(props: IconProps) {
     return (
       <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}>
         <path d="M8 22h8"></path><path d="M7 10h10"></path>
@@ -62,7 +72,7 @@ const ShoppingTab = ({
     );
   }
   
-  function Droplets(props) {
+  function Droplets(props: IconProps) {
     return (
       <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}>
         <path d="M7 16.3c2.2 0 4-1.83 4-4.05 0-1.16-.57-2.26-1.71-3.19S7.29 6.75 7 5.3c-.29 1.45-1.14 2.84-2.29 3.76S3 11.1 3 12.25c0 2.22 1.8 4.05 4 4.05z"></path>
@@ -71,7 +81,7 @@ const ShoppingTab = ({
     );
   }
   
-  function Snowflake(props) {
+  function Snowflake(props: IconProps) {
     return (
       <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}>
         <line x1="2" x2="22" y1="12" y2="12"></line>
@@ -84,7 +94,7 @@ const ShoppingTab = ({
     );
   }
   
-  function Beef(props) {
+  function Beef(props: IconProps) {
     return (
       <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}>
         <circle cx="12" cy="12" r="8"></circle>
@@ -93,7 +103,7 @@ const ShoppingTab = ({
     );
   }
   
-  function Salad(props) {
+  function Salad(props: IconProps) {
     return (
       <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}>
         <path d="M7 21h10"></path>
@@ -105,7 +115,7 @@ const ShoppingTab = ({
     );
   }
   
-  function Salt(props) {
+  function Salt(props: IconProps) {
     return (
       <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}>
         <path d="M7 7a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2z"></path>
@@ -114,39 +124,42 @@ const ShoppingTab = ({
   }
   
   // Define columns for item tables
-  const getItemColumns = (categoryKey) => [
+  const getItemColumns = (categoryKey: string) => [
     { 
-      accessor: 'name', 
+      accessor: 'name' as const, 
       Header: 'Nombre',
-      Cell: ({ value }) => (
+      Cell: ({ value }: { value: string }) => (
         <div className="font-medium text-gray-800">{value}</div>
       )
     },
     { 
-      accessor: 'size', 
+      accessor: 'size' as const, 
       Header: 'Tamaño',
-      Cell: ({ value, row }) => `${value} ${row.sizeUnit}`
+      Cell: ({ value, row }: { value: number; row: ShoppingItem }) => 
+        `${value} ${row.sizeUnit}`
     },
     { 
-      accessor: 'cost', 
+      accessor: 'cost' as const, 
       Header: 'Precio',
-      Cell: ({ value }) => `S/ ${value.toFixed(2)}`
+      Cell: ({ value }: { value: number }) => `S/ ${value.toFixed(2)}`
     },
-    { accessor: 'units', Header: 'Unidades' },
+    { accessor: 'units' as const, Header: 'Unidades' },
     { 
-      accessor: 'servings', 
+      accessor: 'servings' as const, 
       Header: 'Porciones',
-      Cell: ({ value, row }) => value * row.units
+      Cell: ({ value, row }: { value: number; row: ShoppingItem }) => 
+        value * row.units
     },
     { 
-      accessor: 'totalCost', 
+      accessor: 'totalCost' as const, 
       Header: 'Total',
-      Cell: ({ value, row }) => `S/ ${(row.cost * row.units).toFixed(2)}`
+      Cell: ({ value }: { value: number }) => 
+        `S/ ${value.toFixed(2)}`
     },
     {
-      accessor: 'actions',
+      accessor: 'id' as const,
       Header: 'Acciones',
-      Cell: ({ row }) => (
+      Cell: ({ row }: { row: ShoppingItem }) => (
         <div className="flex justify-end gap-2">
           <Button 
             variant="ghost"
@@ -287,18 +300,18 @@ const ShoppingTab = ({
                 <Button
                   onClick={saveEdit}
                   color="primary"
-                  className="w-full"
-                  icon={<Save className="w-5 h-5 mr-2" />}
+                  className="w-full flex items-center justify-center"
                 >
+                  <Save className="w-5 h-5 mr-2" />
                   Guardar Cambios
                 </Button>
               ) : (
                 <Button
                   onClick={addItem}
                   color="success"
-                  className="w-full"
-                  icon={<PlusCircle className="w-5 h-5 mr-2" />}
+                  className="w-full flex items-center justify-center"
                 >
+                  <PlusCircle className="w-5 h-5 mr-2" />
                   Agregar Artículo
                 </Button>
               )}
@@ -324,13 +337,13 @@ const ShoppingTab = ({
                   </div>
                   
                   <Table
-                    data={groupedItems[cat.value].map(item => ({...item, totalCost: item.cost * item.units}))}
+                    data={groupedItems[cat.value]}
                     columns={getItemColumns(cat.value)}
                     hoverable
                     compact
                     footer={
                       <tr className="bg-gray-100 font-medium">
-                        <td colSpan="5" className="px-4 py-3 text-sm text-right rounded-bl-lg">Total de {cat.label}:</td>
+                        <td colSpan={5} className="px-4 py-3 text-sm text-right rounded-bl-lg">Total de {cat.label}:</td>
                         <td className="px-4 py-3 text-sm font-bold text-green-700">S/ {getCategoryTotal(cat.value).toFixed(2)}</td>
                         <td className="rounded-br-lg"></td>
                       </tr>

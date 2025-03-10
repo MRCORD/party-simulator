@@ -17,7 +17,54 @@ import StatusItem from './StatusItem';
 import { useTheme } from '@/components/ui/ThemeProvider';
 import StatusCard from '@/components/ui/StatusCard';
 
-const OverviewTab = ({
+interface CostBreakdownItem {
+  name: string;
+  value: number;
+}
+
+interface FinancialOverviewItem {
+  name: string;
+  amount: number;
+}
+
+interface DrinkRequirements {
+  hasEnoughSpirits: boolean;
+  hasEnoughMixers: boolean;
+  hasEnoughIce: boolean;
+  hasEnoughSupplies: boolean;
+}
+
+interface FoodRequirements {
+  hasEnoughMeat: boolean;
+  hasEnoughSides: boolean;
+  hasEnoughCondiments: boolean;
+}
+
+interface OverviewTabProps {
+  attendees: number;
+  setAttendees: (value: number) => void;
+  ticketPrice: number;
+  setTicketPrice: (value: number) => void;
+  drinksPerPerson: number;
+  setDrinksPerPerson: (value: number) => void;
+  foodServingsPerPerson: number;
+  setFoodServingsPerPerson: (value: number) => void;
+  totalRevenue: number;
+  totalCosts: number;
+  netProfit: number;
+  perPersonCost: number;
+  breakEvenAttendees: number;
+  recommendedTicketPrice: number;
+  isViable: boolean;
+  costBreakdown: CostBreakdownItem[];
+  financialOverview: FinancialOverviewItem[];
+  calculateDrinkRequirements: () => DrinkRequirements;
+  calculateFoodRequirements: () => FoodRequirements;
+  getCategoryServings: (category: string) => number;
+  COLORS: string[];
+}
+
+const OverviewTab: React.FC<OverviewTabProps> = ({
   attendees, setAttendees,
   ticketPrice, setTicketPrice,
   drinksPerPerson, setDrinksPerPerson,
@@ -29,6 +76,14 @@ const OverviewTab = ({
   getCategoryServings, COLORS
 }) => {
   const theme = useTheme();
+  
+  // Helper functions to handle state updates
+  const incrementAttendees = () => setAttendees(attendees + 1);
+  const decrementAttendees = () => setAttendees(Math.max(1, attendees - 1));
+  const incrementDrinksPerPerson = () => setDrinksPerPerson(drinksPerPerson + 1);
+  const decrementDrinksPerPerson = () => setDrinksPerPerson(Math.max(1, drinksPerPerson - 1));
+  const incrementFoodServings = () => setFoodServingsPerPerson(foodServingsPerPerson + 1);
+  const decrementFoodServings = () => setFoodServingsPerPerson(Math.max(1, foodServingsPerPerson - 1));
   
   return (
     <div className="space-y-6">
@@ -54,13 +109,13 @@ const OverviewTab = ({
                   <div className="absolute right-0 top-0 h-full flex flex-col">
                     <button 
                       className="flex-1 px-3 bg-gray-100 hover:bg-gray-200 border-l border-t border-r border-gray-300 rounded-tr-lg"
-                      onClick={() => setAttendees(prev => prev + 1)}
+                      onClick={incrementAttendees}
                     >
                       <ChevronUp size={16} />
                     </button>
                     <button 
                       className="flex-1 px-3 bg-gray-100 hover:bg-gray-200 border-l border-b border-r border-gray-300 rounded-br-lg"
-                      onClick={() => setAttendees(prev => Math.max(1, prev - 1))}
+                      onClick={decrementAttendees}
                     >
                       <ChevronDown size={16} />
                     </button>
@@ -88,7 +143,7 @@ const OverviewTab = ({
                 <div className="flex rounded-lg border border-gray-300 overflow-hidden">
                   <button 
                     className="px-4 bg-gray-100 hover:bg-gray-200 text-gray-700 border-r border-gray-300 flex items-center justify-center"
-                    onClick={() => setDrinksPerPerson(prev => Math.max(1, prev - 1))}
+                    onClick={decrementDrinksPerPerson}
                   >
                     -
                   </button>
@@ -101,7 +156,7 @@ const OverviewTab = ({
                   />
                   <button 
                     className="px-4 bg-gray-100 hover:bg-gray-200 text-gray-700 border-l border-gray-300 flex items-center justify-center"
-                    onClick={() => setDrinksPerPerson(prev => prev + 1)}
+                    onClick={incrementDrinksPerPerson}
                   >
                     +
                   </button>
@@ -114,7 +169,7 @@ const OverviewTab = ({
                 <div className="flex rounded-lg border border-gray-300 overflow-hidden">
                   <button 
                     className="px-4 bg-gray-100 hover:bg-gray-200 text-gray-700 border-r border-gray-300 flex items-center justify-center"
-                    onClick={() => setFoodServingsPerPerson(prev => Math.max(1, prev - 1))}
+                    onClick={decrementFoodServings}
                   >
                     -
                   </button>
@@ -127,7 +182,7 @@ const OverviewTab = ({
                   />
                   <button 
                     className="px-4 bg-gray-100 hover:bg-gray-200 text-gray-700 border-l border-gray-300 flex items-center justify-center"
-                    onClick={() => setFoodServingsPerPerson(prev => prev + 1)}
+                    onClick={incrementFoodServings}
                   >
                     +
                   </button>
@@ -226,7 +281,7 @@ const OverviewTab = ({
                     <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                   ))}
                 </Pie>
-                <Tooltip formatter={(value) => [`S/ ${value.toFixed(2)}`, 'Costo']} />
+                <Tooltip formatter={(value: number) => [`S/ ${value.toFixed(2)}`, 'Costo']} />
               </PieChart>
             </ResponsiveContainer>
           </Card.Content>
@@ -240,7 +295,7 @@ const OverviewTab = ({
                 <CartesianGrid strokeDasharray="3 3" strokeOpacity={0.2} />
                 <XAxis dataKey="name" />
                 <YAxis />
-                <Tooltip formatter={(value) => [`S/ ${value.toFixed(2)}`, '']} />
+                <Tooltip formatter={(value: number) => [`S/ ${value.toFixed(2)}`, '']} />
                 <Bar 
                   dataKey="amount" 
                   radius={[4, 4, 0, 0]}

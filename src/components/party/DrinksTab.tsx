@@ -8,9 +8,29 @@ import Badge from '@/components/ui/Badge';
 import StatusBar from './StatusBar';
 import { useTheme } from '@/components/ui/ThemeProvider';
 
-const DrinksTab = ({
-  attendees, drinksPerPerson, 
-  shoppingItems, 
+// Import shared types
+import { ShoppingItem, DrinkRequirements } from './types';
+
+interface DrinksTabProps {
+  attendees: number;
+  drinksPerPerson: number;
+  shoppingItems: ShoppingItem[];
+  calculateDrinkRequirements: () => DrinkRequirements;
+  getCategoryServings: (category: string) => number;
+  getRecommendedUnits: (category: string, totalDrinks: number) => number;
+}
+
+// Add table column type after other interfaces
+interface TableColumn {
+  accessor: keyof ShoppingItem;
+  Header: string;
+  Cell?: ({ value, row }: { value: any; row: ShoppingItem }) => React.ReactNode;
+}
+
+const DrinksTab: React.FC<DrinksTabProps> = ({
+  attendees,
+  drinksPerPerson,
+  shoppingItems,
   calculateDrinkRequirements,
   getCategoryServings,
   getRecommendedUnits
@@ -18,8 +38,8 @@ const DrinksTab = ({
   const theme = useTheme();
   const drinkRequirements = calculateDrinkRequirements();
   
-  // Define columns for the drinks table
-  const drinkColumns = [
+  // Define columns for the drinks table with proper typing
+  const drinkColumns: TableColumn[] = [
     { 
       accessor: 'name', 
       Header: 'Artículo',
@@ -58,7 +78,7 @@ const DrinksTab = ({
     }));
   
   // Helper function to get category icon
-  const getCategoryIcon = (category) => {
+  const getCategoryIcon = (category: string) => {
     switch(category) {
       case 'spirits': return <Wine className="w-4 h-4 text-purple-600" />;
       case 'mixers': return <Droplet className="w-4 h-4 text-blue-600" />;
