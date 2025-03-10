@@ -70,9 +70,9 @@ interface PieChartCustomizedLabelProps {
   innerRadius: number;
   outerRadius: number;
   percent: number;
-  index: number;
   name: string;
   value: number;
+  index: number;  // Add back the index property
 }
 
 interface PieChartActiveShapeProps {

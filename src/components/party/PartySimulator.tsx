@@ -74,18 +74,18 @@ export default function PartySimulator() {
   const [recommendedTicketPrice, setRecommendedTicketPrice] = useState(0);
   
   // Function to get total costs for a category
-  const getCategoryTotal = (category: string) => {
+  const getCategoryTotal = useCallback((category: string) => {
     return shoppingItems
       .filter(item => item.category === category)
       .reduce((sum, item) => sum + (item.cost * item.units), 0);
-  };
-  
+  }, [shoppingItems]);
+
   // Function to get total servings for a category
-  const getCategoryServings = (category: string) => {
+  const getCategoryServings = useCallback((category: string) => {
     return shoppingItems
       .filter(item => item.category === category)
       .reduce((sum, item) => sum + (item.servings * item.units), 0);
-  };
+  }, [shoppingItems]);
   
   // Function to calculate if we have enough servings
   const hasEnoughServings = useCallback((category: string, requiredServings: number) => {
