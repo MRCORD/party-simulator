@@ -126,13 +126,11 @@ const VenueTab: FC<VenueTabProps> = ({
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">Costo del Local</label>
-              <div className="relative mt-1 rounded-md shadow-sm">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <span className="text-gray-500 sm:text-sm">S/</span>
-                </div>
+              <div className="flex rounded shadow-sm">
+                <span className="inline-flex items-center rounded-l border border-r-0 border-gray-300 bg-gray-50 px-3 text-gray-500">S/</span>
                 <input 
                   type="number" 
-                  className="focus:ring-indigo-500 focus:border-indigo-500 block w-full pl-10 pr-12 sm:text-sm border-gray-300 rounded-md"
+                  className="block w-full rounded-r border border-gray-300 py-2 pl-1 pr-3 text-gray-900 focus:border-blue-500 focus:outline-none focus:ring-blue-500"
                   placeholder="0.00"
                   value={venueCost}
                   onChange={(e) => setVenueCost(parseFloat(e.target.value) || 0)}
@@ -146,13 +144,11 @@ const VenueTab: FC<VenueTabProps> = ({
             
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">Costos Misceláneos</label>
-              <div className="relative mt-1 rounded-md shadow-sm">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <span className="text-gray-500 sm:text-sm">S/</span>
-                </div>
+              <div className="flex rounded shadow-sm">
+                <span className="inline-flex items-center rounded-l border border-r-0 border-gray-300 bg-gray-50 px-3 text-gray-500">S/</span>
                 <input 
                   type="number" 
-                  className="focus:ring-indigo-500 focus:border-indigo-500 block w-full pl-10 pr-12 sm:text-sm border-gray-300 rounded-md"
+                  className="block w-full rounded-r border border-gray-300 py-2 pl-1 pr-3 text-gray-900 focus:border-blue-500 focus:outline-none focus:ring-blue-500"
                   placeholder="0.00"
                   value={miscCosts}
                   onChange={(e) => setMiscCosts(parseFloat(e.target.value) || 0)}
