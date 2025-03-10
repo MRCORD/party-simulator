@@ -1,13 +1,11 @@
+"use client";
 import React from 'react';
-import Card from '@/components/ui/Card';
-import Table from '@/components/ui/Table';
-import Badge from '@/components/ui/Badge';
 import Button from '@/components/ui/Button';
 import { useTheme } from '@/components/ui/ThemeProvider';
 import { 
-  FileBarChart, TrendingUp, DollarSign, Users, 
+  FileBarChart, DollarSign, 
   PieChart, BarChart, CheckCircle, AlertCircle, 
-  Info, Target, ArrowUp, ArrowDown, Calendar,
+  Info, Target, ArrowUp, ArrowDown,
   Activity, FileText, ChevronDown
 } from 'lucide-react';
 
@@ -57,17 +55,15 @@ interface ReportsTabProps {
   isViable: boolean;
   calculateDrinkRequirements: () => DrinkRequirements;
   calculateFoodRequirements: () => FoodRequirements;
-  drinksPerPerson: number;
-  foodServingsPerPerson: number;
   shoppingItems: ShoppingItem[];
   getCategoryTotal: (category: string) => number;
 }
 
-interface TableColumn<T> {
-  accessor: keyof T;
+interface TableColumn {
+  accessor: string;
   Header: string;
   width?: string;
-  Cell?: ({ value }: { value: any }) => React.ReactNode;
+  Cell?: ({ value }: { value: unknown }) => React.ReactNode;
 }
 
 const ReportsTab: React.FC<ReportsTabProps> = ({
@@ -83,8 +79,6 @@ const ReportsTab: React.FC<ReportsTabProps> = ({
   isViable,
   calculateDrinkRequirements,
   calculateFoodRequirements,
-  drinksPerPerson,
-  foodServingsPerPerson,
   shoppingItems,
   getCategoryTotal
 }) => {

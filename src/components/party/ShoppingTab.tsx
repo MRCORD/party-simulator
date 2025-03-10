@@ -20,7 +20,6 @@ interface ShoppingTabProps {
   saveEdit: () => void;
   startEdit: (item: ShoppingItem) => void;
   deleteItem: (id: string) => void;
-  getCategoryTotal: (category: string) => number;
   getItemsByCategory: () => Record<string, ShoppingItem[]>;
   jsonPreview: string;
 }
@@ -36,7 +35,6 @@ const ShoppingTab: React.FC<ShoppingTabProps> = ({
   saveEdit, 
   startEdit, 
   deleteItem,
-  getCategoryTotal,
   getItemsByCategory,
   jsonPreview
 }) => {
