@@ -1,6 +1,7 @@
 "use client";
 import React, { ReactNode } from 'react';
 import { ChevronRight } from 'lucide-react';
+import Image from 'next/image';
 import { useTheme } from './ThemeProvider';
 
 interface Breadcrumb {
@@ -103,7 +104,15 @@ const PageHeader = ({
           {icon && (
             <div className="flex-shrink-0 mr-3">
               {typeof icon === 'string' ? (
-                <img src={icon} alt="" className="h-10 w-10" />
+                <div className="h-10 w-10">
+                  <Image 
+                    src={icon} 
+                    alt="" 
+                    width={40} 
+                    height={40}
+                    className="h-full w-full object-cover"
+                  />
+                </div>
               ) : (
                 <div className="h-10 w-10 bg-primary-light rounded-lg flex items-center justify-center">
                   {icon}
@@ -141,8 +150,10 @@ const PageHeader = ({
   );
 };
 
+PageHeader.displayName = 'PageHeader';
+
 // With tabs subcomponent
-PageHeader.WithTabs = ({
+const HeaderWithTabs = ({
   title,
   subtitle,
   icon,
@@ -153,8 +164,6 @@ PageHeader.WithTabs = ({
   gradient = true,
   ...props
 }: PageHeaderWithTabsProps) => {
-  const theme = useTheme();
-  
   return (
     <div {...props}>
       <PageHeader
@@ -199,8 +208,11 @@ PageHeader.WithTabs = ({
   );
 };
 
+HeaderWithTabs.displayName = 'PageHeader.WithTabs';
+PageHeader.WithTabs = HeaderWithTabs;
+
 // With stats subcomponent
-PageHeader.WithStats = ({
+const HeaderWithStats = ({
   title,
   subtitle,
   icon,
@@ -255,5 +267,8 @@ PageHeader.WithStats = ({
     </div>
   );
 };
+
+HeaderWithStats.displayName = 'PageHeader.WithStats';
+PageHeader.WithStats = HeaderWithStats;
 
 export default PageHeader;

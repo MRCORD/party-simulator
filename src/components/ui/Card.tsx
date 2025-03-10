@@ -1,5 +1,6 @@
 "use client";
 import React, { ReactNode } from 'react';
+import Image from 'next/image';
 import { useTheme } from './ThemeProvider';
 
 type CardVariant = 'default' | 'accent' | 'hover' | 'gradient' | 'glass';
@@ -42,6 +43,8 @@ interface CardImageProps extends Omit<React.ImgHTMLAttributes<HTMLImageElement>,
   className?: string;
   position?: ImagePosition;
   overlay?: boolean;
+  width: number;
+  height: number;
 }
 
 // Main Card component
@@ -184,6 +187,8 @@ const CardImage = ({
   className = '',
   position = 'top',
   overlay = false,
+  width,
+  height,
   ...props 
 }: CardImageProps) => {
   const baseClasses = "w-full";
@@ -195,9 +200,11 @@ const CardImage = ({
   
   return (
     <div className={`relative overflow-hidden ${positionClasses[position]}`}>
-      <img 
+      <Image 
         src={src} 
-        alt={alt} 
+        alt={alt}
+        width={width}
+        height={height}
         className={`${baseClasses} ${className} transition-transform duration-700 hover:scale-105`} 
         {...props} 
       />

@@ -1,6 +1,5 @@
 "use client";
 import React, { ReactNode } from 'react';
-import { useTheme } from './ThemeProvider';
 
 type BadgeVariant = 'default' | 'primary' | 'secondary' | 'success' | 'warning' | 'error' | 'teal' | 'indigo' | 'pink';
 type BadgeSize = 'sm' | 'md' | 'lg';
@@ -29,8 +28,6 @@ const Badge = ({
   className = '',
   ...props
 }: BadgeProps) => {
-  const theme = useTheme();
-  
   // Base styles
   const baseClasses = "inline-flex items-center font-medium";
   

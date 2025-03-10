@@ -35,8 +35,6 @@ const Alert = ({
   className = '',
   ...props
 }: AlertProps) => {
-  const theme = useTheme();
-
   const variantMap = {
     success: {
       bg: 'bg-success-light',
@@ -100,7 +98,7 @@ const Alert = ({
 };
 
 // Toast-style alert
-Alert.Toast = ({
+const AlertToast = ({
   message,
   variant = 'info',
   icon,
@@ -109,8 +107,6 @@ Alert.Toast = ({
   className = '',
   ...props
 }: AlertToastProps) => {
-  const theme = useTheme();
-
   const gradientMap = {
     success: 'bg-gradient-to-r from-green-500 to-green-600',
     warning: 'bg-gradient-to-r from-yellow-500 to-yellow-600',
@@ -136,16 +132,16 @@ Alert.Toast = ({
       icon: <Info className="w-5 h-5" />,
     },
   } as const;
-
+  
   const variantStyles = variantMap[variant];
-
+  
   React.useEffect(() => {
     if (duration && onDismiss) {
       const timer = setTimeout(onDismiss, duration);
       return () => clearTimeout(timer);
     }
   }, [duration, onDismiss]);
-
+  
   return (
     <div 
       className={`flex items-center p-3 rounded-lg shadow-lg text-white ${variantStyles.bg} ${className}`}
@@ -175,5 +171,7 @@ Alert.Toast = ({
     </div>
   );
 };
+
+Alert.Toast = AlertToast;
 
 export default Alert;
