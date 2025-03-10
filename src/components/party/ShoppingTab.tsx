@@ -1,16 +1,11 @@
 "use client";
-
 import React, { useState } from 'react';
 import { 
   ShoppingCart, FileText, Edit, Trash2, PlusCircle, 
   Save, Package, ChevronDown, X,
-  Wine, Droplets, Snowflake, Beef, Salad, Utensils, DollarSign
+  Wine, Droplets, Snowflake, Beef, Salad, Utensils
 } from 'lucide-react';
-import Badge from '@/components/ui/Badge';
-import Button from '@/components/ui/Button';
-import Card from '@/components/ui/Card';
 import { useTheme } from '@/components/ui/ThemeProvider';
-
 // Import shared types
 import { ShoppingItem, Category } from './types';
 
