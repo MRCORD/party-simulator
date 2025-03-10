@@ -1,7 +1,15 @@
 "use client";
 
 import React from 'react';
-import { ShoppingCart, FileText, Edit, Trash2, PlusCircle, Save, Package, ChevronDown, TrendingUp, Calendar, Tag } from 'lucide-react';
+import { 
+  ShoppingCart, FileText, Edit, Trash2, PlusCircle, 
+  Save, Package, ChevronDown, TrendingUp, Tag 
+} from 'lucide-react';
+import Card from '@/components/ui/Card';
+import Button from '@/components/ui/Button';
+import Table from '@/components/ui/Table';
+import Alert from '@/components/ui/Alert';
+import { useTheme } from '@/components/ui/ThemeProvider';
 
 const ShoppingTab = ({
   newItem, 
@@ -12,6 +20,8 @@ const ShoppingTab = ({
   addItem, saveEdit, startEdit, deleteItem,
   getCategoryTotal
 }) => {
+  const theme = useTheme();
+  
   // Group items by category for the shopping list
   const getItemsByCategory = () => {
     const grouped = {};
@@ -28,15 +38,18 @@ const ShoppingTab = ({
   const jsonPreview = JSON.stringify(shoppingItems, null, 2);
   
   // Category icons
-  const categoryIcons = {
-    spirits: <Wine className="w-4 h-4 text-purple-600" />,
-    mixers: <Droplets className="w-4 h-4 text-blue-600" />,
-    ice: <Snowflake className="w-4 h-4 text-cyan-600" />,
-    meat: <Beef className="w-4 h-4 text-red-600" />,
-    sides: <Salad className="w-4 h-4 text-green-600" />,
-    condiments: <Salt className="w-4 h-4 text-yellow-600" />,
-    supplies: <Package className="w-4 h-4 text-gray-600" />,
-    other: <Tag className="w-4 h-4 text-orange-600" />
+  const getCategoryIcon = (category) => {
+    switch(category) {
+      case 'spirits': return <Wine className="w-4 h-4 text-purple-600" />;
+      case 'mixers': return <Droplets className="w-4 h-4 text-blue-600" />;
+      case 'ice': return <Snowflake className="w-4 h-4 text-cyan-600" />;
+      case 'meat': return <Beef className="w-4 h-4 text-red-600" />;
+      case 'sides': return <Salad className="w-4 h-4 text-green-600" />;
+      case 'condiments': return <Salt className="w-4 h-4 text-yellow-600" />;
+      case 'supplies': return <Package className="w-4 h-4 text-gray-600" />;
+      case 'other': return <Tag className="w-4 h-4 text-orange-600" />;
+      default: return <Package className="w-4 h-4 text-gray-600" />;
+    }
   };
   
   // Custom icons for categories
@@ -99,224 +112,253 @@ const ShoppingTab = ({
       </svg>
     );
   }
+  
+  // Define columns for item tables
+  const getItemColumns = (categoryKey) => [
+    { 
+      accessor: 'name', 
+      Header: 'Nombre',
+      Cell: ({ value }) => (
+        <div className="font-medium text-gray-800">{value}</div>
+      )
+    },
+    { 
+      accessor: 'size', 
+      Header: 'Tamaño',
+      Cell: ({ value, row }) => `${value} ${row.sizeUnit}`
+    },
+    { 
+      accessor: 'cost', 
+      Header: 'Precio',
+      Cell: ({ value }) => `S/ ${value.toFixed(2)}`
+    },
+    { accessor: 'units', Header: 'Unidades' },
+    { 
+      accessor: 'servings', 
+      Header: 'Porciones',
+      Cell: ({ value, row }) => value * row.units
+    },
+    { 
+      accessor: 'totalCost', 
+      Header: 'Total',
+      Cell: ({ value, row }) => `S/ ${(row.cost * row.units).toFixed(2)}`
+    },
+    {
+      accessor: 'actions',
+      Header: 'Acciones',
+      Cell: ({ row }) => (
+        <div className="flex justify-end gap-2">
+          <Button 
+            variant="ghost"
+            size="sm"
+            onClick={() => startEdit(row)}
+            className="text-indigo-600 hover:text-indigo-800 bg-indigo-100 hover:bg-indigo-200 p-2 rounded-full"
+          >
+            <Edit className="w-4 h-4" />
+          </Button>
+          <Button 
+            variant="ghost"
+            size="sm"
+            onClick={() => deleteItem(row.id)}
+            className="text-red-600 hover:text-red-800 bg-red-100 hover:bg-red-200 p-2 rounded-full"
+          >
+            <Trash2 className="w-4 h-4" />
+          </Button>
+        </div>
+      )
+    }
+  ];
 
   return (
     <div className="space-y-6">
-      <div className="bg-white p-6 rounded-xl shadow-md border border-gray-100">
-        <h3 className="text-xl font-bold mb-6 flex items-center text-indigo-800">
-          <ShoppingCart className="w-5 h-5 mr-2 text-indigo-600" /> Agregar Nuevo Artículo
-        </h3>
-        
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
-          <div className="space-y-2">
-            <label className="block text-base font-medium text-gray-700">Nombre del Artículo</label>
-            <input
-              type="text"
-              name="name"
-              className="block w-full rounded-lg border-gray-300 shadow-sm p-3 border focus:border-indigo-500 focus:ring focus:ring-indigo-200"
-              value={newItem.name}
-              onChange={handleInputChange}
-              placeholder="ej. Ron Cartavio"
-            />
-          </div>
-          
-          <div className="space-y-2">
-            <label className="block text-base font-medium text-gray-700">Categoría</label>
-            <div className="relative">
-              <select
-                name="category"
-                className="block w-full rounded-lg border-gray-300 shadow-sm p-3 border focus:border-indigo-500 focus:ring focus:ring-indigo-200 appearance-none"
-                value={newItem.category}
-                onChange={handleInputChange}
-              >
-                {categories.map(cat => (
-                  <option key={cat.value} value={cat.value}>{cat.label}</option>
-                ))}
-              </select>
-              <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 pointer-events-none" size={18} />
-            </div>
-          </div>
-          
-          <div className="space-y-2">
-            <label className="block text-base font-medium text-gray-700">Precio (S/)</label>
-            <div className="relative">
-              <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500">S/</span>
+      <Card>
+        <Card.Header 
+          title="Agregar Nuevo Artículo" 
+          icon={<ShoppingCart className="w-5 h-5 text-indigo-600" />}
+          gradient
+        />
+        <Card.Content>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
+            <div className="space-y-2">
+              <label className="block text-base font-medium text-gray-700">Nombre del Artículo</label>
               <input
-                type="number"
-                name="cost"
-                className="block w-full rounded-lg border-gray-300 shadow-sm p-3 pl-8 border focus:border-indigo-500 focus:ring focus:ring-indigo-200"
-                value={newItem.cost}
+                type="text"
+                name="name"
+                className={`block w-full rounded-lg border-gray-300 shadow-sm p-3 border focus:border-indigo-500 ${theme.getFocusRing()}`}
+                value={newItem.name}
                 onChange={handleInputChange}
-                min="0"
-                step="1"
-                placeholder="0.00"
+                placeholder="ej. Ron Cartavio"
               />
             </div>
-          </div>
-          
-          <div className="space-y-2">
-            <label className="block text-base font-medium text-gray-700">Unidades</label>
-            <input
-              type="number"
-              name="units"
-              className="block w-full rounded-lg border-gray-300 shadow-sm p-3 border focus:border-indigo-500 focus:ring focus:ring-indigo-200"
-              value={newItem.units}
-              onChange={handleInputChange}
-              min="1"
-              placeholder="1"
-            />
-          </div>
-          
-          <div className="space-y-2">
-            <label className="block text-base font-medium text-gray-700">Tamaño</label>
-            <input
-              type="number"
-              name="size"
-              className="block w-full rounded-lg border-gray-300 shadow-sm p-3 border focus:border-indigo-500 focus:ring focus:ring-indigo-200"
-              value={newItem.size}
-              onChange={handleInputChange}
-              min="0"
-              step="0.1"
-              placeholder="0.0"
-            />
-          </div>
-          
-          <div className="space-y-2">
-            <label className="block text-base font-medium text-gray-700">Unidad de Medida</label>
-            <div className="relative">
-              <select
-                name="sizeUnit"
-                className="block w-full rounded-lg border-gray-300 shadow-sm p-3 border focus:border-indigo-500 focus:ring focus:ring-indigo-200 appearance-none"
-                value={newItem.sizeUnit}
-                onChange={handleInputChange}
-              >
-                {sizeUnits[newItem.category].map(unit => (
-                  <option key={unit} value={unit}>{unit}</option>
-                ))}
-              </select>
-              <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 pointer-events-none" size={18} />
-            </div>
-          </div>
-          
-          <div className="space-y-2">
-            <label className="block text-base font-medium text-gray-700">Porciones</label>
-            <input
-              type="number"
-              name="servings"
-              className="block w-full rounded-lg border-gray-300 shadow-sm p-3 border focus:border-indigo-500 focus:ring focus:ring-indigo-200"
-              value={newItem.servings}
-              onChange={handleInputChange}
-              min="0"
-              placeholder="0"
-            />
-          </div>
-          
-          <div className="flex items-end">
-            {editingItem ? (
-              <button
-                onClick={saveEdit}
-                className="w-full flex items-center justify-center bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-3 px-4 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-300 transition duration-200"
-              >
-                <Save className="w-5 h-5 mr-2" /> Guardar Cambios
-              </button>
-            ) : (
-              <button
-                onClick={addItem}
-                className="w-full flex items-center justify-center bg-green-600 hover:bg-green-700 text-white font-medium py-3 px-4 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-300 transition duration-200"
-              >
-                <PlusCircle className="w-5 h-5 mr-2" /> Agregar Artículo
-              </button>
-            )}
-          </div>
-        </div>
-      </div>
-      
-      <div className="bg-white p-6 rounded-xl shadow-md border border-gray-100">
-        <h3 className="text-xl font-bold mb-4 flex items-center text-indigo-800">
-          <ShoppingCart className="w-5 h-5 mr-2 text-indigo-600" /> Lista de Compras
-        </h3>
-        
-        <div className="space-y-8">
-          {categories.map(cat => (
-            groupedItems[cat.value] && groupedItems[cat.value].length > 0 ? (
-              <div key={cat.value} className="space-y-3">
-                <div className="flex items-center gap-2 border-b pb-3">
-                  {categoryIcons[cat.value]}
-                  <h4 className="font-bold text-lg text-gray-800">{cat.label}</h4>
-                </div>
-                <div className="bg-gray-50 p-3 rounded-lg">
-                  <div className="overflow-x-auto">
-                    <table className="min-w-full divide-y divide-gray-200">
-                      <thead className="bg-gray-100">
-                        <tr>
-                          <th scope="col" className="px-4 py-3 text-left text-sm font-semibold text-gray-700 uppercase tracking-wider rounded-tl-lg">Nombre</th>
-                          <th scope="col" className="px-4 py-3 text-left text-sm font-semibold text-gray-700 uppercase tracking-wider">Tamaño</th>
-                          <th scope="col" className="px-4 py-3 text-left text-sm font-semibold text-gray-700 uppercase tracking-wider">Precio</th>
-                          <th scope="col" className="px-4 py-3 text-left text-sm font-semibold text-gray-700 uppercase tracking-wider">Unidades</th>
-                          <th scope="col" className="px-4 py-3 text-left text-sm font-semibold text-gray-700 uppercase tracking-wider">Porciones</th>
-                          <th scope="col" className="px-4 py-3 text-left text-sm font-semibold text-gray-700 uppercase tracking-wider">Total</th>
-                          <th scope="col" className="px-4 py-3 text-right text-sm font-semibold text-gray-700 uppercase tracking-wider rounded-tr-lg">Acciones</th>
-                        </tr>
-                      </thead>
-                      <tbody className="bg-white divide-y divide-gray-200">
-                        {groupedItems[cat.value].map(item => (
-                          <tr key={item.id} className="hover:bg-indigo-50 transition-colors duration-150">
-                            <td className="px-4 py-3 whitespace-nowrap text-sm font-medium text-gray-800">{item.name}</td>
-                            <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-700">{item.size} {item.sizeUnit}</td>
-                            <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-700">S/ {item.cost}</td>
-                            <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-700">{item.units}</td>
-                            <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-700">{item.servings * item.units}</td>
-                            <td className="px-4 py-3 whitespace-nowrap text-sm font-medium text-green-700">S/ {(item.cost * item.units).toFixed(2)}</td>
-                            <td className="px-4 py-3 whitespace-nowrap text-sm text-right">
-                              <div className="flex justify-end gap-2">
-                                <button 
-                                  onClick={() => startEdit(item)} 
-                                  className="text-indigo-600 hover:text-indigo-800 bg-indigo-100 hover:bg-indigo-200 p-2 rounded-full transition-colors duration-150"
-                                  title="Editar"
-                                >
-                                  <Edit className="w-4 h-4" />
-                                </button>
-                                <button 
-                                  onClick={() => deleteItem(item.id)} 
-                                  className="text-red-600 hover:text-red-800 bg-red-100 hover:bg-red-200 p-2 rounded-full transition-colors duration-150"
-                                  title="Eliminar"
-                                >
-                                  <Trash2 className="w-4 h-4" />
-                                </button>
-                              </div>
-                            </td>
-                          </tr>
-                        ))}
-                        <tr className="bg-gray-100 font-medium">
-                          <td colSpan="5" className="px-4 py-3 text-sm text-right rounded-bl-lg">Total de {cat.label}:</td>
-                          <td className="px-4 py-3 text-sm font-bold text-green-700">S/ {getCategoryTotal(cat.value).toFixed(2)}</td>
-                          <td className="rounded-br-lg"></td>
-                        </tr>
-                      </tbody>
-                    </table>
-                  </div>
-                </div>
+            
+            <div className="space-y-2">
+              <label className="block text-base font-medium text-gray-700">Categoría</label>
+              <div className="relative">
+                <select
+                  name="category"
+                  className={`block w-full rounded-lg border-gray-300 shadow-sm p-3 border focus:border-indigo-500 ${theme.getFocusRing()} appearance-none`}
+                  value={newItem.category}
+                  onChange={handleInputChange}
+                >
+                  {categories.map(cat => (
+                    <option key={cat.value} value={cat.value}>{cat.label}</option>
+                  ))}
+                </select>
+                <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 pointer-events-none" size={18} />
               </div>
-            ) : null
-          ))}
-          
-          <div className="border-t pt-6 flex justify-between items-center">
-            <div className="text-xl font-bold text-indigo-800">Costo Total de la Lista:</div>
-            <div className="text-xl font-bold text-green-700 bg-green-50 px-6 py-3 rounded-lg">
-              S/ {shoppingItems.reduce((sum, item) => sum + (item.cost * item.units), 0).toFixed(2)}
+            </div>
+            
+            <div className="space-y-2">
+              <label className="block text-base font-medium text-gray-700">Precio (S/)</label>
+              <div className="relative">
+                <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500">S/</span>
+                <input
+                  type="number"
+                  name="cost"
+                  className={`block w-full rounded-lg border-gray-300 shadow-sm p-3 pl-8 border focus:border-indigo-500 ${theme.getFocusRing()}`}
+                  value={newItem.cost}
+                  onChange={handleInputChange}
+                  min="0"
+                  step="1"
+                  placeholder="0.00"
+                />
+              </div>
+            </div>
+            
+            <div className="space-y-2">
+              <label className="block text-base font-medium text-gray-700">Unidades</label>
+              <input
+                type="number"
+                name="units"
+                className={`block w-full rounded-lg border-gray-300 shadow-sm p-3 border focus:border-indigo-500 ${theme.getFocusRing()}`}
+                value={newItem.units}
+                onChange={handleInputChange}
+                min="1"
+                placeholder="1"
+              />
+            </div>
+            
+            <div className="space-y-2">
+              <label className="block text-base font-medium text-gray-700">Tamaño</label>
+              <input
+                type="number"
+                name="size"
+                className={`block w-full rounded-lg border-gray-300 shadow-sm p-3 border focus:border-indigo-500 ${theme.getFocusRing()}`}
+                value={newItem.size}
+                onChange={handleInputChange}
+                min="0"
+                step="0.1"
+                placeholder="0.0"
+              />
+            </div>
+            
+            <div className="space-y-2">
+              <label className="block text-base font-medium text-gray-700">Unidad de Medida</label>
+              <div className="relative">
+                <select
+                  name="sizeUnit"
+                  className={`block w-full rounded-lg border-gray-300 shadow-sm p-3 border focus:border-indigo-500 ${theme.getFocusRing()} appearance-none`}
+                  value={newItem.sizeUnit}
+                  onChange={handleInputChange}
+                >
+                  {sizeUnits[newItem.category].map(unit => (
+                    <option key={unit} value={unit}>{unit}</option>
+                  ))}
+                </select>
+                <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 pointer-events-none" size={18} />
+              </div>
+            </div>
+            
+            <div className="space-y-2">
+              <label className="block text-base font-medium text-gray-700">Porciones</label>
+              <input
+                type="number"
+                name="servings"
+                className={`block w-full rounded-lg border-gray-300 shadow-sm p-3 border focus:border-indigo-500 ${theme.getFocusRing()}`}
+                value={newItem.servings}
+                onChange={handleInputChange}
+                min="0"
+                placeholder="0"
+              />
+            </div>
+            
+            <div className="flex items-end">
+              {editingItem ? (
+                <Button
+                  onClick={saveEdit}
+                  color="primary"
+                  className="w-full"
+                  icon={<Save className="w-5 h-5 mr-2" />}
+                >
+                  Guardar Cambios
+                </Button>
+              ) : (
+                <Button
+                  onClick={addItem}
+                  color="success"
+                  className="w-full"
+                  icon={<PlusCircle className="w-5 h-5 mr-2" />}
+                >
+                  Agregar Artículo
+                </Button>
+              )}
             </div>
           </div>
-        </div>
-      </div>
+        </Card.Content>
+      </Card>
       
-      <div className="bg-gradient-to-r from-gray-100 to-gray-50 p-6 rounded-xl shadow-md border border-gray-100">
-        <h3 className="text-xl font-bold mb-4 flex items-center text-gray-800">
-          <FileText className="w-5 h-5 mr-2 text-gray-600" /> Datos JSON (Para Desarrolladores)
-        </h3>
-        <div className="bg-white p-4 rounded-lg border border-gray-200 overflow-hidden">
+      <Card>
+        <Card.Header 
+          title="Lista de Compras" 
+          icon={<ShoppingCart className="w-5 h-5 text-indigo-600" />}
+          gradient
+        />
+        <Card.Content>
+          <div className="space-y-8">
+            {categories.map(cat => (
+              groupedItems[cat.value] && groupedItems[cat.value].length > 0 ? (
+                <div key={cat.value} className="space-y-3">
+                  <div className="flex items-center gap-2 border-b pb-3">
+                    {getCategoryIcon(cat.value)}
+                    <h4 className="font-bold text-lg text-gray-800">{cat.label}</h4>
+                  </div>
+                  
+                  <Table
+                    data={groupedItems[cat.value].map(item => ({...item, totalCost: item.cost * item.units}))}
+                    columns={getItemColumns(cat.value)}
+                    hoverable
+                    compact
+                    footer={
+                      <tr className="bg-gray-100 font-medium">
+                        <td colSpan="5" className="px-4 py-3 text-sm text-right rounded-bl-lg">Total de {cat.label}:</td>
+                        <td className="px-4 py-3 text-sm font-bold text-green-700">S/ {getCategoryTotal(cat.value).toFixed(2)}</td>
+                        <td className="rounded-br-lg"></td>
+                      </tr>
+                    }
+                  />
+                </div>
+              ) : null
+            ))}
+            
+            <div className="border-t pt-6 flex justify-between items-center">
+              <div className="text-xl font-bold text-indigo-800">Costo Total de la Lista:</div>
+              <div className="text-xl font-bold text-green-700 bg-green-50 px-6 py-3 rounded-lg">
+                S/ {shoppingItems.reduce((sum, item) => sum + (item.cost * item.units), 0).toFixed(2)}
+              </div>
+            </div>
+          </div>
+        </Card.Content>
+      </Card>
+      
+      <Card variant="default">
+        <Card.Header 
+          title="Datos JSON (Para Desarrolladores)" 
+          icon={<FileText className="w-5 h-5 text-gray-600" />}
+        />
+        <Card.Content className="bg-white p-4 rounded-lg border border-gray-200 overflow-hidden">
           <pre className="text-xs overflow-auto max-h-64 text-gray-700 font-mono">{jsonPreview}</pre>
-        </div>
-      </div>
+        </Card.Content>
+      </Card>
     </div>
   );
 };

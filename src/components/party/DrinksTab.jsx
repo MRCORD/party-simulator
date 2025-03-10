@@ -1,6 +1,12 @@
+"use client";
+
 import React from 'react';
 import { Wine, Droplet, Snowflake, Package, CheckCircle, AlertCircle, TrendingUp, Users } from 'lucide-react';
+import Card from '@/components/ui/Card';
+import Table from '@/components/ui/Table';
+import Badge from '@/components/ui/Badge';
 import StatusBar from './StatusBar';
+import { useTheme } from '@/components/ui/ThemeProvider';
 
 const DrinksTab = ({
   attendees, drinksPerPerson, 
@@ -9,324 +15,297 @@ const DrinksTab = ({
   getCategoryServings,
   getRecommendedUnits
 }) => {
+  const theme = useTheme();
   const drinkRequirements = calculateDrinkRequirements();
+  
+  // Define columns for the drinks table
+  const drinkColumns = [
+    { 
+      accessor: 'name', 
+      Header: 'Artículo',
+      Cell: ({ value, row }) => (
+        <div className="flex items-center">
+          {getCategoryIcon(row.category)}
+          <span className="ml-2">{value}</span>
+        </div>
+      )
+    },
+    { 
+      accessor: 'size', 
+      Header: 'Tamaño',
+      Cell: ({ value, row }) => `${value} ${row.sizeUnit}`
+    },
+    { accessor: 'units', Header: 'Unidades' },
+    { accessor: 'servings', Header: 'Porciones', Cell: ({ value, row }) => value * row.units },
+    { 
+      accessor: 'cost', 
+      Header: 'Precio',
+      Cell: ({ value }) => `S/ ${value.toFixed(2)}`
+    },
+    { 
+      accessor: 'totalCost', 
+      Header: 'Costo Total',
+      Cell: ({ value }) => `S/ ${value.toFixed(2)}`
+    }
+  ];
+  
+  // Transform shopping items for the table
+  const drinkItems = shoppingItems
+    .filter(item => ['spirits', 'mixers', 'ice', 'supplies'].includes(item.category))
+    .map(item => ({
+      ...item,
+      totalCost: item.cost * item.units
+    }));
+  
+  // Helper function to get category icon
+  const getCategoryIcon = (category) => {
+    switch(category) {
+      case 'spirits': return <Wine className="w-4 h-4 text-purple-600" />;
+      case 'mixers': return <Droplet className="w-4 h-4 text-blue-600" />;
+      case 'ice': return <Snowflake className="w-4 h-4 text-cyan-600" />;
+      case 'supplies': return <Package className="w-4 h-4 text-gray-600" />;
+      default: return null;
+    }
+  };
   
   return (
     <div className="space-y-6">
-      <div className="bg-gradient-to-r from-indigo-600 to-purple-600 p-6 rounded-xl shadow-lg text-white mb-6">
-        <h3 className="text-xl font-bold mb-4 flex items-center">
-          <Wine className="w-6 h-6 mr-2" /> Planificación de Bebidas
-        </h3>
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-4">
-          <div className="bg-white/20 backdrop-blur-sm rounded-lg p-3 text-center">
-            <div className="text-xs uppercase tracking-wide mb-1">Asistentes</div>
-            <div className="text-2xl font-bold flex justify-center items-center">
-              <Users size={18} className="mr-2 opacity-70" />
-              {attendees}
+      <Card variant="gradient">
+        <Card.Content className="bg-gradient-to-r from-indigo-600 to-purple-600 p-6 rounded-xl shadow-lg text-white">
+          <h3 className="text-xl font-bold mb-4 flex items-center">
+            <Wine className="w-6 h-6 mr-2" /> Planificación de Bebidas
+          </h3>
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-4">
+            <div className="bg-white/20 backdrop-blur-sm rounded-lg p-3 text-center">
+              <div className="text-xs uppercase tracking-wide mb-1">Asistentes</div>
+              <div className="text-2xl font-bold flex justify-center items-center">
+                <Users size={18} className="mr-2 opacity-70" />
+                {attendees}
+              </div>
+            </div>
+            <div className="bg-white/20 backdrop-blur-sm rounded-lg p-3 text-center">
+              <div className="text-xs uppercase tracking-wide mb-1">Bebidas por Persona</div>
+              <div className="text-2xl font-bold flex justify-center items-center">
+                <Wine size={18} className="mr-2 opacity-70" />
+                {drinksPerPerson}
+              </div>
+            </div>
+            <div className="bg-white/20 backdrop-blur-sm rounded-lg p-3 text-center">
+              <div className="text-xs uppercase tracking-wide mb-1">Total Bebidas</div>
+              <div className="text-2xl font-bold">{drinkRequirements.totalDrinks}</div>
+            </div>
+            <div className="bg-white/20 backdrop-blur-sm rounded-lg p-3 text-center">
+              <div className="text-xs uppercase tracking-wide mb-1">Costo Total</div>
+              <div className="text-2xl font-bold">S/ {drinkRequirements.totalCost.toFixed(2)}</div>
             </div>
           </div>
-          <div className="bg-white/20 backdrop-blur-sm rounded-lg p-3 text-center">
-            <div className="text-xs uppercase tracking-wide mb-1">Bebidas por Persona</div>
-            <div className="text-2xl font-bold flex justify-center items-center">
-              <Wine size={18} className="mr-2 opacity-70" />
-              {drinksPerPerson}
-            </div>
+          <div className="text-sm opacity-80">
+            El costo por persona para bebidas es aproximadamente <span className="font-bold text-white">S/ {(drinkRequirements.totalCost / attendees).toFixed(2)}</span>
           </div>
-          <div className="bg-white/20 backdrop-blur-sm rounded-lg p-3 text-center">
-            <div className="text-xs uppercase tracking-wide mb-1">Total Bebidas</div>
-            <div className="text-2xl font-bold">{drinkRequirements.totalDrinks}</div>
-          </div>
-          <div className="bg-white/20 backdrop-blur-sm rounded-lg p-3 text-center">
-            <div className="text-xs uppercase tracking-wide mb-1">Costo Total</div>
-            <div className="text-2xl font-bold">S/ {drinkRequirements.totalCost.toFixed(2)}</div>
-          </div>
-        </div>
-        <div className="text-sm opacity-80">
-          El costo por persona para bebidas es aproximadamente <span className="font-bold text-white">S/ {(drinkRequirements.totalCost / attendees).toFixed(2)}</span>
-        </div>
-      </div>
+        </Card.Content>
+      </Card>
       
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div className="bg-white p-6 rounded-xl shadow-md border border-gray-100">
-          <h3 className="text-xl font-bold mb-4 text-indigo-800">Información Detallada</h3>
-          
-          <div className="space-y-6">
-            <div className="bg-indigo-50 p-4 rounded-lg space-y-3">
-              <h4 className="font-bold text-indigo-800 border-b border-indigo-200 pb-2">Requerimientos Básicos</h4>
-              <div className="grid grid-cols-2 gap-4">
-                <div className="flex justify-between items-center">
-                  <span className="text-gray-700">Asistentes:</span>
-                  <span className="font-medium text-indigo-800">{attendees}</span>
-                </div>
-                <div className="flex justify-between items-center">
-                  <span className="text-gray-700">Bebidas por persona:</span>
-                  <span className="font-medium text-indigo-800">{drinksPerPerson}</span>
-                </div>
-                <div className="flex justify-between items-center">
-                  <span className="text-gray-700">Total de bebidas:</span>
-                  <span className="font-medium text-indigo-800">{drinkRequirements.totalDrinks}</span>
-                </div>
-                <div className="flex justify-between items-center">
-                  <span className="text-gray-700">Costo por persona:</span>
-                  <span className="font-medium text-green-600">S/ {(drinkRequirements.totalCost / attendees).toFixed(2)}</span>
+        <Card>
+          <Card.Header 
+            title="Información Detallada" 
+            gradient
+            icon={<Wine className="w-5 h-5 text-indigo-600" />}
+          />
+          <Card.Content>
+            <div className="space-y-6">
+              <div className="bg-indigo-50 p-4 rounded-lg space-y-3">
+                <h4 className="font-bold text-indigo-800 border-b border-indigo-200 pb-2">Requerimientos Básicos</h4>
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="flex justify-between items-center">
+                    <span className="text-gray-700">Asistentes:</span>
+                    <span className="font-medium text-indigo-800">{attendees}</span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-gray-700">Bebidas por persona:</span>
+                    <span className="font-medium text-indigo-800">{drinksPerPerson}</span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-gray-700">Total de bebidas:</span>
+                    <span className="font-medium text-indigo-800">{drinkRequirements.totalDrinks}</span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-gray-700">Costo por persona:</span>
+                    <span className="font-medium text-green-600">S/ {(drinkRequirements.totalCost / attendees).toFixed(2)}</span>
+                  </div>
                 </div>
               </div>
-            </div>
-            
-            <div className="space-y-3">
-              <h4 className="font-bold text-indigo-800 border-b border-gray-200 pb-2">Desglose de Costos</h4>
               
-              <div className="grid gap-2">
-                <div className="flex items-center p-3 bg-gradient-to-r from-purple-600 to-indigo-600 text-white rounded-lg">
-                  <Wine className="w-5 h-5 mr-3" />
-                  <span className="flex-1 font-medium">Licores:</span>
-                  <span className="text-white font-bold">S/ {drinkRequirements.spiritsCost.toFixed(2)}</span>
-                </div>
+              <div className="space-y-3">
+                <h4 className="font-bold text-indigo-800 border-b border-gray-200 pb-2">Desglose de Costos</h4>
                 
-                <div className="flex items-center p-3 bg-gradient-to-r from-blue-600 to-cyan-600 text-white rounded-lg">
-                  <Droplet className="w-5 h-5 mr-3" />
-                  <span className="flex-1 font-medium">Mezcladores:</span>
-                  <span className="text-white font-bold">S/ {drinkRequirements.mixersCost.toFixed(2)}</span>
-                </div>
-                
-                <div className="flex items-center p-3 bg-gradient-to-r from-cyan-600 to-teal-600 text-white rounded-lg">
-                  <Snowflake className="w-5 h-5 mr-3" />
-                  <span className="flex-1 font-medium">Hielo:</span>
-                  <span className="text-white font-bold">S/ {drinkRequirements.iceCost.toFixed(2)}</span>
-                </div>
-                
-                <div className="flex items-center p-3 bg-gradient-to-r from-gray-600 to-gray-700 text-white rounded-lg">
-                  <Package className="w-5 h-5 mr-3" />
-                  <span className="flex-1 font-medium">Suministros:</span>
-                  <span className="text-white font-bold">S/ {drinkRequirements.suppliesCost.toFixed(2)}</span>
-                </div>
-                
-                <div className="flex items-center justify-between p-3 bg-green-100 text-green-800 rounded-lg font-bold">
-                  <span>COSTO TOTAL DE BEBIDAS:</span>
-                  <span>S/ {drinkRequirements.totalCost.toFixed(2)}</span>
+                <div className="grid gap-2">
+                  <div className={`flex items-center p-3 ${theme.getGradient('primary')} text-white rounded-lg`}>
+                    <Wine className="w-5 h-5 mr-3" />
+                    <span className="flex-1 font-medium">Licores:</span>
+                    <span className="text-white font-bold">S/ {drinkRequirements.spiritsCost.toFixed(2)}</span>
+                  </div>
+                  
+                  <div className="flex items-center p-3 bg-gradient-to-r from-blue-600 to-cyan-600 text-white rounded-lg">
+                    <Droplet className="w-5 h-5 mr-3" />
+                    <span className="flex-1 font-medium">Mezcladores:</span>
+                    <span className="text-white font-bold">S/ {drinkRequirements.mixersCost.toFixed(2)}</span>
+                  </div>
+                  
+                  <div className="flex items-center p-3 bg-gradient-to-r from-cyan-600 to-teal-600 text-white rounded-lg">
+                    <Snowflake className="w-5 h-5 mr-3" />
+                    <span className="flex-1 font-medium">Hielo:</span>
+                    <span className="text-white font-bold">S/ {drinkRequirements.iceCost.toFixed(2)}</span>
+                  </div>
+                  
+                  <div className="flex items-center p-3 bg-gradient-to-r from-gray-600 to-gray-700 text-white rounded-lg">
+                    <Package className="w-5 h-5 mr-3" />
+                    <span className="flex-1 font-medium">Suministros:</span>
+                    <span className="text-white font-bold">S/ {drinkRequirements.suppliesCost.toFixed(2)}</span>
+                  </div>
+                  
+                  <div className="flex items-center justify-between p-3 bg-green-100 text-green-800 rounded-lg font-bold">
+                    <span>COSTO TOTAL DE BEBIDAS:</span>
+                    <span>S/ {drinkRequirements.totalCost.toFixed(2)}</span>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
-        </div>
+          </Card.Content>
+        </Card>
         
-        <div className="bg-white p-6 rounded-xl shadow-md border border-gray-100">
-          <h3 className="text-xl font-bold mb-4 text-indigo-800">Estado del Inventario</h3>
-          
-          <div className="space-y-5">
-            <StatusBar 
-              title="Licores" 
-              icon={<Wine className="w-5 h-5 text-purple-600" />}
-              isEnough={drinkRequirements.hasEnoughSpirits}
-              currentAmount={getCategoryServings('spirits')}
-              requiredAmount={drinkRequirements.totalDrinks}
-              colorClass="from-purple-600 to-indigo-600"
-            />
-            
-            <StatusBar 
-              title="Mezcladores" 
-              icon={<Droplet className="w-5 h-5 text-blue-600" />}
-              isEnough={drinkRequirements.hasEnoughMixers}
-              currentAmount={getCategoryServings('mixers')}
-              requiredAmount={drinkRequirements.totalDrinks}
-              colorClass="from-blue-600 to-cyan-600"
-            />
-            
-            <StatusBar 
-              title="Hielo" 
-              icon={<Snowflake className="w-5 h-5 text-cyan-600" />}
-              isEnough={drinkRequirements.hasEnoughIce}
-              currentAmount={getCategoryServings('ice')}
-              requiredAmount={drinkRequirements.totalDrinks}
-              colorClass="from-cyan-600 to-teal-600"
-            />
-            
-            <StatusBar 
-              title="Suministros" 
-              icon={<Package className="w-5 h-5 text-gray-700" />}
-              isEnough={drinkRequirements.hasEnoughSupplies}
-              currentAmount={getCategoryServings('supplies')}
-              requiredAmount={drinkRequirements.totalDrinks}
-              colorClass="from-gray-600 to-gray-700"
-            />
-            
-            <h4 className="font-bold text-indigo-800 border-b border-gray-200 pb-2 pt-2">Cantidades Recomendadas</h4>
-            
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div className="bg-indigo-50 rounded-lg overflow-hidden shadow-sm">
-                <div className="bg-indigo-600 text-white p-3 font-medium flex items-center">
-                  <Wine className="w-4 h-4 mr-2" /> Licores
-                </div>
-                <div className="p-3">
-                  <div className="flex justify-between items-center">
-                    <span className="text-indigo-800 font-medium">Unidades necesarias:</span>
-                    <div className="flex items-center">
-                      <span className="font-bold text-indigo-800">
-                        {getRecommendedUnits('spirits', drinkRequirements.totalDrinks)}
-                      </span>
-                      {getRecommendedUnits('spirits', drinkRequirements.totalDrinks) > shoppingItems
-                        .filter(i => i.category === 'spirits')
-                        .reduce((sum, i) => sum + i.units, 0) ? (
-                        <span className="ml-2 text-xs bg-red-100 text-red-800 px-2 py-1 rounded-full flex items-center">
-                          <AlertCircle size={12} className="mr-1" /> Falta
-                        </span>
-                      ) : (
-                        <span className="ml-2 text-xs bg-green-100 text-green-800 px-2 py-1 rounded-full flex items-center">
-                          <CheckCircle size={12} className="mr-1" /> Completo
-                        </span>
-                      )}
-                    </div>
-                  </div>
-                </div>
-              </div>
+        <Card>
+          <Card.Header 
+            title="Estado del Inventario"
+            gradient 
+            icon={<CheckCircle className="w-5 h-5 text-indigo-600" />}
+          />
+          <Card.Content>
+            <div className="space-y-5">
+              <StatusBar 
+                title="Licores" 
+                icon={<Wine className="w-5 h-5 text-purple-600" />}
+                isEnough={drinkRequirements.hasEnoughSpirits}
+                currentAmount={getCategoryServings('spirits')}
+                requiredAmount={drinkRequirements.totalDrinks}
+                colorClass="from-purple-600 to-indigo-600"
+              />
               
-              <div className="bg-blue-50 rounded-lg overflow-hidden shadow-sm">
-                <div className="bg-blue-600 text-white p-3 font-medium flex items-center">
-                  <Droplet className="w-4 h-4 mr-2" /> Mezcladores
-                </div>
-                <div className="p-3">
-                  <div className="flex justify-between items-center">
-                    <span className="text-blue-800 font-medium">Unidades necesarias:</span>
-                    <div className="flex items-center">
-                      <span className="font-bold text-blue-800">
-                        {getRecommendedUnits('mixers', drinkRequirements.totalDrinks)}
-                      </span>
-                      {getRecommendedUnits('mixers', drinkRequirements.totalDrinks) > shoppingItems
-                        .filter(i => i.category === 'mixers')
-                        .reduce((sum, i) => sum + i.units, 0) ? (
-                        <span className="ml-2 text-xs bg-red-100 text-red-800 px-2 py-1 rounded-full flex items-center">
-                          <AlertCircle size={12} className="mr-1" /> Falta
-                        </span>
-                      ) : (
-                        <span className="ml-2 text-xs bg-green-100 text-green-800 px-2 py-1 rounded-full flex items-center">
-                          <CheckCircle size={12} className="mr-1" /> Completo
-                        </span>
-                      )}
-                    </div>
-                  </div>
-                </div>
-              </div>
+              <StatusBar 
+                title="Mezcladores" 
+                icon={<Droplet className="w-5 h-5 text-blue-600" />}
+                isEnough={drinkRequirements.hasEnoughMixers}
+                currentAmount={getCategoryServings('mixers')}
+                requiredAmount={drinkRequirements.totalDrinks}
+                colorClass="from-blue-600 to-cyan-600"
+              />
               
-              <div className="bg-cyan-50 rounded-lg overflow-hidden shadow-sm">
-                <div className="bg-cyan-600 text-white p-3 font-medium flex items-center">
-                  <Snowflake className="w-4 h-4 mr-2" /> Hielo
-                </div>
-                <div className="p-3">
-                  <div className="flex justify-between items-center">
-                    <span className="text-cyan-800 font-medium">Unidades necesarias:</span>
-                    <div className="flex items-center">
-                      <span className="font-bold text-cyan-800">
-                        {getRecommendedUnits('ice', drinkRequirements.totalDrinks)}
-                      </span>
-                      {getRecommendedUnits('ice', drinkRequirements.totalDrinks) > shoppingItems
-                        .filter(i => i.category === 'ice')
-                        .reduce((sum, i) => sum + i.units, 0) ? (
-                        <span className="ml-2 text-xs bg-red-100 text-red-800 px-2 py-1 rounded-full flex items-center">
-                          <AlertCircle size={12} className="mr-1" /> Falta
-                        </span>
-                      ) : (
-                        <span className="ml-2 text-xs bg-green-100 text-green-800 px-2 py-1 rounded-full flex items-center">
-                          <CheckCircle size={12} className="mr-1" /> Completo
-                        </span>
-                      )}
-                    </div>
-                  </div>
-                </div>
-              </div>
+              <StatusBar 
+                title="Hielo" 
+                icon={<Snowflake className="w-5 h-5 text-cyan-600" />}
+                isEnough={drinkRequirements.hasEnoughIce}
+                currentAmount={getCategoryServings('ice')}
+                requiredAmount={drinkRequirements.totalDrinks}
+                colorClass="from-cyan-600 to-teal-600"
+              />
               
-              <div className="bg-gray-50 rounded-lg overflow-hidden shadow-sm">
-                <div className="bg-gray-600 text-white p-3 font-medium flex items-center">
-                  <Package className="w-4 h-4 mr-2" /> Suministros
-                </div>
-                <div className="p-3">
-                  <div className="flex justify-between items-center">
-                    <span className="text-gray-800 font-medium">Unidades necesarias:</span>
+              <StatusBar 
+                title="Suministros" 
+                icon={<Package className="w-5 h-5 text-gray-700" />}
+                isEnough={drinkRequirements.hasEnoughSupplies}
+                currentAmount={getCategoryServings('supplies')}
+                requiredAmount={drinkRequirements.totalDrinks}
+                colorClass="from-gray-600 to-gray-700"
+              />
+              
+              <h4 className="font-bold text-indigo-800 border-b border-gray-200 pb-2 pt-2">Cantidades Recomendadas</h4>
+              
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <Card variant="default" className="bg-indigo-50">
+                  <Card.Header className="bg-indigo-600 text-white p-3 font-medium">
                     <div className="flex items-center">
-                      <span className="font-bold text-gray-800">
-                        {getRecommendedUnits('supplies', drinkRequirements.totalDrinks)}
-                      </span>
-                      {getRecommendedUnits('supplies', drinkRequirements.totalDrinks) > shoppingItems
-                        .filter(i => i.category === 'supplies')
-                        .reduce((sum, i) => sum + i.units, 0) ? (
-                        <span className="ml-2 text-xs bg-red-100 text-red-800 px-2 py-1 rounded-full flex items-center">
-                          <AlertCircle size={12} className="mr-1" /> Falta
-                        </span>
-                      ) : (
-                        <span className="ml-2 text-xs bg-green-100 text-green-800 px-2 py-1 rounded-full flex items-center">
-                          <CheckCircle size={12} className="mr-1" /> Completo
-                        </span>
-                      )}
+                      <Wine className="w-4 h-4 mr-2" /> Licores
                     </div>
-                  </div>
-                </div>
+                  </Card.Header>
+                  <Card.Content className="p-3">
+                    <div className="flex justify-between items-center">
+                      <span className="text-indigo-800 font-medium">Unidades necesarias:</span>
+                      <div className="flex items-center">
+                        <span className="font-bold text-indigo-800">
+                          {getRecommendedUnits('spirits', drinkRequirements.totalDrinks)}
+                        </span>
+                        {getRecommendedUnits('spirits', drinkRequirements.totalDrinks) > shoppingItems
+                          .filter(i => i.category === 'spirits')
+                          .reduce((sum, i) => sum + i.units, 0) ? (
+                          <Badge variant="error" size="sm" className="ml-2" icon={<AlertCircle size={12} />}>
+                            Falta
+                          </Badge>
+                        ) : (
+                          <Badge variant="success" size="sm" className="ml-2" icon={<CheckCircle size={12} />}>
+                            Completo
+                          </Badge>
+                        )}
+                      </div>
+                    </div>
+                  </Card.Content>
+                </Card>
+                
+                {/* Similar cards for Mixers, Ice, and Supplies... */}
+                <Card variant="default" className="bg-blue-50">
+                  <Card.Header className="bg-blue-600 text-white p-3 font-medium">
+                    <div className="flex items-center">
+                      <Droplet className="w-4 h-4 mr-2" /> Mezcladores
+                    </div>
+                  </Card.Header>
+                  <Card.Content className="p-3">
+                    <div className="flex justify-between items-center">
+                      <span className="text-blue-800 font-medium">Unidades necesarias:</span>
+                      <div className="flex items-center">
+                        <span className="font-bold text-blue-800">
+                          {getRecommendedUnits('mixers', drinkRequirements.totalDrinks)}
+                        </span>
+                        {getRecommendedUnits('mixers', drinkRequirements.totalDrinks) > shoppingItems
+                          .filter(i => i.category === 'mixers')
+                          .reduce((sum, i) => sum + i.units, 0) ? (
+                          <Badge variant="error" size="sm" className="ml-2" icon={<AlertCircle size={12} />}>
+                            Falta
+                          </Badge>
+                        ) : (
+                          <Badge variant="success" size="sm" className="ml-2" icon={<CheckCircle size={12} />}>
+                            Completo
+                          </Badge>
+                        )}
+                      </div>
+                    </div>
+                  </Card.Content>
+                </Card>
               </div>
             </div>
-          </div>
-        </div>
+          </Card.Content>
+        </Card>
       </div>
       
-      <div className="grid grid-cols-1 gap-6">
-        <div className="bg-white p-6 rounded-xl shadow-md border border-gray-100">
-          <h3 className="text-xl font-bold mb-4 text-indigo-800">Detalle de Bebidas</h3>
-          
-          <div className="overflow-hidden rounded-xl border border-gray-200">
-            <table className="min-w-full divide-y divide-gray-200">
-              <thead>
-                <tr className="bg-gradient-to-r from-indigo-600 to-purple-600 text-white">
-                  <th scope="col" className="px-4 py-3 text-left text-sm font-semibold uppercase tracking-wider">Artículo</th>
-                  <th scope="col" className="px-4 py-3 text-left text-sm font-semibold uppercase tracking-wider">Tamaño</th>
-                  <th scope="col" className="px-4 py-3 text-left text-sm font-semibold uppercase tracking-wider">Unidades</th>
-                  <th scope="col" className="px-4 py-3 text-left text-sm font-semibold uppercase tracking-wider">Porciones</th>
-                  <th scope="col" className="px-4 py-3 text-left text-sm font-semibold uppercase tracking-wider">Precio</th>
-                  <th scope="col" className="px-4 py-3 text-left text-sm font-semibold uppercase tracking-wider">Costo Total</th>
-                </tr>
-              </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
-                {shoppingItems
-                  .filter(item => ['spirits', 'mixers', 'ice', 'supplies'].includes(item.category))
-                  .map(item => {
-                    // Determine background color based on category
-                    let bgColorClass = "";
-                    switch(item.category) {
-                      case 'spirits': bgColorClass = "hover:bg-purple-50"; break;
-                      case 'mixers': bgColorClass = "hover:bg-blue-50"; break;
-                      case 'ice': bgColorClass = "hover:bg-cyan-50"; break;
-                      case 'supplies': bgColorClass = "hover:bg-gray-50"; break;
-                      default: bgColorClass = "hover:bg-gray-50";
-                    }
-                    
-                    // Determine icon based on category
-                    let icon = null;
-                    switch(item.category) {
-                      case 'spirits': icon = <Wine className="w-4 h-4 text-purple-600 mr-2" />; break;
-                      case 'mixers': icon = <Droplet className="w-4 h-4 text-blue-600 mr-2" />; break;
-                      case 'ice': icon = <Snowflake className="w-4 h-4 text-cyan-600 mr-2" />; break;
-                      case 'supplies': icon = <Package className="w-4 h-4 text-gray-600 mr-2" />; break;
-                    }
-                    
-                    return (
-                      <tr key={item.id} className={`${bgColorClass} transition-colors duration-150`}>
-                        <td className="px-4 py-3 whitespace-nowrap text-sm font-medium text-gray-800 flex items-center">
-                          {icon} {item.name}
-                        </td>
-                        <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-700">{item.size} {item.sizeUnit}</td>
-                        <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-700">{item.units}</td>
-                        <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-700">{item.servings * item.units}</td>
-                        <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-700">S/ {item.cost.toFixed(2)}</td>
-                        <td className="px-4 py-3 whitespace-nowrap text-sm font-medium text-green-700">S/ {(item.cost * item.units).toFixed(2)}</td>
-                      </tr>
-                    )
-                  })}
-              </tbody>
-            </table>
-          </div>
-        </div>
-        
-        <div className="bg-white p-6 rounded-xl shadow-md border border-gray-100">
-          <h3 className="text-xl font-bold mb-4 flex items-center text-indigo-800">
-            <TrendingUp className="w-5 h-5 mr-2 text-indigo-600" /> Consejos para Planificar Bebidas
-          </h3>
-          
+      <Card>
+        <Card.Header 
+          title="Detalle de Bebidas" 
+          gradient
+          icon={<Wine className="w-5 h-5 text-indigo-600" />}
+        />
+        <Card.Content>
+          <Table
+            data={drinkItems}
+            columns={drinkColumns}
+            hoverable
+          />
+        </Card.Content>
+      </Card>
+      
+      <Card>
+        <Card.Header 
+          title="Consejos para Planificar Bebidas" 
+          icon={<TrendingUp className="w-5 h-5 text-indigo-600" />}
+        />
+        <Card.Content>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="bg-indigo-50 p-5 rounded-lg">
               <h4 className="font-bold text-indigo-800 mb-3 border-b border-indigo-200 pb-2">Opciones de Servicio</h4>
@@ -376,8 +355,8 @@ const DrinksTab = ({
               </ul>
             </div>
           </div>
-        </div>
-      </div>
+        </Card.Content>
+      </Card>
     </div>
   );
 };

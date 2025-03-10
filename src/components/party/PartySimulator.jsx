@@ -1,18 +1,29 @@
 "use client";
 
 import React, { useState, useEffect } from 'react';
-import { Users, DollarSign, Wine, Utensils, MapPin, FileBarChart, ShoppingBag, AlertCircle, CheckCircle } from 'lucide-react';
+import { 
+  Users, DollarSign, Wine, Utensils, MapPin, 
+  FileBarChart, ShoppingBag, AlertCircle, CheckCircle 
+} from 'lucide-react';
+import Card from '@/components/ui/Card';
+import Badge from '@/components/ui/Badge';
+import Button from '@/components/ui/Button';
+import Tabs from '@/components/ui/Tabs';
+import PageHeader from '@/components/ui/PageHeader';
+import { useTheme } from '@/components/ui/ThemeProvider';
+
+// Import tab components
 import OverviewTab from './OverviewTab';
 import ShoppingTab from './ShoppingTab';
 import DrinksTab from './DrinksTab';
 import FoodTab from './FoodTab';
 import VenueTab from './VenueTab';
 import ReportsTab from './ReportsTab';
-import StatusItem from './StatusItem';
-import StatusBar from './StatusBar';
 
 // Main component
 export default function PartySimulator() {
+  const theme = useTheme();
+  
   // Tab state
   const [activeTab, setActiveTab] = useState('overview');
   
@@ -299,168 +310,188 @@ export default function PartySimulator() {
     }
   };
 
-  // Render appropriate tab content
-  const renderTab = () => {
-    switch(activeTab) {
-      case 'overview':
-        return (
-          <OverviewTab 
-            attendees={attendees}
-            ticketPrice={ticketPrice}
-            drinksPerPerson={drinksPerPerson}
-            foodServingsPerPerson={foodServingsPerPerson}
-            setAttendees={setAttendees}
-            setTicketPrice={setTicketPrice}
-            setDrinksPerPerson={setDrinksPerPerson}
-            setFoodServingsPerPerson={setFoodServingsPerPerson}
-            totalRevenue={totalRevenue}
-            totalCosts={totalCosts}
-            netProfit={netProfit}
-            perPersonCost={perPersonCost}
-            breakEvenAttendees={breakEvenAttendees}
-            recommendedTicketPrice={recommendedTicketPrice}
-            isViable={isViable}
-            costBreakdown={costBreakdown}
-            financialOverview={financialOverview}
-            COLORS={COLORS}
-            calculateDrinkRequirements={calculateDrinkRequirements}
-            calculateFoodRequirements={calculateFoodRequirements}
-            getCategoryServings={getCategoryServings}
-          />
-        );
-      case 'shopping':
-        return (
-          <ShoppingTab 
-            newItem={newItem}
-            editingItem={editingItem}
-            handleInputChange={handleInputChange}
-            addItem={addItem}
-            saveEdit={saveEdit}
-            categories={categories}
-            sizeUnits={sizeUnits}
-            shoppingItems={shoppingItems}
-            getItemsByCategory={getItemsByCategory}
-            startEdit={startEdit}
-            deleteItem={deleteItem}
-            getCategoryTotal={getCategoryTotal}
-            jsonPreview={jsonPreview}
-          />
-        );
-      case 'drinks':
-        return (
-          <DrinksTab 
-            attendees={attendees}
-            drinksPerPerson={drinksPerPerson}
-            shoppingItems={shoppingItems}
-            calculateDrinkRequirements={calculateDrinkRequirements}
-            getCategoryServings={getCategoryServings}
-            getRecommendedUnits={getRecommendedUnits}
-          />
-        );
-      case 'food':
-        return (
-          <FoodTab 
-            attendees={attendees}
-            foodServingsPerPerson={foodServingsPerPerson}
-            shoppingItems={shoppingItems}
-            calculateFoodRequirements={calculateFoodRequirements}
-            getCategoryServings={getCategoryServings}
-            getRecommendedUnits={getRecommendedUnits}
-          />
-        );
-      case 'venue':
-        return (
-          <VenueTab 
-            venueCost={venueCost}
-            setVenueCost={setVenueCost}
-            miscCosts={miscCosts}
-            setMiscCosts={setMiscCosts}
-            attendees={attendees}
-          />
-        );
-      case 'reports':
-        return (
-          <ReportsTab 
-            venueCost={venueCost}
-            attendees={attendees}
-            ticketPrice={ticketPrice}
-            totalCosts={totalCosts}
-            totalRevenue={totalRevenue}
-            netProfit={netProfit}
-            perPersonCost={perPersonCost}
-            breakEvenAttendees={breakEvenAttendees}
-            recommendedTicketPrice={recommendedTicketPrice}
-            isViable={isViable}
-            calculateDrinkRequirements={calculateDrinkRequirements}
-            calculateFoodRequirements={calculateFoodRequirements}
-            drinksPerPerson={drinksPerPerson}
-            foodServingsPerPerson={foodServingsPerPerson}
-            shoppingItems={shoppingItems}
-            getCategoryTotal={getCategoryTotal}
-          />
-        );
-      default:
-        return <OverviewTab />;
-    }
-  };
-
   // Tabs configuration
   const tabs = [
-    { id: 'overview', label: 'Resumen', icon: <Users size={18} /> },
-    { id: 'shopping', label: 'Compras', icon: <ShoppingBag size={18} /> },
-    { id: 'drinks', label: 'Bebidas', icon: <Wine size={18} /> },
-    { id: 'food', label: 'Comida', icon: <Utensils size={18} /> },
-    { id: 'venue', label: 'Local', icon: <MapPin size={18} /> },
-    { id: 'reports', label: 'Informes', icon: <FileBarChart size={18} /> },
+    { 
+      label: 'Resumen', 
+      icon: <Users size={18} />,
+      content: (
+        <OverviewTab 
+          attendees={attendees}
+          ticketPrice={ticketPrice}
+          drinksPerPerson={drinksPerPerson}
+          foodServingsPerPerson={foodServingsPerPerson}
+          setAttendees={setAttendees}
+          setTicketPrice={setTicketPrice}
+          setDrinksPerPerson={setDrinksPerPerson}
+          setFoodServingsPerPerson={setFoodServingsPerPerson}
+          totalRevenue={totalRevenue}
+          totalCosts={totalCosts}
+          netProfit={netProfit}
+          perPersonCost={perPersonCost}
+          breakEvenAttendees={breakEvenAttendees}
+          recommendedTicketPrice={recommendedTicketPrice}
+          isViable={isViable}
+          costBreakdown={costBreakdown}
+          financialOverview={financialOverview}
+          COLORS={COLORS}
+          calculateDrinkRequirements={calculateDrinkRequirements}
+          calculateFoodRequirements={calculateFoodRequirements}
+          getCategoryServings={getCategoryServings}
+        />
+      )
+    },
+    { 
+      label: 'Compras', 
+      icon: <ShoppingBag size={18} />,
+      content: (
+        <ShoppingTab 
+          newItem={newItem}
+          editingItem={editingItem}
+          handleInputChange={handleInputChange}
+          addItem={addItem}
+          saveEdit={saveEdit}
+          categories={categories}
+          sizeUnits={sizeUnits}
+          shoppingItems={shoppingItems}
+          getItemsByCategory={getItemsByCategory}
+          startEdit={startEdit}
+          deleteItem={deleteItem}
+          getCategoryTotal={getCategoryTotal}
+          jsonPreview={jsonPreview}
+        />
+      )
+    },
+    { 
+      label: 'Bebidas', 
+      icon: <Wine size={18} />,
+      content: (
+        <DrinksTab 
+          attendees={attendees}
+          drinksPerPerson={drinksPerPerson}
+          shoppingItems={shoppingItems}
+          calculateDrinkRequirements={calculateDrinkRequirements}
+          getCategoryServings={getCategoryServings}
+          getRecommendedUnits={getRecommendedUnits}
+        />
+      ) 
+    },
+    { 
+      label: 'Comida', 
+      icon: <Utensils size={18} />,
+      content: (
+        <FoodTab 
+          attendees={attendees}
+          foodServingsPerPerson={foodServingsPerPerson}
+          shoppingItems={shoppingItems}
+          calculateFoodRequirements={calculateFoodRequirements}
+          getCategoryServings={getCategoryServings}
+          getRecommendedUnits={getRecommendedUnits}
+        />
+      )
+    },
+    { 
+      label: 'Local', 
+      icon: <MapPin size={18} />,
+      content: (
+        <VenueTab 
+          venueCost={venueCost}
+          setVenueCost={setVenueCost}
+          miscCosts={miscCosts}
+          setMiscCosts={setMiscCosts}
+          attendees={attendees}
+        />
+      )
+    },
+    { 
+      label: 'Informes', 
+      icon: <FileBarChart size={18} />,
+      content: (
+        <ReportsTab 
+          venueCost={venueCost}
+          attendees={attendees}
+          ticketPrice={ticketPrice}
+          totalCosts={totalCosts}
+          totalRevenue={totalRevenue}
+          netProfit={netProfit}
+          perPersonCost={perPersonCost}
+          breakEvenAttendees={breakEvenAttendees}
+          recommendedTicketPrice={recommendedTicketPrice}
+          isViable={isViable}
+          calculateDrinkRequirements={calculateDrinkRequirements}
+          calculateFoodRequirements={calculateFoodRequirements}
+          drinksPerPerson={drinksPerPerson}
+          foodServingsPerPerson={foodServingsPerPerson}
+          shoppingItems={shoppingItems}
+          getCategoryTotal={getCategoryTotal}
+        />
+      )
+    },
   ];
 
+  // Map tab labels to their index for handling active tab
+  const tabMap = {
+    'overview': 0,
+    'shopping': 1,
+    'drinks': 2, 
+    'food': 3,
+    'venue': 4,
+    'reports': 5
+  };
+  
+  // Helper to convert activeTab string to tab index
+  const getActiveTabIndex = () => tabMap[activeTab] || 0;
+  
+  // Handle tab change by index
+  const handleTabChange = (index) => {
+    const tabKeys = Object.keys(tabMap);
+    setActiveTab(tabKeys[index]);
+  };
+
   return (
-    <div className="bg-gradient-to-b from-indigo-50 to-white min-h-screen p-4">
+    <div className={`bg-gradient-to-b from-indigo-50 to-white min-h-screen p-4 ${theme.getGradient()}`}>
       <div className="max-w-7xl mx-auto">
-        <div className="bg-gradient-to-r from-indigo-600 to-purple-600 p-6 rounded-xl shadow-lg mb-6 text-white">
-          <h2 className="text-3xl font-bold mb-2 flex items-center">
-            <span className="bg-white text-indigo-600 p-2 rounded-lg mr-3">🎉</span>
-            Simulador de Fiestas
-          </h2>
-          <p className="text-indigo-100 text-lg">Organiza, planifica y visualiza todos los aspectos de tu próxima fiesta</p>
-          
-          {/* Status summary */}
-          <div className="mt-4 p-3 bg-white/10 backdrop-blur-sm rounded-lg flex flex-wrap gap-2">
-            <div className="flex items-center px-3 py-1 bg-white/20 rounded-full text-sm">
-              <Users size={14} className="mr-1" />
-              <span>{attendees} Asistentes</span>
+        <Card className="bg-gradient-to-r from-indigo-600 to-purple-600 mb-6">
+          <Card.Content className="p-6 text-white">
+            <h2 className="text-3xl font-bold mb-2 flex items-center">
+              <span className="bg-white text-indigo-600 p-2 rounded-lg mr-3">🎉</span>
+              Simulador de Fiestas
+            </h2>
+            <p className="text-indigo-100 text-lg">Organiza, planifica y visualiza todos los aspectos de tu próxima fiesta</p>
+            
+            {/* Status summary */}
+            <div className="mt-4 p-3 bg-white/10 backdrop-blur-sm rounded-lg flex flex-wrap gap-2">
+              <Badge size="md" color="primary" className="bg-white/20 text-white">
+                <Users size={14} className="mr-1" />
+                {attendees} Asistentes
+              </Badge>
+              <Badge size="md" color="primary" className="bg-white/20 text-white">
+                <DollarSign size={14} className="mr-1" />
+                S/ {ticketPrice} Entrada
+              </Badge>
+              <Badge 
+                size="md" 
+                color={isViable ? 'success' : 'error'}
+                className={isViable ? 'bg-green-500/70' : 'bg-red-500/70'}
+              >
+                {isViable ? <CheckCircle size={14} className="mr-1" /> : <AlertCircle size={14} className="mr-1" />}
+                {isViable ? 'Viable' : 'No Viable'}
+              </Badge>
             </div>
-            <div className="flex items-center px-3 py-1 bg-white/20 rounded-full text-sm">
-              <DollarSign size={14} className="mr-1" />
-              <span>S/ {ticketPrice} Entrada</span>
-            </div>
-            <div className={`flex items-center px-3 py-1 rounded-full text-sm ${isViable ? 'bg-green-500/70' : 'bg-red-500/70'}`}>
-              {isViable ? <CheckCircle size={14} className="mr-1" /> : <AlertCircle size={14} className="mr-1" />}
-              <span>{isViable ? 'Viable' : 'No Viable'}</span>
-            </div>
-          </div>
-        </div>
+          </Card.Content>
+        </Card>
         
         {/* Tabs */}
-        <div className="flex overflow-x-auto md:flex-wrap bg-white rounded-xl shadow-md mb-6 p-1">
-          {tabs.map(tab => (
-            <button
-              key={tab.id}
-              className={`flex items-center px-4 py-3 text-sm md:text-base font-medium rounded-lg transition-all duration-200 mx-1 whitespace-nowrap
-                ${activeTab === tab.id 
-                  ? 'bg-indigo-600 text-white shadow-md' 
-                  : 'text-gray-700 hover:bg-indigo-100'}`}
-              onClick={() => setActiveTab(tab.id)}
-            >
-              <span className="mr-2">{tab.icon}</span>
-              {tab.label}
-            </button>
-          ))}
-        </div>
-        
-        {/* Tab Content */}
-        <div className="transition-all duration-300 ease-in-out">
-          {renderTab()}
+        <div className="bg-white rounded-xl shadow-md p-1 mb-6">
+          <Tabs
+            tabs={tabs}
+            initialTab={getActiveTabIndex()}
+            onChange={handleTabChange}
+            variant="pills"
+            color="primary"
+            size="md"
+            fullWidth={false}
+          />
         </div>
       </div>
     </div>
