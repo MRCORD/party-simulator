@@ -476,47 +476,44 @@ export default function PartySimulator() {
     <div className="bg-gradient-to-br from-blue-50/70 to-white min-h-screen p-6">
       <div className="max-w-7xl mx-auto">
         {/* Enhanced Header */}
-        <Card className="mb-8 overflow-hidden transform hover:scale-[1.01] transition-all duration-300">
-          <Card.Content className="bg-gradient-to-r from-primary-dark to-primary p-0">
-            <div className="px-8 py-6 text-white relative overflow-hidden">
-              {/* Background pattern */}
-              <div className="absolute inset-0 opacity-10">
-                <div className="absolute top-0 left-0 w-40 h-40 bg-white rounded-full -translate-x-1/2 -translate-y-1/2" />
-                <div className="absolute bottom-0 right-0 w-60 h-60 bg-white rounded-full translate-x-1/4 translate-y-1/4" />
+        <div className="bg-gradient-to-r from-blue-600 to-blue-500 rounded-2xl mb-8 overflow-hidden shadow-lg">
+          <div className="px-8 py-6 text-white relative overflow-hidden">
+            {/* Background pattern */}
+            <div className="absolute inset-0 opacity-10">
+              <div className="absolute top-0 left-0 w-40 h-40 bg-white rounded-full -translate-x-1/2 -translate-y-1/2" />
+              <div className="absolute bottom-0 right-0 w-60 h-60 bg-white rounded-full translate-x-1/4 translate-y-1/4" />
+            </div>
+            
+            <div className="flex items-center">
+              <div className="bg-white text-blue-600 p-4 rounded-xl mr-4 shadow-md">
+                <Sparkles size={32} />
               </div>
-              
-              <div className="flex items-center">
-                <div className="bg-white text-primary p-4 rounded-xl mr-5 shadow-md">
-                  <Sparkles size={32} />
-                </div>
-                <div>
-                  <h1 className="text-3xl font-bold mb-1">Simulador de Fiestas</h1>
-                  <p className="text-blue-100 text-lg">Organiza, planifica y visualiza todos los aspectos de tu próxima fiesta</p>
-                </div>
-              </div>
-              
-              {/* Status pills */}
-              <div className="mt-6 flex flex-wrap gap-3">
-                <Badge size="md" color="primary" className="bg-white/20 backdrop-blur-sm text-white">
-                  <Users size={16} className="mr-2" />
-                  {attendees} Asistentes
-                </Badge>
-                <Badge size="md" color="primary" className="bg-white/20 backdrop-blur-sm text-white">
-                  <DollarSign size={16} className="mr-2" />
-                  S/ {ticketPrice} Entrada
-                </Badge>
-                <Badge 
-                  size="md" 
-                  color={isViable ? 'success' : 'error'}
-                  className={isViable ? 'bg-success/70' : 'bg-error/70'}
-                >
-                  {isViable ? <CheckCircle size={16} className="mr-2" /> : <AlertCircle size={16} className="mr-2" />}
-                  {isViable ? 'Viable' : 'No Viable'}
-                </Badge>
+              <div>
+                <h1 className="text-3xl font-bold mb-1">Simulador de Fiestas</h1>
+                <p className="text-blue-100 text-lg">Organiza, planifica y visualiza todos los aspectos de tu próxima fiesta</p>
               </div>
             </div>
-          </Card.Content>
-        </Card>
+            
+            {/* Status pills */}
+            <div className="mt-6 flex flex-wrap gap-3">
+              <div className="bg-white/20 backdrop-blur-sm px-4 py-2 rounded-full flex items-center">
+                <Users size={16} className="mr-2 text-blue-100" />
+                <span>{attendees} Asistentes</span>
+              </div>
+              <div className="bg-white/20 backdrop-blur-sm px-4 py-2 rounded-full flex items-center">
+                <DollarSign size={16} className="mr-2 text-blue-100" />
+                <span>S/ {ticketPrice} Entrada</span>
+              </div>
+              <div className={`px-4 py-2 rounded-full flex items-center ${isViable ? 'bg-green-500/80' : 'bg-red-500/80'}`}>
+                {isViable ? 
+                  <CheckCircle size={16} className="mr-2" /> : 
+                  <AlertCircle size={16} className="mr-2" />
+                }
+                <span>{isViable ? 'Viable' : 'No Viable'}</span>
+              </div>
+            </div>
+          </div>
+        </div>
         
         {/* Improved Tab Navigation */}
         <div className="bg-white rounded-xl shadow-md p-2 mb-8">
