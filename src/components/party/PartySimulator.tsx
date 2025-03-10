@@ -259,7 +259,7 @@ export default function PartySimulator() {
     { name: 'Misceláneos', value: miscCosts }
   ];
   
-  const COLORS = ['#4F46E5', '#06B6D4', '#F59E0B', '#EC4899', '#10B981', '#8B5CF6'];
+  const COLORS = ['var(--color-primary-blue)', 'var(--color-accent-teal)', 'var(--color-warning)', 'var(--color-accent-pink)', 'var(--color-success)', 'var(--color-primary-dark)'];
   
   // Financial overview data
   const financialOverview: FinancialOverviewItem[] = [
@@ -472,15 +472,15 @@ export default function PartySimulator() {
   };
 
   return (
-    <div className={`bg-gradient-to-b from-indigo-50 to-white min-h-screen p-4 ${theme.getGradient()}`}>
+    <div className="bg-primary-light/30 to-white min-h-screen p-4">
       <div className="max-w-7xl mx-auto">
-        <Card className="bg-gradient-to-r from-indigo-600 to-purple-600 mb-6">
+        <Card className={`${theme.getGradient('primary')} mb-6`}>
           <Card.Content className="p-6 text-white">
             <h2 className="text-3xl font-bold mb-2 flex items-center">
-              <span className="bg-white text-indigo-600 p-2 rounded-lg mr-3">🎉</span>
+              <span className="bg-white text-primary p-2 rounded-lg mr-3">🎉</span>
               Simulador de Fiestas
             </h2>
-            <p className="text-indigo-100 text-lg">Organiza, planifica y visualiza todos los aspectos de tu próxima fiesta</p>
+            <p className="text-white/80 text-lg">Organiza, planifica y visualiza todos los aspectos de tu próxima fiesta</p>
             
             {/* Status summary */}
             <div className="mt-4 p-3 bg-white/10 backdrop-blur-sm rounded-lg flex flex-wrap gap-2">
@@ -495,7 +495,7 @@ export default function PartySimulator() {
               <Badge 
                 size="md" 
                 color={isViable ? 'success' : 'error'}
-                className={isViable ? 'bg-green-500/70' : 'bg-red-500/70'}
+                className={isViable ? 'bg-success/70' : 'bg-error/70'}
               >
                 {isViable ? <CheckCircle size={14} className="mr-1" /> : <AlertCircle size={14} className="mr-1" />}
                 {isViable ? 'Viable' : 'No Viable'}

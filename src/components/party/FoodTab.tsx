@@ -77,7 +77,7 @@ const FoodTab: React.FC<FoodTabProps> = ({
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
               <h4 className="font-medium mb-3">Información Básica</h4>
-              <div className="bg-blue-50 p-4 rounded-md space-y-2">
+              <div className="bg-primary-light p-4 rounded-md space-y-2">
                 <div className="flex justify-between">
                   <span className="text-sm font-medium">Asistentes:</span>
                   <span className="text-sm">{attendees}</span>
@@ -106,11 +106,11 @@ const FoodTab: React.FC<FoodTabProps> = ({
                   <span className="text-sm font-medium">Condimentos:</span>
                   <span className="text-sm">S/ {foodRequirements.condimentsCost.toFixed(2)}</span>
                 </div>
-                <div className="flex justify-between p-2 bg-blue-50 rounded font-medium">
+                <div className="flex justify-between p-2 bg-primary-light rounded font-medium">
                   <span>Costo Total de Comida:</span>
                   <span>S/ {foodRequirements.totalCost.toFixed(2)}</span>
                 </div>
-                <div className="flex justify-between p-2 bg-yellow-50 rounded">
+                <div className="flex justify-between p-2 bg-warning-light rounded">
                   <span className="text-sm font-medium">Costo por persona:</span>
                   <span className="text-sm">S/ {(foodRequirements.totalCost / attendees).toFixed(2)}</span>
                 </div>
@@ -144,7 +144,7 @@ const FoodTab: React.FC<FoodTabProps> = ({
               <h4 className="font-medium mt-4 mb-3">Cantidades Recomendadas</h4>
               
               <div className="space-y-2">
-                <div className="flex justify-between items-center p-2 bg-blue-50 rounded">
+                <div className="flex justify-between items-center p-2 bg-primary-light rounded">
                   <span className="text-sm font-medium">Carnes:</span>
                   <div className="flex items-center">
                     <span className="text-sm font-medium mr-2">
@@ -160,7 +160,7 @@ const FoodTab: React.FC<FoodTabProps> = ({
                   </div>
                 </div>
                 
-                <div className="flex justify-between items-center p-2 bg-blue-50 rounded">
+                <div className="flex justify-between items-center p-2 bg-primary-light rounded">
                   <span className="text-sm font-medium">Guarniciones:</span>
                   <div className="flex items-center">
                     <span className="text-sm font-medium mr-2">
@@ -176,7 +176,7 @@ const FoodTab: React.FC<FoodTabProps> = ({
                   </div>
                 </div>
                 
-                <div className="flex justify-between items-center p-2 bg-blue-50 rounded">
+                <div className="flex justify-between items-center p-2 bg-primary-light rounded">
                   <span className="text-sm font-medium">Condimentos:</span>
                   <div className="flex items-center">
                     <span className="text-sm font-medium mr-2">
@@ -220,7 +220,7 @@ const FoodTab: React.FC<FoodTabProps> = ({
         <Card.Content>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="space-y-2">
-              <h4 className="font-medium text-gray-800">Logística de Cocina</h4>
+              <h4 className="font-medium text-slate-800">Logística de Cocina</h4>
               <ul className="list-disc pl-5 space-y-1 text-sm">
                 <li>Tener al menos 2 personas manejando la parrilla para fiestas de más de 20 personas</li>
                 <li>Preparar la carne con anticipación (marinado, sazonado)</li>
@@ -231,7 +231,7 @@ const FoodTab: React.FC<FoodTabProps> = ({
             </div>
             
             <div className="space-y-2">
-              <h4 className="font-medium text-gray-800">Consejos de Selección de Alimentos</h4>
+              <h4 className="font-medium text-slate-800">Consejos de Selección de Alimentos</h4>
               <ul className="list-disc pl-5 space-y-1 text-sm">
                 <li>Elegir alimentos que se puedan preparar con anticipación</li>
                 <li>Incluir opciones vegetarianas (brochetas de verduras, maíz, etc.)</li>
