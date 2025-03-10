@@ -68,7 +68,7 @@ const FoodTab: React.FC<FoodTabProps> = ({
       current: getCategoryServings('meat'), 
       required: foodRequirements.totalServings, 
       isEnough: foodRequirements.hasEnoughMeat,
-      icon: <Beef className="w-5 h-5 text-white" />
+      icon: <Beef className="w-5 h-5" strokeWidth={2.5} />
     },
     { 
       category: 'sides', 
@@ -76,7 +76,7 @@ const FoodTab: React.FC<FoodTabProps> = ({
       current: getCategoryServings('sides'), 
       required: foodRequirements.totalServings, 
       isEnough: foodRequirements.hasEnoughSides,
-      icon: <Salad className="w-5 h-5 text-white" />
+      icon: <Salad className="w-5 h-5" strokeWidth={2.5} />
     },
     { 
       category: 'condiments', 
@@ -84,7 +84,7 @@ const FoodTab: React.FC<FoodTabProps> = ({
       current: getCategoryServings('condiments'), 
       required: foodRequirements.totalServings, 
       isEnough: foodRequirements.hasEnoughCondiments,
-      icon: <UtensilsCrossed className="w-5 h-5 text-white" />
+      icon: <UtensilsCrossed className="w-5 h-5" strokeWidth={2.5} />
     }
   ];
   

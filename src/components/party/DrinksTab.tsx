@@ -75,7 +75,7 @@ const DrinksTab: React.FC<DrinksTabProps> = ({
       current: getCategoryServings('spirits'), 
       required: drinkRequirements.totalDrinks, 
       isEnough: drinkRequirements.hasEnoughSpirits,
-      icon: <Wine className="w-5 h-5 text-white" />
+      icon: <Wine className="w-5 h-5" strokeWidth={2.5} />
     },
     { 
       category: 'mixers', 
@@ -83,7 +83,7 @@ const DrinksTab: React.FC<DrinksTabProps> = ({
       current: getCategoryServings('mixers'), 
       required: drinkRequirements.totalDrinks, 
       isEnough: drinkRequirements.hasEnoughMixers,
-      icon: <Droplet className="w-5 h-5 text-white" />
+      icon: <Droplet className="w-5 h-5" strokeWidth={2.5} />
     },
     { 
       category: 'ice', 
@@ -91,7 +91,7 @@ const DrinksTab: React.FC<DrinksTabProps> = ({
       current: getCategoryServings('ice'), 
       required: drinkRequirements.totalDrinks, 
       isEnough: drinkRequirements.hasEnoughIce,
-      icon: <Snowflake className="w-5 h-5 text-white" />
+      icon: <Snowflake className="w-5 h-5" strokeWidth={2.5} />
     },
     { 
       category: 'supplies', 
@@ -99,7 +99,7 @@ const DrinksTab: React.FC<DrinksTabProps> = ({
       current: getCategoryServings('supplies'), 
       required: drinkRequirements.totalDrinks, 
       isEnough: drinkRequirements.hasEnoughSupplies,
-      icon: <Package className="w-5 h-5 text-white" />
+      icon: <Package className="w-5 h-5" strokeWidth={2.5} />
     }
   ];
   
