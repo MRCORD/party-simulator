@@ -79,10 +79,6 @@ const ShoppingTab: React.FC<ShoppingTabProps> = ({
   // Get form section with proper theme colors
   const formClasses = 'p-5 bg-primary-light/10 border-b border-primary-light/20';
 
-  // Get filtered items and totals
-  const filteredItems = getFilteredItems();
-  const filteredTotal = getFilteredTotal();
-
   return (
     <div className="space-y-6">
       {/* Header Card */}

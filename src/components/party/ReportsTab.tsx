@@ -23,13 +23,6 @@ interface FoodRequirements {
   totalCost: number;
 }
 
-interface FinancialData {
-  category: string;
-  cost: number;
-  perPerson: number;
-  percentage: number | string;
-}
-
 interface CategoryData {
   category: string;
   items: number;
@@ -59,13 +52,6 @@ interface ReportsTabProps {
   getCategoryTotal: (category: string) => number;
 }
 
-interface TableColumn {
-  accessor: string;
-  Header: string;
-  width?: string;
-  Cell?: ({ value }: { value: unknown }) => React.ReactNode;
-}
-
 const ReportsTab: React.FC<ReportsTabProps> = ({
   venueCost,
   attendees,
@@ -92,65 +78,12 @@ const ReportsTab: React.FC<ReportsTabProps> = ({
   const costRevenue = totalRevenue !== 0 ? (totalCosts / totalRevenue) * 100 : 0;
   const roi = totalCosts !== 0 ? (netProfit / totalCosts) * 100 : 0;
   
-  // Helper to get badge style
-  const getBadgeStyle = (isGood: boolean): string => {
-    return isGood 
-      ? "bg-success-light text-success-dark flex items-center"
-      : "bg-error-light text-error-dark flex items-center";
-  };
-  
   // Expense categories for visualizations
   const expenseCategories: ExpenseCategory[] = [
     { name: 'Local', value: venueCost, color: 'bg-teal-500' },
     { name: 'Bebidas', value: drinkRequirements.totalCost, color: 'bg-blue-500' },
     { name: 'Comida', value: foodRequirements.totalCost, color: 'bg-red-500' },
     { name: 'Misceláneos', value: miscCosts, color: 'bg-amber-500' }
-  ];
-  
-  // Financial summary data
-  const financialData: FinancialData[] = [
-    {
-      category: 'Local',
-      cost: venueCost,
-      perPerson: venueCost / attendees,
-      percentage: (venueCost / totalCosts) * 100
-    },
-    {
-      category: 'Bebidas',
-      cost: drinkRequirements.totalCost,
-      perPerson: drinkRequirements.totalCost / attendees,
-      percentage: (drinkRequirements.totalCost / totalCosts) * 100
-    },
-    {
-      category: 'Comida',
-      cost: foodRequirements.totalCost,
-      perPerson: foodRequirements.totalCost / attendees,
-      percentage: (foodRequirements.totalCost / totalCosts) * 100
-    },
-    {
-      category: 'Misceláneos',
-      cost: miscCosts,
-      perPerson: miscCosts / attendees,
-      percentage: (miscCosts / totalCosts) * 100
-    },
-    {
-      category: 'COSTOS TOTALES',
-      cost: totalCosts,
-      perPerson: perPersonCost,
-      percentage: 100
-    },
-    {
-      category: 'INGRESOS TOTALES',
-      cost: totalRevenue,
-      perPerson: ticketPrice,
-      percentage: '-'
-    },
-    {
-      category: 'BENEFICIO/PÉRDIDA NETA',
-      cost: netProfit,
-      perPerson: netProfit / attendees,
-      percentage: netProfit >= 0 ? `${((netProfit / totalRevenue) * 100).toFixed(1)}% margen` : '-'
-    }
   ];
   
   // Beverage data
