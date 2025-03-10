@@ -1,3 +1,5 @@
+import React from 'react';
+
 // Centralized type definitions for the party simulator
 
 // Base shopping item definition used throughout all components
@@ -61,4 +63,41 @@ export interface ShoppingItem {
   export interface VenueCosts {
     venue: number;
     misc: number;
+  }
+
+  // Shopping tab props
+  export interface ShoppingTabProps {
+    newItem: Omit<ShoppingItem, 'id'>;
+    editingItem: ShoppingItem | null;
+    handleInputChange: (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => void;
+    addItem: () => void;
+    saveEdit: () => void;
+    categories: Category[];
+    sizeUnits: { [key: string]: string[] };
+    shoppingItems: ShoppingItem[];
+    getItemsByCategory: () => { [key: string]: ShoppingItem[] };
+    startEdit: (item: ShoppingItem) => void;
+    deleteItem: (id: string) => void;
+    getCategoryTotal: (category: string) => number;
+    jsonPreview: string;
+  }
+  
+  // Reports tab props
+  export interface ReportsTabProps {
+    venueCost: number;
+    attendees: number;
+    ticketPrice: number;
+    totalCosts: number;
+    totalRevenue: number;
+    netProfit: number;
+    perPersonCost: number;
+    breakEvenAttendees: number;
+    recommendedTicketPrice: number;
+    isViable: boolean;
+    calculateDrinkRequirements: () => DrinkRequirements;
+    calculateFoodRequirements: () => FoodRequirements;
+    drinksPerPerson: number;
+    foodServingsPerPerson: number;
+    shoppingItems: ShoppingItem[];
+    getCategoryTotal: (category: string) => number;
   }

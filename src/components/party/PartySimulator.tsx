@@ -1,13 +1,11 @@
 "use client";
-
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { 
   Users, Wine, Utensils, MapPin, 
   FileBarChart, ShoppingBag, AlertCircle, CheckCircle,
   Sparkles
 } from 'lucide-react';
 import Tabs from '@/components/ui/Tabs';
-import { useTheme } from '@/components/ui/ThemeProvider';
 
 // Import shared types
 import { 
@@ -90,13 +88,13 @@ export default function PartySimulator() {
   };
   
   // Function to calculate if we have enough servings
-  const hasEnoughServings = (category: string, requiredServings: number) => {
+  const hasEnoughServings = useCallback((category: string, requiredServings: number) => {
     const totalServings = getCategoryServings(category);
     return totalServings >= requiredServings;
-  };
+  }, [getCategoryServings]);
   
   // Calculate drink requirements
-  const calculateDrinkRequirements = () => {
+  const calculateDrinkRequirements = useCallback(() => {
     const totalDrinks = attendees * drinksPerPerson;
     const hasEnoughSpirits = hasEnoughServings('spirits', totalDrinks);
     const hasEnoughMixers = hasEnoughServings('mixers', totalDrinks);
@@ -116,10 +114,10 @@ export default function PartySimulator() {
       totalCost: getCategoryTotal('spirits') + getCategoryTotal('mixers') + 
                 getCategoryTotal('ice') + getCategoryTotal('supplies')
     };
-  };
+  }, [attendees, drinksPerPerson, getCategoryTotal, hasEnoughServings]);
   
   // Calculate food requirements
-  const calculateFoodRequirements = () => {
+  const calculateFoodRequirements = useCallback(() => {
     const totalServings = attendees * foodServingsPerPerson;
     const hasEnoughMeat = hasEnoughServings('meat', totalServings);
     const hasEnoughSides = hasEnoughServings('sides', totalServings);
@@ -135,7 +133,7 @@ export default function PartySimulator() {
       condimentsCost: getCategoryTotal('condiments'),
       totalCost: getCategoryTotal('meat') + getCategoryTotal('sides') + getCategoryTotal('condiments')
     };
-  };
+  }, [attendees, foodServingsPerPerson, getCategoryTotal, hasEnoughServings]);
   
   // Function to add a new item
   const addItem = () => {
@@ -201,10 +199,7 @@ export default function PartySimulator() {
   };
   
   // Calculate overall financials
-  useEffect(() => {
-    const drinkRequirements = calculateDrinkRequirements();
-    const foodRequirements = calculateFoodRequirements();
-    
+  useEffect(() => {    
     const totalShoppingCosts = shoppingItems.reduce((sum, item) => sum + (item.cost * item.units), 0);
     const calculatedTotalCosts = venueCost + totalShoppingCosts + miscCosts;
     const calculatedTotalRevenue = attendees * ticketPrice;
@@ -230,8 +225,7 @@ export default function PartySimulator() {
     setRecommendedTicketPrice(calculatedRecommendedTicketPrice);
   }, [
     attendees, ticketPrice, venueCost, miscCosts,
-    shoppingItems, drinksPerPerson, foodServingsPerPerson,
-    calculateDrinkRequirements, calculateFoodRequirements
+    shoppingItems
   ]);
   
   // Cost breakdown for charts
@@ -359,7 +353,6 @@ export default function PartySimulator() {
           getItemsByCategory={getItemsByCategory}
           startEdit={startEdit}
           deleteItem={deleteItem}
-          getCategoryTotal={getCategoryTotal}
           jsonPreview={jsonPreview}
         />
       )
@@ -426,8 +419,6 @@ export default function PartySimulator() {
           isViable={isViable}
           calculateDrinkRequirements={calculateDrinkRequirements}
           calculateFoodRequirements={calculateFoodRequirements}
-          drinksPerPerson={drinksPerPerson}
-          foodServingsPerPerson={foodServingsPerPerson}
           shoppingItems={shoppingItems}
           getCategoryTotal={getCategoryTotal}
         />
