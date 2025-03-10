@@ -20,22 +20,16 @@ const theme: ThemeContextType = {
   // Gradient utilities
   getGradient: (type = 'primary') => {
     const gradients = {
-      primary: 'bg-gradient-to-r from-primary to-primary-secondary',
-      success: 'bg-gradient-to-r from-success to-accent-teal',
-      warning: 'bg-gradient-to-r from-warning to-accent-amber',
-      error: 'bg-gradient-to-r from-error to-accent-pink',
+      primary: 'bg-gradient-primary',
+      success: 'bg-gradient-success',
+      warning: 'bg-gradient-warning',
+      error: 'bg-gradient-error',
     };
     return gradients[type] || gradients.primary;
   },
   
   getGradientText: (type = 'primary') => {
-    const textGradients = {
-      primary: 'bg-gradient-to-r from-primary to-primary-secondary text-transparent bg-clip-text',
-      success: 'bg-gradient-to-r from-success to-accent-teal text-transparent bg-clip-text',
-      warning: 'bg-gradient-to-r from-warning to-accent-amber text-transparent bg-clip-text',
-      error: 'bg-gradient-to-r from-error to-accent-pink text-transparent bg-clip-text',
-    };
-    return textGradients[type] || textGradients.primary;
+    return `text-gradient-${type}`;
   },
   
   // Status utilities
@@ -51,13 +45,7 @@ const theme: ThemeContextType = {
   
   // Focus utilities
   getFocusRing: (color = 'primary') => {
-    const focusRings = {
-      primary: 'focus:ring-2 focus:ring-primary/20 focus:outline-none',
-      success: 'focus:ring-2 focus:ring-success/20 focus:outline-none',
-      warning: 'focus:ring-2 focus:ring-warning/20 focus:outline-none',
-      error: 'focus:ring-2 focus:ring-error/20 focus:outline-none',
-    };
-    return focusRings[color] || focusRings.primary;
+    return 'focus-ring';
   }
 };
 
