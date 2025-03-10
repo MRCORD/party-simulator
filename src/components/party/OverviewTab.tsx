@@ -72,7 +72,7 @@ interface PieChartCustomizedLabelProps {
   percent: number;
   name: string;
   value: number;
-  index: number;  // Add back the index property
+  index: number;
 }
 
 interface PieChartActiveShapeProps {
