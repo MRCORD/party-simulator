@@ -1,7 +1,46 @@
 "use client";
-
-import React from 'react';
+import React, { ReactNode } from 'react';
 import { useTheme } from './ThemeProvider';
+
+type CardVariant = 'default' | 'accent' | 'hover' | 'gradient';
+type AccentColor = 'primary' | 'success' | 'warning' | 'error';
+type ImagePosition = 'top' | 'bottom' | 'full';
+
+interface CardProps extends React.HTMLAttributes<HTMLDivElement> {
+  children: ReactNode;
+  className?: string;
+  variant?: CardVariant;
+  accentColor?: AccentColor;
+  hover?: boolean;
+}
+
+interface CardHeaderProps extends React.HTMLAttributes<HTMLDivElement> {
+  children?: ReactNode;
+  className?: string;
+  title?: string;
+  description?: string;
+  icon?: ReactNode;
+  gradient?: boolean;
+}
+
+interface CardContentProps extends React.HTMLAttributes<HTMLDivElement> {
+  children: ReactNode;
+  className?: string;
+  noPadding?: boolean;
+}
+
+interface CardFooterProps extends React.HTMLAttributes<HTMLDivElement> {
+  children: ReactNode;
+  className?: string;
+  bordered?: boolean;
+}
+
+interface CardImageProps extends Omit<React.ImgHTMLAttributes<HTMLImageElement>, 'position'> {
+  src: string;
+  alt?: string;
+  className?: string;
+  position?: ImagePosition;
+}
 
 // Main Card component
 const Card = ({ 
@@ -11,7 +50,7 @@ const Card = ({
   accentColor = 'primary',
   hover = false,
   ...props 
-}) => {
+}: CardProps) => {
   const theme = useTheme();
   
   // Base card styles
@@ -23,23 +62,22 @@ const Card = ({
     accent: "",  // Handled separately with accentBar
     hover: hover ? "transition-all hover:shadow-md" : "",
     gradient: "bg-gradient-to-br from-slate-50 to-white",
-  };
+  } as const;
   
-  // Use theme gradients instead of hardcoded colors
+  // Use theme gradients for accent colors
   const accentColorMap = {
     primary: theme.getGradient('primary'),
-    secondary: theme.getGradient('secondary'),
     success: theme.getGradient('success'),
     warning: theme.getGradient('warning'),
     error: theme.getGradient('error'),
-  };
+  } as const;
   
   // Build class string
   const classes = [
     baseClasses,
     variantClasses[variant],
     className
-  ].join(' ');
+  ].filter(Boolean).join(' ');
   
   // For accent variant, we need to wrap with a div to show the accent
   if (variant === 'accent') {
@@ -50,7 +88,7 @@ const Card = ({
       </div>
     );
   }
-
+  
   return (
     <div className={classes} {...props}>
       {children}
@@ -67,7 +105,7 @@ const CardHeader = ({
   icon,
   gradient = false,
   ...props 
-}) => {
+}: CardHeaderProps) => {
   const theme = useTheme();
   const baseClasses = "px-6 py-4";
   
@@ -101,7 +139,7 @@ const CardContent = ({
   className = '',
   noPadding = false,
   ...props 
-}) => {
+}: CardContentProps) => {
   const baseClasses = noPadding ? "" : "px-6 py-4";
   
   return (
@@ -117,7 +155,7 @@ const CardFooter = ({
   className = '',
   bordered = true,
   ...props 
-}) => {
+}: CardFooterProps) => {
   const baseClasses = "px-6 py-4";
   const borderClass = bordered ? "border-t border-slate-100" : "";
   
@@ -135,13 +173,13 @@ const CardImage = ({
   className = '',
   position = 'top',
   ...props 
-}) => {
+}: CardImageProps) => {
   const baseClasses = "w-full";
   const positionClasses = {
     top: "rounded-t-xl",
     bottom: "rounded-b-xl",
     full: "rounded-xl",
-  };
+  } as const;
   
   return (
     <div className={`overflow-hidden ${positionClasses[position]}`}>

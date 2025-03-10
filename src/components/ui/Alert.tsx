@@ -1,8 +1,29 @@
 "use client";
 
-import React from 'react';
+import React, { ReactNode } from 'react';
 import { CheckCircle, AlertCircle, Info, X } from 'lucide-react';
 import { useTheme } from './ThemeProvider';
+
+type AlertVariant = 'success' | 'warning' | 'error' | 'info';
+
+interface AlertProps extends React.HTMLAttributes<HTMLDivElement> {
+  children: ReactNode;
+  title?: string;
+  variant?: AlertVariant;
+  icon?: ReactNode;
+  dismissible?: boolean;
+  onDismiss?: () => void;
+  className?: string;
+}
+
+interface AlertToastProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'children'> {
+  message: string;
+  variant?: AlertVariant;
+  icon?: ReactNode;
+  duration?: number;
+  onDismiss?: () => void;
+  className?: string;
+}
 
 const Alert = ({
   children,
@@ -13,7 +34,7 @@ const Alert = ({
   onDismiss,
   className = '',
   ...props
-}) => {
+}: AlertProps) => {
   const theme = useTheme();
 
   const variantMap = {
@@ -41,7 +62,7 @@ const Alert = ({
       text: 'text-primary-dark',
       icon: <Info className="w-5 h-5 text-primary" />,
     },
-  };
+  } as const;
   
   const variantStyles = variantMap[variant];
   
@@ -87,27 +108,34 @@ Alert.Toast = ({
   onDismiss,
   className = '',
   ...props
-}) => {
+}: AlertToastProps) => {
   const theme = useTheme();
+
+  const gradientMap = {
+    success: 'bg-gradient-to-r from-green-500 to-green-600',
+    warning: 'bg-gradient-to-r from-yellow-500 to-yellow-600',
+    error: 'bg-gradient-to-r from-red-500 to-red-600',
+    info: 'bg-gradient-to-r from-blue-500 to-blue-600',
+  } as const;
   
   const variantMap = {
     success: {
-      bg: theme.getGradient('success'),
+      bg: gradientMap.success,
       icon: <CheckCircle className="w-5 h-5" />,
     },
     warning: {
-      bg: theme.getGradient('warning'),
+      bg: gradientMap.warning,
       icon: <AlertCircle className="w-5 h-5" />,
     },
     error: {
-      bg: theme.getGradient('error'),
+      bg: gradientMap.error,
       icon: <AlertCircle className="w-5 h-5" />,
     },
     info: {
-      bg: theme.getGradient('primary'),
+      bg: gradientMap.info,
       icon: <Info className="w-5 h-5" />,
     },
-  };
+  } as const;
 
   const variantStyles = variantMap[variant];
 

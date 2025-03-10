@@ -1,12 +1,22 @@
 "use client";
 
-import React, { createContext, useContext } from 'react';
+import React, { createContext, useContext, ReactNode } from 'react';
+
+type ThemeType = 'primary' | 'success' | 'warning' | 'error';
+type StatusType = 'active' | 'inactive' | 'pending' | 'error';
+
+interface ThemeContextType {
+  getGradient: (type?: ThemeType) => string;
+  getGradientText: (type?: ThemeType) => string;
+  getStatusBadge: (status: StatusType) => string;
+  getFocusRing: (color?: ThemeType) => string;
+}
 
 // Create theme context
-const ThemeContext = createContext();
+const ThemeContext = createContext<ThemeContextType | null>(null);
 
 // Theme utilities and dynamic functions
-const theme = {
+const theme: ThemeContextType = {
   // Gradient utilities
   getGradient: (type = 'primary') => {
     const gradients = {
@@ -39,8 +49,12 @@ const theme = {
   }
 };
 
+interface ThemeProviderProps {
+  children: ReactNode;
+}
+
 // Theme provider component
-export const ThemeProvider = ({ children }) => {
+export const ThemeProvider = ({ children }: ThemeProviderProps) => {
   return (
     <ThemeContext.Provider value={theme}>
       {children}
@@ -51,7 +65,7 @@ export const ThemeProvider = ({ children }) => {
 // Custom hook to use theme
 export const useTheme = () => {
   const context = useContext(ThemeContext);
-  if (context === undefined) {
+  if (context === undefined || context === null) {
     throw new Error('useTheme must be used within a ThemeProvider');
   }
   return context;

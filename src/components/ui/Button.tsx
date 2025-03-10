@@ -1,7 +1,19 @@
 "use client";
-
-import React from 'react';
+import React, { ReactNode } from 'react';
 import { useTheme } from './ThemeProvider';
+
+type ButtonVariant = 'solid' | 'outline' | 'ghost' | 'gradient';
+type ButtonColor = 'primary' | 'success' | 'warning' | 'error';
+type ButtonSize = 'sm' | 'md' | 'lg';
+
+interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+  variant?: ButtonVariant;
+  color?: ButtonColor;
+  size?: ButtonSize;
+  isLoading?: boolean;
+  children: ReactNode;
+  className?: string;
+}
 
 const Button = ({
   variant = 'solid',
@@ -12,7 +24,7 @@ const Button = ({
   className = '',
   children,
   ...props
-}) => {
+}: ButtonProps) => {
   const theme = useTheme();
   
   const baseClasses = 'inline-flex items-center justify-center rounded-md font-medium transition-all duration-200';
@@ -21,7 +33,7 @@ const Button = ({
     sm: 'px-3 py-1.5 text-sm',
     md: 'px-4 py-2 text-base',
     lg: 'px-6 py-3 text-lg'
-  };
+  } as const;
   
   const variantClasses = {
     solid: {
@@ -48,7 +60,7 @@ const Button = ({
       warning: theme.getGradient('warning'),
       error: theme.getGradient('error'),
     }
-  };
+  } as const;
 
   const classes = [
     baseClasses,

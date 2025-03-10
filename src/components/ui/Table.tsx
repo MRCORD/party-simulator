@@ -1,10 +1,37 @@
 "use client";
-
-import React from 'react';
+import React, { ReactNode } from 'react';
 import { ChevronDown, ChevronUp, ChevronLeft, ChevronRight } from 'lucide-react';
 import { useTheme } from './ThemeProvider';
 
-const Table = ({
+interface TableColumn<T> {
+  accessor: keyof T;
+  Header: ReactNode;
+  Cell?: (props: { value: any; row: T }) => ReactNode;
+  sortable?: boolean;
+  sortFn?: (a: T, b: T) => number;
+  width?: string;
+}
+
+interface TableProps<T extends Record<string, any>> extends React.HTMLAttributes<HTMLTableElement> {
+  data: T[];
+  columns: TableColumn<T>[];
+  striped?: boolean;
+  hoverable?: boolean;
+  bordered?: boolean;
+  compact?: boolean;
+  sortable?: boolean;
+  pagination?: boolean;
+  itemsPerPage?: number;
+  className?: string;
+  footer?: ReactNode;
+}
+
+interface SortConfig {
+  key: string | null;
+  direction: 'asc' | 'desc';
+}
+
+function Table<T extends Record<string, any>>({
   data = [],
   columns = [],
   striped = false,
@@ -16,14 +43,14 @@ const Table = ({
   itemsPerPage = 10,
   className = '',
   ...props
-}) => {
+}: TableProps<T>) {
   const theme = useTheme();
-  const [sortConfig, setSortConfig] = React.useState({ key: null, direction: 'asc' });
+  const [sortConfig, setSortConfig] = React.useState<SortConfig>({ key: null, direction: 'asc' });
   const [currentPage, setCurrentPage] = React.useState(1);
   
   // Request sort handler
-  const requestSort = (key) => {
-    let direction = 'asc';
+  const requestSort = (key: string) => {
+    let direction: 'asc' | 'desc' = 'asc';
     if (sortConfig.key === key && sortConfig.direction === 'asc') {
       direction = 'desc';
     }
@@ -43,10 +70,13 @@ const Table = ({
           : column.sortFn(b, a);
       }
       
-      if (a[sortConfig.key] < b[sortConfig.key]) {
+      const aValue = a[sortConfig.key as keyof T];
+      const bValue = b[sortConfig.key as keyof T];
+      
+      if (aValue < bValue) {
         return sortConfig.direction === 'asc' ? -1 : 1;
       }
-      if (a[sortConfig.key] > b[sortConfig.key]) {
+      if (aValue > bValue) {
         return sortConfig.direction === 'asc' ? 1 : -1;
       }
       return 0;
@@ -61,7 +91,7 @@ const Table = ({
   }, [sortedData, pagination, currentPage, itemsPerPage]);
   
   const totalPages = Math.ceil(sortedData.length / itemsPerPage);
-  const changePage = (page) => setCurrentPage(page);
+  const changePage = (page: number) => setCurrentPage(page);
   
   // Style classes using theme colors
   const tableClasses = [
@@ -107,7 +137,7 @@ const Table = ({
                 className={`${thClasses} ${sortable && column.sortable !== false ? 'cursor-pointer select-none' : ''}`}
                 onClick={() => {
                   if (sortable && column.sortable !== false) {
-                    requestSort(column.accessor);
+                    requestSort(column.accessor as string);
                   }
                 }}
                 style={{ width: column.width }}
@@ -229,6 +259,6 @@ const Table = ({
       )}
     </div>
   );
-};
+}
 
 export default Table;

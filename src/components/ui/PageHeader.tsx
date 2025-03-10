@@ -1,8 +1,56 @@
 "use client";
-
-import React from 'react';
+import React, { ReactNode } from 'react';
 import { ChevronRight } from 'lucide-react';
 import { useTheme } from './ThemeProvider';
+
+interface Breadcrumb {
+  href?: string;
+  label: string;
+  icon?: ReactNode;
+}
+
+interface Tab {
+  label: string;
+  icon?: ReactNode;
+  count?: number;
+  content?: ReactNode;
+}
+
+interface StatChange {
+  trend: 'up' | 'down' | 'neutral';
+  text: string;
+  icon?: ReactNode;
+}
+
+interface Stat {
+  label: string;
+  value: string | number;
+  icon?: ReactNode;
+  change?: StatChange;
+}
+
+interface PageHeaderBaseProps extends React.HTMLAttributes<HTMLDivElement> {
+  title: string;
+  subtitle?: string;
+  icon?: ReactNode | string;
+  actions?: ReactNode;
+  gradient?: boolean;
+  className?: string;
+}
+
+interface PageHeaderProps extends PageHeaderBaseProps {
+  breadcrumbs?: Breadcrumb[];
+}
+
+interface PageHeaderWithTabsProps extends PageHeaderBaseProps {
+  tabs: Tab[];
+  activeTab: number;
+  onTabChange: (index: number) => void;
+}
+
+interface PageHeaderWithStatsProps extends PageHeaderBaseProps {
+  stats: Stat[];
+}
 
 const PageHeader = ({
   title,
@@ -13,7 +61,7 @@ const PageHeader = ({
   gradient = true,
   className = '',
   ...props
-}) => {
+}: PageHeaderProps) => {
   const theme = useTheme();
   
   return (
@@ -104,7 +152,7 @@ PageHeader.WithTabs = ({
   onTabChange,
   gradient = true,
   ...props
-}) => {
+}: PageHeaderWithTabsProps) => {
   const theme = useTheme();
   
   return (
@@ -160,7 +208,7 @@ PageHeader.WithStats = ({
   stats = [],
   gradient = true,
   ...props
-}) => {
+}: PageHeaderWithStatsProps) => {
   const theme = useTheme();
   
   return (

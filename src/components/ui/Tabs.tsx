@@ -1,24 +1,48 @@
 "use client";
-
-import React, { useState } from 'react';
+import React, { useState, ReactNode } from 'react';
 import { useTheme } from './ThemeProvider';
+
+interface Tab {
+  label: string;
+  icon?: ReactNode;
+  content?: ReactNode;
+}
+
+type TabVariant = 'default' | 'pills' | 'buttons' | 'underline';
+type TabColor = 'primary' | 'secondary';
+type TabSize = 'sm' | 'md' | 'lg';
+
+interface TabsProps {
+  tabs: Tab[];
+  initialTab?: number;
+  onChange?: (index: number) => void;
+  variant?: TabVariant;
+  color?: TabColor;
+  fullWidth?: boolean;
+  size?: TabSize;
+  className?: string;
+  style?: React.CSSProperties;
+  id?: string;
+  role?: string;
+  'aria-label'?: string;
+}
 
 const Tabs = ({
   tabs = [],
   initialTab = 0,
   onChange,
-  variant = 'default', // default, pills, buttons, underline
-  color = 'primary', // primary, secondary
+  variant = 'default',
+  color = 'primary',
   fullWidth = false,
   size = 'md',
   className = '',
   ...props
-}) => {
+}: TabsProps) => {
   const theme = useTheme();
   const [activeTab, setActiveTab] = useState(initialTab);
   
   // Handle tab change
-  const handleTabChange = (index) => {
+  const handleTabChange = (index: number) => {
     setActiveTab(index);
     if (onChange) onChange(index);
   };
@@ -30,7 +54,7 @@ const Tabs = ({
     pills: "p-1 bg-slate-50 rounded-lg",
     buttons: "p-1 bg-slate-50 rounded-lg",
     underline: "border-b border-slate-200",
-  };
+  } as const;
   
   // Base styles for individual tabs
   const tabBaseClasses = "inline-flex items-center justify-center font-medium transition-all";
@@ -39,7 +63,7 @@ const Tabs = ({
     sm: "px-3 py-1.5 text-sm",
     md: "px-4 py-2 text-sm",
     lg: "px-5 py-2.5 text-base",
-  };
+  } as const;
   
   // Styles for different variant and state combinations
   const tabStyleVariants = {
@@ -83,7 +107,7 @@ const Tabs = ({
         inactive: "text-slate-600 hover:text-slate-800 border-b-2 border-transparent hover:border-slate-200",
       }
     }
-  };
+  } as const;
   
   // Width classes
   const widthClasses = fullWidth ? "flex-1" : "";
