@@ -1,7 +1,8 @@
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
-import { ShoppingItem, Category, ItemRelationship } from '@/components/party/types';
+import { ShoppingItem, Category, ItemRelationship, EaterProfile, SimulationResult } from '@/components/party/types';
 import { synchronizeRelatedItems } from '@/utils/relationshipUtils';
+import { runMonteCarlo } from '@/utils/simulationUtils';
 
 // Define the store state type
 interface PartyState {
@@ -39,22 +40,11 @@ interface PartyState {
 
   // Food Simulator State
   confidenceLevel: number;
-  eaterProfiles: Array<{
-    name: string;
-    percentage: number;
-    servingsMultiplier: number;
-  }>;
+  eaterProfiles: EaterProfile[];
+  simulationCount: number;
   useAdvancedFoodSim: boolean;
-  setUseAdvancedFoodSim: (value: boolean) => void;
-  simulationResults: Record<string, any>;
+  simulationResults: Record<string, SimulationResult>;
   simulationRun: boolean;
-  setSimulationRun: (value: boolean) => void;
-  setSimulationResults: (results: Record<string, any>) => void;
-
-  // Food Simulator Actions
-  setConfidenceLevel: (level: number) => void;
-  updateEaterProfile: (index: number, percentage: number) => void;
-  runFoodSimulation: () => void;
 
   // Actions
   setActiveTab: (tab: 'overview' | 'shopping' | 'drinks' | 'food' | 'venue' | 'reports') => void;
@@ -72,7 +62,7 @@ interface PartyState {
   saveEdit: () => void;
   handleInputChange: (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => void;
 
-  // Complementary items actions (new)
+  // Complementary items actions
   addItemRelationship: (relationship: ItemRelationship) => void;
   removeItemRelationship: (index: number) => void;
   updateRelatedItems: (itemId: string, newUnits: number) => void;
@@ -113,6 +103,14 @@ interface PartyState {
 
   // Reset functionality
   resetAllData: () => void;
+
+  // NEW: Food Simulation Actions
+  setConfidenceLevel: (level: number) => void;
+  setSimulationCount: (count: number) => void;
+  updateEaterProfile: (index: number, field: keyof EaterProfile, value: number) => void;
+  setUseAdvancedFoodSim: (value: boolean) => void;
+  runFoodSimulation: (selectedFoodItems?: string[]) => void;
+  applySimulationRecommendations: () => void;
 }
 
 // Create the store with persist middleware
@@ -150,8 +148,10 @@ export const usePartyStore = create<PartyState>()(
       // Initial editing state
       editingItem: null,
 
-      // Initial item relationships (new)
-      itemRelationships: [],
+      // Initial item relationships
+      itemRelationships: [
+        { primaryItemId: '1', secondaryItemId: '2', ratio: 1 } // Example: 1 bun per hamburger
+      ],
 
       // Initial parameters
       attendees: 40,
@@ -187,39 +187,24 @@ export const usePartyStore = create<PartyState>()(
         spirits: ['ml', 'L'],
         mixers: ['ml', 'L'],
         ice: ['kg', 'lb'],
-        meat: ['kg', 'lb', 'units'],
-        sides: ['kg', 'lb', 'units'],
-        condiments: ['units', 'pack'],
+        meat: ['kg', 'lb', 'g', 'units'],
+        sides: ['kg', 'lb', 'g', 'units'],
+        condiments: ['units', 'pack', 'g'],
         supplies: ['units', 'oz', 'pack'],
         other: ['units']
       },
 
       // Food Simulator State
       confidenceLevel: 95,
+      simulationCount: 1000,
       eaterProfiles: [
         { name: "Light Eater", percentage: 25, servingsMultiplier: 0.7 },
         { name: "Average Eater", percentage: 50, servingsMultiplier: 1.0 },
         { name: "Heavy Eater", percentage: 25, servingsMultiplier: 1.5 }
       ],
       useAdvancedFoodSim: false,
-      setUseAdvancedFoodSim: (value) => set({ useAdvancedFoodSim: value }),
       simulationResults: {},
       simulationRun: false,
-      setSimulationRun: (value) => set({ simulationRun: value }),
-      setSimulationResults: (results) => set({ simulationResults: results }),
-
-      // Food Simulator Actions
-      setConfidenceLevel: (level) => set({ confidenceLevel: level }),
-      updateEaterProfile: (index, percentage) => {
-        const newProfiles = [...get().eaterProfiles];
-        newProfiles[index].percentage = percentage;
-        set({ eaterProfiles: newProfiles });
-      },
-      runFoodSimulation: () => {
-        // Implementation of simulation logic
-        // (similar to what's in the component but adapted to state management)
-        set({ simulationRun: true });
-      },
 
       // UI Actions
       setActiveTab: (tab) => set({ activeTab: tab }),
@@ -245,7 +230,7 @@ export const usePartyStore = create<PartyState>()(
         get().updateFinancials();
       },
 
-      setDrinksPerPerson: ( value) => {
+      setDrinksPerPerson: (value) => {
         set({ drinksPerPerson: value });
       },
 
@@ -375,7 +360,7 @@ export const usePartyStore = create<PartyState>()(
         }
       },
 
-      // Complementary items actions (new)
+      // Complementary items actions 
       addItemRelationship: (relationship) => {
         // Check that both items exist and they're not the same item
         const items = get().shoppingItems;
@@ -599,10 +584,101 @@ export const usePartyStore = create<PartyState>()(
             venueCost: 1500,
             miscCosts: 600,
             drinksPerPerson: 4,
-            foodServingsPerPerson: 1
+            foodServingsPerPerson: 1,
+            confidenceLevel: 95,
+            simulationCount: 1000,
+            eaterProfiles: [
+              { name: "Light Eater", percentage: 25, servingsMultiplier: 0.7 },
+              { name: "Average Eater", percentage: 50, servingsMultiplier: 1.0 },
+              { name: "Heavy Eater", percentage: 25, servingsMultiplier: 1.5 }
+            ],
+            useAdvancedFoodSim: false,
+            simulationResults: {},
+            simulationRun: false
           });
           get().updateFinancials();
         }
+      },
+
+      // NEW: Food Simulation Actions
+      setConfidenceLevel: (level) => set({ confidenceLevel: level }),
+      
+      setSimulationCount: (count) => set({ simulationCount: count }),
+      
+      updateEaterProfile: (index, field, value) => {
+        const profiles = [...get().eaterProfiles];
+        if (profiles[index]) {
+          profiles[index] = { 
+            ...profiles[index], 
+            [field]: value 
+          };
+          set({ eaterProfiles: profiles });
+        }
+      },
+      
+      setUseAdvancedFoodSim: (value) => set({ useAdvancedFoodSim: value }),
+      
+      runFoodSimulation: (selectedFoodItems) => {
+        const { 
+          attendees, 
+          eaterProfiles, 
+          confidenceLevel, 
+          simulationCount,
+          shoppingItems,
+          itemRelationships
+        } = get();
+        
+        // Filter food items if a specific selection is provided
+        let foodItems = shoppingItems.filter(item => 
+          ['meat', 'sides', 'condiments'].includes(item.category)
+        );
+        
+        if (selectedFoodItems && selectedFoodItems.length > 0) {
+          foodItems = foodItems.filter(item => selectedFoodItems.includes(item.id));
+        }
+        
+        // Filter relationships to only include selected items
+        const relevantRelationships = itemRelationships.filter(rel => {
+          const isPrimarySelected = foodItems.some(item => item.id === rel.primaryItemId);
+          const isSecondarySelected = foodItems.some(item => item.id === rel.secondaryItemId);
+          return isPrimarySelected || isSecondarySelected;
+        });
+        
+        // Run the Monte Carlo simulation
+        const results = runMonteCarlo({
+          attendees,
+          eaterProfiles,
+          foodItems,
+          itemRelationships: relevantRelationships,
+          confidenceLevel,
+          simulationCount
+        });
+        
+        set({ 
+          simulationResults: results,
+          simulationRun: true
+        });
+      },
+      
+      applySimulationRecommendations: () => {
+        const { simulationResults, shoppingItems } = get();
+        
+        if (Object.keys(simulationResults).length === 0) return;
+        
+        // Update the units for each item that has a simulation result
+        const updatedItems = shoppingItems.map(item => {
+          const result = simulationResults[item.id];
+          if (!result) return item;
+          
+          return {
+            ...item,
+            units: result.recommendedUnits,
+            totalCost: result.totalCost
+          };
+        });
+        
+        set({ shoppingItems: updatedItems });
+        get().updateFinancials();
       }
     }),
     {

@@ -4,7 +4,7 @@ import {
   Users, DollarSign, AlertCircle, Wine, 
   Utensils, Calendar, Info, PieChart,
   ChevronRight, TrendingUp, ArrowUp, ArrowDown,
-  Activity
+  Activity, Sparkles
 } from 'lucide-react';
 import { 
   PieChart as RechartsPieChart, Pie, Cell, Tooltip, BarChart, Bar, 
@@ -15,33 +15,6 @@ import Button from '@/components/ui/Button';
 import { useTheme } from '@/components/ui/ThemeProvider';
 
 import StatusRow from './StatusRow';
-
-interface CostBreakdownItem {
-  name: string;
-  value: number;
-}
-
-interface FinancialOverviewItem {
-  name: string;
-  amount: number;
-}
-
-interface DrinkRequirements {
-  hasEnoughSpirits: boolean;
-  hasEnoughMixers: boolean;
-  hasEnoughIce: boolean;
-  hasEnoughSupplies: boolean;
-  totalCost: number;
-  totalDrinks: number;
-}
-
-interface FoodRequirements {
-  hasEnoughMeat: boolean;
-  hasEnoughSides: boolean;
-  hasEnoughCondiments: boolean;
-  totalCost: number;
-  totalServings: number;
-}
 
 interface OverviewTabProps {
   attendees: number;
@@ -59,52 +32,23 @@ interface OverviewTabProps {
   breakEvenAttendees: number;
   recommendedTicketPrice: number;
   isViable: boolean;
-  costBreakdown: CostBreakdownItem[];
-  financialOverview: FinancialOverviewItem[];
-  calculateDrinkRequirements: () => DrinkRequirements;
-  calculateFoodRequirements: () => FoodRequirements;
+  costBreakdown: {
+    name: string;
+    value: number;
+  }[];
+  financialOverview: {
+    name: string;
+    amount: number;
+  }[];
+  calculateDrinkRequirements: () => any;
+  calculateFoodRequirements: () => any;
   getCategoryServings: (category: string) => number;
   COLORS: string[];
   
-  // New props for food simulator integration
+  // Props for food simulator integration
   useAdvancedFoodSim: boolean;
   setUseAdvancedFoodSim: (value: boolean) => void;
   setActiveTab: (tab: 'overview' | 'shopping' | 'drinks' | 'food' | 'venue' | 'reports') => void;
-}
-
-// Types for chart components
-interface PieChartCustomizedLabelProps {
-  cx: number;
-  cy: number;
-  midAngle: number;
-  innerRadius: number;
-  outerRadius: number;
-  percent: number;
-  name: string;
-  value: number;
-  index: number;
-}
-
-interface PieChartActiveShapeProps {
-  cx: number;
-  cy: number;
-  innerRadius: number;
-  outerRadius: number;
-  startAngle: number;
-  endAngle: number;
-  fill: string;
-  payload: unknown;
-  percent: number;
-  value: number;
-  name: string;
-}
-
-interface CustomTooltipProps {
-  active?: boolean;
-  payload?: Array<{
-    name: string;
-    value: number;
-  }>;
 }
 
 const OverviewTab: React.FC<OverviewTabProps> = ({
@@ -238,7 +182,7 @@ const OverviewTab: React.FC<OverviewTabProps> = ({
                 </Button>
               </div>
               
-              {/* NEW: Advanced Food Simulation Button */}
+              {/* Monte Carlo Simulation Button - Enhanced with Sparkles icon */}
               <div className="mt-3">
                 <Button
                   variant={useAdvancedFoodSim ? "gradient" : "outline"}
@@ -253,7 +197,8 @@ const OverviewTab: React.FC<OverviewTabProps> = ({
                     }
                   }}
                 >
-                  {useAdvancedFoodSim ? 'Usar Simulación Avanzada' : 'Habilitar Simulación Avanzada'} 
+                  <Sparkles className="w-4 h-4 mr-1" />
+                  {useAdvancedFoodSim ? 'Simulación Monte Carlo Activa' : 'Activar Simulación Monte Carlo'} 
                   <ChevronRight className="w-4 h-4 ml-1" />
                 </Button>
               </div>
@@ -343,8 +288,8 @@ const OverviewTab: React.FC<OverviewTabProps> = ({
   };
   
   // Custom active shape for pie chart with better hover effect
-  const renderActiveShape = (props: unknown) => {
-    const { cx, cy, innerRadius, outerRadius, startAngle, endAngle, fill } = props as PieChartActiveShapeProps;
+  const renderActiveShape = (props: any) => {
+    const { cx, cy, innerRadius, outerRadius, startAngle, endAngle, fill } = props;
     
     return (
       <g>
@@ -371,7 +316,7 @@ const OverviewTab: React.FC<OverviewTabProps> = ({
   };
   
   // Enhanced custom tooltip for pie chart
-  const CustomTooltip: React.FC<CustomTooltipProps> = ({ active, payload }) => {
+  const CustomTooltip = ({ active, payload }: any) => {
     if (active && payload && payload.length) {
       const data = payload[0];
       const totalValue = costBreakdown.reduce((sum, item) => sum + item.value, 0);
@@ -391,8 +336,8 @@ const OverviewTab: React.FC<OverviewTabProps> = ({
   };
   
   // Custom label renderer for pie chart (outside labels with lines)
-  const renderCustomizedLabel = (props: PieChartCustomizedLabelProps) => {
-    const { cx, cy, midAngle, outerRadius, name, value } = props;
+  const renderCustomizedLabel = (props: any) => {
+    const { cx, cy, midAngle, outerRadius, name, value, index } = props;
     const RADIAN = Math.PI / 180;
     // Position the label further from the pie
     const radius = outerRadius * 1.25;
@@ -413,7 +358,7 @@ const OverviewTab: React.FC<OverviewTabProps> = ({
         {/* Line from pie to label */}
         <path 
           d={`M${cx + outerRadius * Math.cos(-midAngle * RADIAN)},${cy + outerRadius * Math.sin(-midAngle * RADIAN)}L${lineEnd.x},${lineEnd.y}L${x},${y}`} 
-          stroke={COLORS[props.index % COLORS.length]}
+          stroke={COLORS[index % COLORS.length]}
           fill="none"
         />
         
@@ -422,7 +367,7 @@ const OverviewTab: React.FC<OverviewTabProps> = ({
           x={x}
           y={y} 
           textAnchor={textAnchor} 
-          fill={COLORS[props.index % COLORS.length]}
+          fill={COLORS[index % COLORS.length]}
           dominantBaseline="central"
           className="text-xs font-medium"
         >
@@ -498,7 +443,7 @@ const OverviewTab: React.FC<OverviewTabProps> = ({
   
   // Financial overview chart using actual financialOverview data
   const renderFinancialOverview = () => {
-    const data = financialOverview.map((item) => {
+    const data = financialOverview.map((item, index) => {
       let color = COLORS[0]; // Use first color for positives
       if (item.name.includes('Costos')) {
         color = COLORS[3]; // Use another color for costs
@@ -631,7 +576,10 @@ const OverviewTab: React.FC<OverviewTabProps> = ({
                 <span className="font-medium">Estado de Comida</span>
               </div>
               {useAdvancedFoodSim && (
-                <span className="text-xs bg-white/20 px-2 py-0.5 rounded-full">Avanzado</span>
+                <span className="text-xs bg-white/20 px-2 py-0.5 rounded-full flex items-center">
+                  <Sparkles className="w-3 h-3 mr-1" />
+                  Monte Carlo
+                </span>
               )}
             </div>
             <div className="p-3">
@@ -659,8 +607,8 @@ const OverviewTab: React.FC<OverviewTabProps> = ({
               {useAdvancedFoodSim && (
                 <div className="mt-2 bg-warning-light/50 p-2 rounded text-xs text-warning-dark">
                   <div className="flex items-center">
-                    <Info className="w-3 h-3 mr-1 flex-shrink-0" />
-                    <span>Usando simulación avanzada. Ver pestaña Comida.</span>
+                    <Sparkles className="w-3 h-3 mr-1 flex-shrink-0" />
+                    <span>La simulación Monte Carlo está activa. Ver pestaña Comida.</span>
                   </div>
                 </div>
               )}
@@ -718,6 +666,26 @@ const OverviewTab: React.FC<OverviewTabProps> = ({
                   ></div>
                 </div>
               </div>
+              
+              {/* Monte Carlo Simulation Button */}
+              {!useAdvancedFoodSim && (
+                <div className="mt-4">
+                  <Button
+                    variant="outline"
+                    color="warning"
+                    size="sm"
+                    className="w-full"
+                    onClick={() => {
+                      setUseAdvancedFoodSim(true);
+                      // Navigate to food tab
+                      setTimeout(() => setActiveTab('food'), 300);
+                    }}
+                  >
+                    <Sparkles className="w-4 h-4 mr-1" />
+                    Activar Simulación Monte Carlo
+                  </Button>
+                </div>
+              )}
             </div>
           </div>
         </div>
@@ -738,6 +706,38 @@ const OverviewTab: React.FC<OverviewTabProps> = ({
       </div>
       
       {renderStatusSection()}
+      
+      {/* Monte Carlo Simulation Callout */}
+      {!useAdvancedFoodSim && (
+        <div className="bg-white rounded-xl p-5 border-2 border-dashed border-warning">
+          <div className="flex">
+            <div className="flex-shrink-0 mr-4">
+              <div className="w-12 h-12 bg-warning text-white rounded-full flex items-center justify-center">
+                <Sparkles className="w-6 h-6" />
+              </div>
+            </div>
+            <div>
+              <h3 className="text-lg font-medium text-gray-900 mb-1">Precisión al siguiente nivel</h3>
+              <p className="text-gray-600 mb-3">
+                Usa la simulación Monte Carlo para calcular con precisión estadística cuánta comida necesitarás, 
+                considerando diferentes perfiles de consumo y variabilidad entre los asistentes.
+              </p>
+              <Button
+                variant="gradient"
+                color="warning"
+                onClick={() => {
+                  setUseAdvancedFoodSim(true);
+                  setTimeout(() => setActiveTab('food'), 300);
+                }}
+              >
+                <Sparkles className="w-4 h-4 mr-2" />
+                Activar Simulación Monte Carlo
+                <ChevronRight className="w-4 h-4 ml-1" />
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

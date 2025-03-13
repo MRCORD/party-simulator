@@ -1,14 +1,16 @@
 "use client";
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   Utensils, Users, Beef, Salad, 
   CheckCircle, AlertCircle, TrendingUp, 
   Clipboard, List, UtensilsCrossed, Package,
-  ArrowLeft, ChevronDown
+  ArrowLeft, ChevronDown, ChevronRight, ArrowRight,
+  Sparkles, Info, ShoppingBag
 } from 'lucide-react';
 import Badge from '@/components/ui/Badge';
 import ProgressBar from '@/components/ui/ProgressBar';
 import Button from '@/components/ui/Button';
+import Alert from '@/components/ui/Alert';
 import { useTheme } from '@/components/ui/ThemeProvider';
 
 // Import shared types
@@ -23,7 +25,7 @@ interface FoodTabProps {
   getCategoryServings: (category: string) => number;
   getRecommendedUnits: (category: string, totalServings: number) => number;
   
-  // New props for food simulator integration
+  // Props for food simulator integration
   useAdvancedFoodSim: boolean;
   setUseAdvancedFoodSim: (value: boolean) => void;
   simulationResults?: Record<string, any>;
@@ -44,8 +46,19 @@ const FoodTab: React.FC<FoodTabProps> = ({
 }) => {
   const theme = useTheme();
   const foodRequirements = calculateFoodRequirements();
-  const [showSimpleView, setShowSimpleView] = useState(!useAdvancedFoodSim);
-  
+  const [showSimpleView, setShowSimpleView] = useState(true);
+
+  // Update showSimpleView when useAdvancedFoodSim changes
+  useEffect(() => {
+    setShowSimpleView(!useAdvancedFoodSim);
+  }, [useAdvancedFoodSim]);
+
+  const toggleView = () => {
+    const newAdvancedMode = !useAdvancedFoodSim;
+    setUseAdvancedFoodSim(newAdvancedMode);
+    setShowSimpleView(!newAdvancedMode);
+  };
+
   // Filter food-related items
   const foodItems = shoppingItems.filter(item => 
     ['meat', 'sides', 'condiments'].includes(item.category)
@@ -117,13 +130,6 @@ const FoodTab: React.FC<FoodTabProps> = ({
     "Tener postres preparados que no requieran refrigeración"
   ];
   
-  // Toggle between simple and advanced view
-  const toggleView = () => {
-    const newState = !showSimpleView;
-    setShowSimpleView(newState);
-    setUseAdvancedFoodSim(!newState);
-  };
-
   // Render the basic view with option to switch to advanced
   const renderSimpleView = () => {
     return (
@@ -144,8 +150,8 @@ const FoodTab: React.FC<FoodTabProps> = ({
                 onClick={toggleView}
                 className="bg-white/10 hover:bg-white/20 text-white border-white/30"
               >
+                <Sparkles size={18} className="mr-2" />
                 Usar Simulación Avanzada
-                <ChevronDown className="w-4 h-4 ml-2" />
               </Button>
             </div>
             
@@ -407,11 +413,11 @@ const FoodTab: React.FC<FoodTabProps> = ({
         {/* Call to Action for Advanced Simulation */}
         <div className="bg-white rounded-xl shadow-md overflow-hidden border-2 border-dashed border-warning">
           <div className="p-6 text-center">
-            <Utensils className="w-12 h-12 text-warning mx-auto mb-3" />
+            <Sparkles className="w-12 h-12 text-warning mx-auto mb-3" />
             <h3 className="text-xl font-medium text-gray-900 mb-3">¿Quieres una planificación más precisa?</h3>
             <p className="text-gray-600 mb-4 max-w-lg mx-auto">
-              Nuestra simulación avanzada permite calcular con mayor precisión las cantidades de comida necesarias 
-              basándose en diferentes perfiles de comensales y simulaciones estadísticas.
+              Nuestra simulación Monte Carlo te permite calcular con mayor precisión las cantidades de comida necesarias
+              basándose en diferentes perfiles de comensales y miles de simulaciones estadísticas.
             </p>
             <Button
               variant="gradient"
@@ -420,8 +426,13 @@ const FoodTab: React.FC<FoodTabProps> = ({
               onClick={toggleView}
               className="px-6"
             >
-              Habilitar Simulación Avanzada
+              <Sparkles className="w-5 h-5 mr-2" />
+              Activar Simulación Monte Carlo
             </Button>
+            
+            <div className="mt-4 text-sm text-gray-500">
+              La simulación Monte Carlo analiza miles de escenarios posibles para darte una recomendación con el nivel de confianza que elijas.
+            </div>
           </div>
         </div>
       </div>
@@ -440,8 +451,8 @@ const FoodTab: React.FC<FoodTabProps> = ({
             <div className={`${theme.getGradient('warning')} px-4 py-3 text-white`}>
               <div className="flex items-center justify-between">
                 <div className="flex items-center">
-                  <Utensils className="w-5 h-5 mr-2" />
-                  <h3 className="font-medium">Simulación Avanzada de Alimentos</h3>
+                  <Sparkles className="w-5 h-5 mr-2" />
+                  <h3 className="font-medium">Simulación Monte Carlo de Alimentos</h3>
                 </div>
                 <Button
                   variant="outline"
@@ -458,14 +469,32 @@ const FoodTab: React.FC<FoodTabProps> = ({
             
             <div className="p-4 bg-warning-light/20 border-b border-warning-light">
               <div className="flex items-center">
-                <AlertCircle className="w-5 h-5 text-warning mr-2 flex-shrink-0" />
+                <Info className="w-5 h-5 text-warning mr-2 flex-shrink-0" />
                 <p className="text-sm text-warning-dark">
-                  Estás usando el modo de simulación avanzada que permite un cálculo más preciso basado en 
-                  diferentes perfiles de comensales y simulaciones Monte Carlo.
+                  Estás usando el simulador Monte Carlo que permite un cálculo más preciso basado en 
+                  diferentes perfiles de comensales y miles de iteraciones estadísticas.
                 </p>
               </div>
             </div>
           </div>
+          
+          {/* Advanced simulation capabilities callout */}
+          <Alert 
+            variant="info" 
+            className="mb-6"
+            title="Simulación Monte Carlo"
+          >
+            <p className="mb-2">
+              La simulación Monte Carlo ejecuta miles de escenarios aleatorios para modelar la variabilidad 
+              en el consumo de alimentos, considerando:
+            </p>
+            <ul className="list-disc list-inside ml-2 space-y-1">
+              <li>Diferentes perfiles de consumidores (ligero, promedio, pesado)</li>
+              <li>Variaciones aleatorias en el consumo individual</li>
+              <li>Relaciones entre artículos complementarios</li>
+              <li>Niveles de confianza configurable (80-99%)</li>
+            </ul>
+          </Alert>
           
           {/* Embedded FoodSimulator with shared state */}
           <FoodSimulator 
@@ -484,7 +513,9 @@ const FoodTab: React.FC<FoodTabProps> = ({
               color="warning"
               onClick={() => setActiveTab('shopping')}
             >
+              <ShoppingBag className="w-4 h-4 mr-2" />
               Ir a Lista de Compras
+              <ArrowRight className="w-4 h-4 ml-2" />
             </Button>
           </div>
         </div>

@@ -118,22 +118,45 @@ export interface ReportsTabProps {
   getCategoryTotal: (category: string) => number;
 }
 
-// Food Simulator types
+// NEW TYPES FOR MONTE CARLO SIMULATION
+
+/**
+ * Distribution bin for visualization
+ */
+export interface DistributionBin {
+  min: number;
+  max: number;
+  count: number;
+  containsRecommendation: boolean;
+}
+
+/**
+ * Eater profile definition for simulation
+ */
 export interface EaterProfile {
   name: string;
   percentage: number;
   servingsMultiplier: number;
 }
 
+/**
+ * Results of a Monte Carlo simulation for a food item
+ */
 export interface SimulationResult {
+  // Statistical results
   mean: number;
+  median: number;
   min: number;
   max: number;
-  recommended: number;
+  
+  // Recommendations
+  recommendedServings: number;
   recommendedUnits: number;
-  risks: {
-    low: { servings: number, riskPercentage: number };
-    medium: { servings: number, riskPercentage: number };
-    high: { servings: number, riskPercentage: number };
-  }
+  totalCost: number;
+  
+  // Risk assessment
+  stockoutRisk: number;
+  
+  // Distribution data for visualization
+  distribution: DistributionBin[];
 }
