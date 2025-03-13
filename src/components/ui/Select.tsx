@@ -35,16 +35,16 @@ const Select = forwardRef<HTMLSelectElement, SelectProps>(
           <select
             ref={ref}
             className={`block w-full rounded-md shadow-sm border ${variantClass} py-2 
-              ${icon ? 'pl-10' : 'pl-3'} pr-10 bg-white 
+              ${icon ? 'pl-10' : 'pl-3'} pr-10
               focus:outline-none focus:ring-2 focus:ring-opacity-50 disabled:bg-gray-100 disabled:text-gray-500 
-              appearance-none text-gray-900 ${className}`}
+              appearance-none bg-transparent text-inherit ${className}`}
             {...props}
           >
             {children}
           </select>
           <ChevronDown 
             size={18}
-            className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 pointer-events-none" 
+            className="absolute right-3 top-1/2 transform -translate-y-1/2 text-inherit pointer-events-none" 
           />
         </div>
         {error && <p className="mt-1 text-sm text-red-500">{error}</p>}
