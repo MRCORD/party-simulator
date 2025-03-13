@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
-import { ShoppingItem, Category } from '@/components/party/types';
+import { ShoppingItem, Category, ItemRelationship } from '@/components/party/types';
+import { synchronizeRelatedItems } from '@/utils/relationshipUtils';
 
 // Define the store state type
 interface PartyState {
@@ -11,6 +12,9 @@ interface PartyState {
   shoppingItems: ShoppingItem[];
   newItem: Omit<ShoppingItem, 'id'>;
   editingItem: ShoppingItem | null;
+
+  // Item relationships (new)
+  itemRelationships: ItemRelationship[];
 
   // Basic parameters
   attendees: number;
@@ -67,6 +71,11 @@ interface PartyState {
   startEdit: (item: ShoppingItem) => void;
   saveEdit: () => void;
   handleInputChange: (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => void;
+
+  // Complementary items actions (new)
+  addItemRelationship: (relationship: ItemRelationship) => void;
+  removeItemRelationship: (index: number) => void;
+  updateRelatedItems: (itemId: string, newUnits: number) => void;
 
   // Computed values for accessing data
   getCategoryTotal: (category: string) => number;
@@ -141,6 +150,9 @@ export const usePartyStore = create<PartyState>()(
       // Initial editing state
       editingItem: null,
 
+      // Initial item relationships (new)
+      itemRelationships: [],
+
       // Initial parameters
       attendees: 40,
       ticketPrice: 80,
@@ -205,7 +217,7 @@ export const usePartyStore = create<PartyState>()(
       },
       runFoodSimulation: () => {
         // Implementation of simulation logic
-        // (similar to what's in the component but adapted to your state management)
+        // (similar to what's in the component but adapted to state management)
         set({ simulationRun: true });
       },
 
@@ -272,9 +284,21 @@ export const usePartyStore = create<PartyState>()(
       },
 
       deleteItem: (id) => {
-        set((state) => ({
-          shoppingItems: state.shoppingItems.filter(item => item.id !== id)
+        // Find any relationships involving this item
+        const { itemRelationships } = get();
+        const relationshipsToRemove = itemRelationships.filter(
+          rel => rel.primaryItemId === id || rel.secondaryItemId === id
+        );
+          
+        // Remove item from shopping list
+        set(state => ({
+          shoppingItems: state.shoppingItems.filter(item => item.id !== id),
+          // Also remove any relationships involving this item
+          itemRelationships: state.itemRelationships.filter(
+            rel => rel.primaryItemId !== id && rel.secondaryItemId !== id
+          )
         }));
+        
         get().updateFinancials();
       },
 
@@ -288,8 +312,11 @@ export const usePartyStore = create<PartyState>()(
       saveEdit: () => {
         const { editingItem, newItem, shoppingItems } = get();
 
-        if (editingItem && newItem.name && newItem.cost > 0 ) {
+        if (editingItem && newItem.name && newItem.cost > 0) {
           const totalCost = newItem.cost * newItem.units;
+          
+          // Check if the units have changed
+          const unitsChanged = editingItem.units !== newItem.units;
 
           set({
             shoppingItems: shoppingItems.map(item =>
@@ -307,6 +334,11 @@ export const usePartyStore = create<PartyState>()(
               totalCost: 0
             }
           });
+
+          // If units changed, update any related items
+          if (unitsChanged) {
+            get().updateRelatedItems(editingItem.id, newItem.units);
+          }
 
           get().updateFinancials();
         }
@@ -340,6 +372,83 @@ export const usePartyStore = create<PartyState>()(
               } : {})
             }
           });
+        }
+      },
+
+      // Complementary items actions (new)
+      addItemRelationship: (relationship) => {
+        // Check that both items exist and they're not the same item
+        const items = get().shoppingItems;
+        const primaryItem = items.find(item => item.id === relationship.primaryItemId);
+        const secondaryItem = items.find(item => item.id === relationship.secondaryItemId);
+        
+        if (!primaryItem || !secondaryItem || primaryItem.id === secondaryItem.id) {
+          console.error("Invalid relationship");
+          return;
+        }
+        
+        // Check if relationship already exists
+        const existingIndex = get().itemRelationships.findIndex(
+          rel => rel.primaryItemId === relationship.primaryItemId && 
+                 rel.secondaryItemId === relationship.secondaryItemId
+        );
+        
+        if (existingIndex !== -1) {
+          // Update existing relationship
+          const updatedRelationships = [...get().itemRelationships];
+          updatedRelationships[existingIndex] = relationship;
+          set({ itemRelationships: updatedRelationships });
+        } else {
+          // Add new relationship
+          set(state => ({ 
+            itemRelationships: [...state.itemRelationships, relationship] 
+          }));
+        }
+        
+        // Update secondary item quantity based on current primary item quantity
+        get().updateRelatedItems(relationship.primaryItemId, primaryItem.units);
+      },
+      
+      removeItemRelationship: (index) => {
+        set(state => ({
+          itemRelationships: state.itemRelationships.filter((_, i) => i !== index)
+        }));
+      },
+      
+      updateRelatedItems: (itemId, newUnits) => {
+        // Find all relationships where this item is the primary
+        const relationships = get().itemRelationships.filter(
+          rel => rel.primaryItemId === itemId
+        );
+        
+        if (relationships.length === 0) return;
+        
+        // Get the current shopping items
+        const items = [...get().shoppingItems];
+        let updated = false;
+        
+        // Update the units of all related secondary items
+        relationships.forEach(relation => {
+          const secondaryItemIndex = items.findIndex(item => item.id === relation.secondaryItemId);
+          
+          if (secondaryItemIndex !== -1) {
+            // Calculate new units for the secondary item based on the ratio
+            const newSecondaryUnits = Math.max(1, Math.round(newUnits * relation.ratio));
+            
+            // Update secondary item quantity
+            items[secondaryItemIndex] = {
+              ...items[secondaryItemIndex],
+              units: newSecondaryUnits,
+              totalCost: items[secondaryItemIndex].cost * newSecondaryUnits
+            };
+            
+            updated = true;
+          }
+        });
+        
+        if (updated) {
+          set({ shoppingItems: items });
+          get().updateFinancials();
         }
       },
 
@@ -484,6 +593,7 @@ export const usePartyStore = create<PartyState>()(
               totalCost: 0
             },
             editingItem: null,
+            itemRelationships: [],
             attendees: 40,
             ticketPrice: 80,
             venueCost: 1500,

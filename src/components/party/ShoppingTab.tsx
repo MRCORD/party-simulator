@@ -1,27 +1,37 @@
 "use client";
+
 import React, { useState } from 'react';
 import { 
   ShoppingCart, FileText, Edit, Trash2, PlusCircle, MinusCircle,
-  Save, Package, ChevronDown, X,
-  Wine, Droplets, Snowflake, Beef, Salad, Utensils
+  Save, Package, ChevronDown, X, Link, Wine, Droplet, Snowflake,
+  Beef, Salad, UtensilsCrossed, Layers, Ruler, Type, DollarSign, Hash, Box
 } from 'lucide-react';
 import { useTheme } from '@/components/ui/ThemeProvider';
 // Import shared types
-import { ShoppingItem, Category } from './types';
+import { ShoppingItem, Category, ItemRelationship } from './types';
+// Import UI components
+import ComplementaryItemsManager from './ComplementaryItemsManager';
+import Select from '@/components/ui/Select';
+import Input from '@/components/ui/Input';
+import Button from '@/components/ui/Button';
 
 interface ShoppingTabProps {
   newItem: Omit<ShoppingItem, 'id'>;
-  shoppingItems: ShoppingItem[];
-  categories: Category[];
-  sizeUnits: Record<string, string[]>;
   editingItem: ShoppingItem | null;
   handleInputChange: (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => void;
   addItem: () => void;
   saveEdit: () => void;
+  categories: Category[];
+  sizeUnits: Record<string, string[]>;
+  shoppingItems: ShoppingItem[];
+  getItemsByCategory: () => Record<string, ShoppingItem[]>;
   startEdit: (item: ShoppingItem) => void;
   deleteItem: (id: string) => void;
-  getItemsByCategory: () => Record<string, ShoppingItem[]>;
   jsonPreview: string;
+  // New props for complementary items
+  itemRelationships: ItemRelationship[];
+  addItemRelationship: (relationship: ItemRelationship) => void;
+  removeItemRelationship: (index: number) => void;
 }
 
 const ShoppingTab: React.FC<ShoppingTabProps> = ({
@@ -36,11 +46,16 @@ const ShoppingTab: React.FC<ShoppingTabProps> = ({
   startEdit, 
   deleteItem,
   getItemsByCategory,
-  jsonPreview
+  jsonPreview,
+  // Add new props destructuring
+  itemRelationships,
+  addItemRelationship,
+  removeItemRelationship
 }) => {
   const theme = useTheme();
   const [showForm, setShowForm] = useState(false);
   const [activeCategory, setActiveCategory] = useState('all');
+  const [showComplementary, setShowComplementary] = useState(false);
   
   // Get filtered items based on active category
   const getFilteredItems = () => {
@@ -48,16 +63,16 @@ const ShoppingTab: React.FC<ShoppingTabProps> = ({
     return shoppingItems.filter(item => item.category === activeCategory);
   };
   
-  // Get icon for category
+  // Get category icon for display
   const getCategoryIcon = (category: string) => {
     switch(category) {
-      case 'spirits': return <Wine className="w-4 h-4 text-blue-500" />;
-      case 'mixers': return <Droplets className="w-4 h-4 text-teal-500" />;
-      case 'ice': return <Snowflake className="w-4 h-4 text-blue-300" />;
-      case 'meat': return <Beef className="w-4 h-4 text-red-500" />;
-      case 'sides': return <Salad className="w-4 h-4 text-green-500" />;
-      case 'condiments': return <Utensils className="w-4 h-4 text-amber-500" />;
-      case 'supplies': return <Package className="w-4 h-4 text-purple-500" />;
+      case 'spirits': return <Wine className="w-4 h-4 text-primary" />;
+      case 'mixers': return <Droplet className="w-4 h-4 text-accent-teal" />;
+      case 'ice': return <Snowflake className="w-4 h-4 text-primary-light" />;
+      case 'meat': return <Beef className="w-4 h-4 text-accent-amber" />;
+      case 'sides': return <Salad className="w-4 h-4 text-success" />;
+      case 'condiments': return <UtensilsCrossed className="w-4 h-4 text-warning" />;
+      case 'supplies': return <Package className="w-4 h-4 text-accent-pink" />;
       default: return <Package className="w-4 h-4 text-gray-500" />;
     }
   };
@@ -89,22 +104,35 @@ const ShoppingTab: React.FC<ShoppingTabProps> = ({
               <ShoppingCart className="w-6 h-6 mr-3" />
               <h2 className="text-xl font-bold">Lista de Compras</h2>
             </div>
-            <button 
-              onClick={() => setShowForm(!showForm)}
-              className="bg-white text-blue-600 hover:bg-blue-50 px-4 py-2 rounded-lg shadow flex items-center transition-all"
-            >
-              {showForm ? (
-                <>
-                  <X size={18} className="mr-2" />
-                  <span>Cerrar</span>
-                </>
-              ) : (
-                <>
-                  <PlusCircle size={18} className="mr-2" />
-                  <span>Agregar Artículo</span>
-                </>
-              )}
-            </button>
+            <div className="flex space-x-3">
+              <Button 
+                onClick={() => setShowComplementary(!showComplementary)}
+                variant={showComplementary ? "solid" : "outline"}
+                color="primary"
+                className={showComplementary ? "bg-indigo-600" : "bg-white"}
+              >
+                <Link size={18} className="mr-2" />
+                <span>Artículos Complementarios</span>
+              </Button>
+              
+              <Button 
+                onClick={() => setShowForm(!showForm)}
+                variant={showForm ? "outline" : "solid"}
+                color="primary"
+              >
+                {showForm ? (
+                  <>
+                    <X size={18} className="mr-2" />
+                    <span>Cerrar</span>
+                  </>
+                ) : (
+                  <>
+                    <PlusCircle size={18} className="mr-2" />
+                    <span>Agregar Artículo</span>
+                  </>
+                )}
+              </Button>
+            </div>
           </div>
           
           {/* Summary Statistics */}
@@ -134,76 +162,75 @@ const ShoppingTab: React.FC<ShoppingTabProps> = ({
             {/* Name field in the form */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div>
-                <label className="block text-sm font-medium text-blue-800 mb-1">Nombre del Artículo</label>
-                <input
+                <Input
                   type="text"
                   name="name"
-                  className="block w-full rounded-md shadow-sm border border-blue-200 p-2.5 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                   value={newItem.name}
                   onChange={handleInputChange}
                   placeholder="ej. Ron Cartavio"
+                  label="Nombre del Artículo"
+                  variant="secondary"
+                  icon={<Type size={16} />}
                 />
               </div>
               
               <div>
-                <label className="block text-sm font-medium text-blue-800 mb-1">URL del Producto</label>
-                <input
+                <Input
                   type="url"
                   name="url"
-                  className="block w-full rounded-md shadow-sm border border-blue-200 p-2.5 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                   value={newItem.url}
                   onChange={handleInputChange}
                   placeholder="https://..."
+                  label="URL del Producto"
+                  variant="secondary"
+                  icon={<Link size={16} />}
                 />
               </div>
               
               <div>
                 <label className="block text-sm font-medium text-blue-800 mb-1">Categoría</label>
-                <div className="relative">
-                  <select
-                    name="category"
-                    className="block w-full rounded-md shadow-sm border border-blue-200 p-2.5 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 appearance-none"
-                    value={newItem.category}
-                    onChange={handleInputChange}
-                  >
-                    {categories.map(cat => (
-                      <option key={cat.value} value={cat.value}>{cat.label}</option>
-                    ))}
-                  </select>
-                  <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 text-blue-400 pointer-events-none" size={18} />
-                </div>
+                <Select
+                  name="category"
+                  value={newItem.category}
+                  onChange={handleInputChange}
+                  variant="secondary"
+                  icon={<Layers size={16} />}
+                >
+                  {categories.map(cat => (
+                    <option key={cat.value} value={cat.value}>{cat.label}</option>
+                  ))}
+                </Select>
               </div>
             </div>
             
             <div className="grid grid-cols-1 md:grid-cols-1 gap-4 mt-4">
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-sm font-medium text-blue-800 mb-1">Precio (S/)</label>
-                  <div className="relative">
-                    <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-blue-400">S/</span>
-                    <input
-                      type="number"
-                      name="cost"
-                      className="block w-full rounded-md shadow-sm border border-blue-200 p-2.5 pl-8 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                      value={newItem.cost}
-                      onChange={handleInputChange}
-                      min="0"
-                      step="0.1"
-                      placeholder="0.00"
-                    />
-                  </div>
+                  <Input
+                    type="number"
+                    name="cost"
+                    value={newItem.cost}
+                    onChange={handleInputChange}
+                    min="0"
+                    step="0.1"
+                    placeholder="0.00"
+                    label="Precio (S/)"
+                    variant="secondary"
+                    leftAddon={<DollarSign size={16} />}
+                  />
                 </div>
                 
                 <div>
-                  <label className="block text-sm font-medium text-blue-800 mb-1">Unidades</label>
-                  <input
+                  <Input
                     type="number"
                     name="units"
-                    className="block w-full rounded-md shadow-sm border border-blue-200 p-2.5 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                     value={newItem.units}
                     onChange={handleInputChange}
                     min="1"
                     placeholder="1"
+                    label="Unidades"
+                    variant="secondary"
+                    icon={<Hash size={16} />}
                   />
                 </div>
               </div>
@@ -211,120 +238,152 @@ const ShoppingTab: React.FC<ShoppingTabProps> = ({
               <div className="grid grid-cols-1 mt-5 gap-4 ml-2">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
                   <div>
-                    <label className="block text-sm font-medium text-blue-800 mb-1">Tamaño</label>
-                    <input
+                    <Input
                       type="text"
                       name="size"
-                      className="block w-full rounded-md shadow-sm border border-blue-200 p-2.5 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                       value={newItem.size}
                       onChange={handleInputChange}
                       placeholder="ej. Botella 750"
+                      label="Tamaño"
+                      variant="secondary"
+                      icon={<Box size={16} />}
                     />
                   </div>
                   
                   <div>
                     <label className="block text-sm font-medium text-blue-800 mb-1">Unidad de Medida</label>
-                    <div className="relative">
-                      <select
-                        name="sizeUnit"
-                        className="block w-full rounded-md shadow-sm border border-blue-200 p-2.5 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 appearance-none"
-                        value={newItem.sizeUnit}
-                        onChange={handleInputChange}
-                      >
-                        {sizeUnits[newItem.category].map(unit => (
-                          <option key={unit} value={unit}>{unit}</option>
-                        ))}
-                      </select>
-                      <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 text-blue-400 pointer-events-none" size={18} />
-                    </div>
+                    <Select
+                      name="sizeUnit"
+                      value={newItem.sizeUnit}
+                      onChange={handleInputChange}
+                      variant="secondary"
+                      icon={<Ruler size={16} />}
+                    >
+                      {sizeUnits[newItem.category].map(unit => (
+                        <option key={unit} value={unit}>{unit}</option>
+                      ))}
+                    </Select>
                   </div>
                 </div>
                 
                 <div>
-                  <label className="block text-sm font-medium text-blue-800 mb-1">Porciones</label>
-                  <input
+                  <Input
                     type="number"
                     name="servings"
-                    className="block w-full rounded-md shadow-sm border border-blue-200 p-2.5 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                     value={newItem.servings}
                     onChange={handleInputChange}
                     min="0"
                     placeholder="0"
+                    label="Porciones"
+                    variant="secondary"
+                    icon={<PlusCircle size={16} />}
                   />
                 </div>
               </div>
             </div>
             
             <div className="mt-5 flex justify-end">
-              <button
+              <Button
+                variant="outline"
+                color="primary"
                 onClick={() => {
                   setShowForm(false);
                 }}
-                className="mr-3 px-4 py-2 border border-blue-200 rounded-lg text-blue-600 hover:bg-blue-50"
+                className="mr-3"
               >
                 Cancelar
-              </button>
+              </Button>
               
               {editingItem ? (
-                <button
+                <Button
+                  variant="gradient"
+                  color="primary"
                   onClick={() => {
                     saveEdit();
                     setShowForm(false);
                   }}
-                  className="px-5 py-2 bg-gradient-to-r from-blue-600 to-blue-500 text-white rounded-lg shadow hover:shadow-md flex items-center"
+                  className="flex items-center"
                 >
                   <Save className="w-4 h-4 mr-2" />
                   Guardar Cambios
-                </button>
+                </Button>
               ) : (
-                <button
+                <Button
+                  variant="gradient"
+                  color="success"
                   onClick={() => {
                     addItem();
                     setShowForm(false);
                   }}
-                  className="px-5 py-2 bg-gradient-to-r from-green-600 to-green-500 text-white rounded-lg shadow hover:shadow-md flex items-center"
+                  className="flex items-center"
                 >
                   <PlusCircle className="w-4 h-4 mr-2" />
                   Agregar Artículo
-                </button>
+                </Button>
               )}
             </div>
           </div>
         )}
         
-        {/* Filter Tabs */}
+        {/* Add a hint about complementary items when adding items to the shopping list */}
+        {showForm && (
+          <div className="bg-indigo-50 rounded-xl p-4 border border-indigo-100 m-5">
+            <div className="flex items-start">
+              <Link className="w-5 h-5 text-indigo-600 mr-2 flex-shrink-0 mt-0.5" />
+              <div>
+                <p className="text-sm text-indigo-800 font-medium">¿Sabías que puedes vincular artículos complementarios?</p>
+                <p className="text-sm text-indigo-700 mt-1">
+                  Después de agregar tus artículos, usa la sección "Artículos Complementarios" para crear relaciones
+                  entre productos que se consumen juntos, como hamburguesas y panes, o ron y cola.
+                </p>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+      
+      {/* Complementary Items Manager - conditionally rendered */}
+      {showComplementary && (
+        <ComplementaryItemsManager 
+          shoppingItems={shoppingItems}
+          itemRelationships={itemRelationships}
+          addItemRelationship={addItemRelationship}
+          removeItemRelationship={removeItemRelationship}
+        />
+      )}
+      
+      {/* Filter Tabs */}
+      <div className="bg-white rounded-xl shadow-md overflow-hidden">
         <div className="flex border-b border-slate-200 overflow-x-auto px-4 pt-4">
-          <button
+          <Button 
             onClick={() => setActiveCategory('all')}
-            className={`px-4 py-2 font-medium text-sm rounded-t-lg ${
-              activeCategory === 'all' 
-                ? theme.getGradient('primary') + ' text-white' 
-                : 'text-slate-600 hover:bg-slate-100'
-            } mr-2`}
+            variant={activeCategory === 'all' ? "gradient" : "ghost"}
+            color="primary"
+            size="sm"
+            className={`mr-2 ${activeCategory !== 'all' && 'text-slate-600'}`}
           >
             Todos
-          </button>
+          </Button>
           
           {categories.map(category => {
             const categoryItems = shoppingItems.filter(item => item.category === category.value);
             if (categoryItems.length === 0) return null;
             
             return (
-              <button
+              <Button
                 key={category.value}
                 onClick={() => setActiveCategory(category.value)}
-                className={`px-4 py-2 font-medium text-sm rounded-t-lg flex items-center ${
-                  activeCategory === category.value 
-                    ? theme.getGradient('primary') + ' text-white' 
-                    : 'text-slate-600 hover:bg-slate-100'
-                } mr-2`}
+                variant={activeCategory === category.value ? "gradient" : "ghost"}
+                color="primary"
+                size="sm"
+                className={`mr-2 flex items-center ${activeCategory !== category.value && 'text-slate-600'}`}
               >
                 {getCategoryIcon(category.value)}
                 <span className="ml-2">{category.label}</span>
-                <span className="ml-2 bg-white/30 text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">
+                <span className={`ml-2 ${activeCategory === category.value ? 'bg-white/30' : 'bg-gray-200'} text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center`}>
                   {categoryItems.length}
                 </span>
-              </button>
+              </Button>
             );
           })}
         </div>
@@ -391,27 +450,33 @@ const ShoppingTab: React.FC<ShoppingTabProps> = ({
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <div className="flex items-center justify-center space-x-2">
-                      <button 
+                      <Button 
+                        variant="ghost"
+                        color="primary"
+                        size="sm"
                         onClick={() => {
                           const updatedItem = { ...item, units: Math.max(1, item.units - 1) };
                           startEdit(updatedItem);
                           saveEdit();
                         }}
-                        className="p-1 rounded-md hover:bg-gray-100 text-gray-500"
+                        className="p-1"
                       >
                         <MinusCircle size={16} />
-                      </button>
+                      </Button>
                       <span className="text-sm font-medium w-8 text-center">{item.units}</span>
-                      <button 
+                      <Button 
+                        variant="ghost"
+                        color="primary" 
+                        size="sm"
                         onClick={() => {
                           const updatedItem = { ...item, units: item.units + 1 };
                           startEdit(updatedItem);
                           saveEdit();
                         }}
-                        className="p-1 rounded-md hover:bg-gray-100 text-gray-500"
+                        className="p-1"
                       >
                         <PlusCircle size={16} />
-                      </button>
+                      </Button>
                     </div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-right text-gray-500">
@@ -421,21 +486,26 @@ const ShoppingTab: React.FC<ShoppingTabProps> = ({
                     S/ {(item.cost * item.units).toFixed(2)}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                    <button 
-                      className="text-blue-600 hover:text-blue-900 mr-3"
+                    <Button 
+                      variant="ghost"
+                      color="primary"
+                      size="sm"
                       onClick={() => {
                         startEdit(item);
                         setShowForm(true);
                       }}
+                      className="mr-3"
                     >
                       <Edit className="w-4 h-4" />
-                    </button>
-                    <button 
-                      className="text-red-600 hover:text-red-900"
+                    </Button>
+                    <Button 
+                      variant="ghost"
+                      color="error"
+                      size="sm"
                       onClick={() => deleteItem(item.id)}
                     >
                       <Trash2 className="w-4 h-4" />
-                    </button>
+                    </Button>
                   </td>
                 </tr>
               ))}
@@ -480,15 +550,18 @@ const ShoppingTab: React.FC<ShoppingTabProps> = ({
             <FileText className="w-5 h-5 text-slate-600 mr-2" />
             <h3 className="font-medium text-slate-800">Datos JSON (Para Desarrolladores)</h3>
           </div>
-          <button 
+          <Button 
+            variant="ghost"
+            color="primary"
+            size="sm"
             onClick={() => {
               const el = document.getElementById('json-preview');
               if (el) el.classList.toggle('hidden');
             }}
-            className="text-sm text-blue-600 hover:text-blue-800"
+            className="text-sm"
           >
             Mostrar/Ocultar
-          </button>
+          </Button>
         </div>
         <div id="json-preview" className="hidden">
           <pre className="text-xs overflow-auto max-h-64 text-slate-700 font-mono p-4">{jsonPreview}</pre>

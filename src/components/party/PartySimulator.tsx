@@ -3,7 +3,8 @@ import React, { useEffect } from 'react';
 import { 
   Users, Wine, Utensils, MapPin, 
   FileBarChart, ShoppingBag, AlertCircle, CheckCircle,
-  Sparkles
+  Sparkles,
+  Link
 } from 'lucide-react';
 import Tabs from '@/components/ui/Tabs';
 // Import shared types
@@ -33,6 +34,10 @@ export default function PartySimulator() {
     shoppingItems,
     newItem,
     editingItem,
+    // New complementary items state
+    itemRelationships,
+    addItemRelationship,
+    removeItemRelationship,
 
     // Basic parameters
     attendees,
@@ -162,6 +167,10 @@ export default function PartySimulator() {
           startEdit={startEdit}
           deleteItem={deleteItem}
           jsonPreview={jsonPreview}
+          // New complementary items props
+          itemRelationships={itemRelationships}
+          addItemRelationship={addItemRelationship}
+          removeItemRelationship={removeItemRelationship}
         />
       )
     },
@@ -313,6 +322,13 @@ export default function PartySimulator() {
                 </div>
               )}
             </div>
+            {/* Add pill to show complementary relationships count */}
+            {itemRelationships.length > 0 && (
+              <div className="bg-indigo-500/80 px-4 py-2 rounded-full flex items-center">
+                <Link size={16} className="mr-2 text-white" />
+                <span>{itemRelationships.length} Artículos Complementarios</span>
+              </div>
+            )}
           </div>
         </div>
         
