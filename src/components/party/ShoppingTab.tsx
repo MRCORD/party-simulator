@@ -115,7 +115,7 @@ const ShoppingTab: React.FC<ShoppingTabProps> = ({
             </div>
             <div className="bg-white/20 backdrop-blur-sm rounded-lg p-3">
               <div className="text-sm opacity-80">Costo Total</div>
-              <div className="text-xl font-bold">S/ {shoppingItems.reduce((sum, item) => sum + (item.cost * item.units), 0).toFixed(2)}</div>
+              <div className="text-xl font-extrabold">S/ {shoppingItems.reduce((sum, item) => sum + (item.cost * item.units), 0).toFixed(2)}</div>
             </div>
             <div className="bg-white/20 backdrop-blur-sm rounded-lg p-3">
               <div className="text-sm opacity-80">Categorías</div>
@@ -131,6 +131,7 @@ const ShoppingTab: React.FC<ShoppingTabProps> = ({
               {editingItem ? 'Editar Artículo' : 'Agregar Nuevo Artículo'}
             </h3>
             
+            {/* Name field in the form */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div>
                 <label className="block text-sm font-medium text-blue-800 mb-1">Nombre del Artículo</label>
@@ -141,6 +142,18 @@ const ShoppingTab: React.FC<ShoppingTabProps> = ({
                   value={newItem.name}
                   onChange={handleInputChange}
                   placeholder="ej. Ron Cartavio"
+                />
+              </div>
+              
+              <div>
+                <label className="block text-sm font-medium text-blue-800 mb-1">URL del Producto</label>
+                <input
+                  type="url"
+                  name="url"
+                  className="block w-full rounded-md shadow-sm border border-blue-200 p-2.5 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  value={newItem.url}
+                  onChange={handleInputChange}
+                  placeholder="https://..."
                 />
               </div>
               
@@ -160,7 +173,9 @@ const ShoppingTab: React.FC<ShoppingTabProps> = ({
                   <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 text-blue-400 pointer-events-none" size={18} />
                 </div>
               </div>
-              
+            </div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-1 gap-4 mt-4">
               <div className="grid grid-cols-2 gap-3">
                 <div>
                   <label className="block text-sm font-medium text-blue-800 mb-1">Precio (S/)</label>
@@ -192,51 +207,51 @@ const ShoppingTab: React.FC<ShoppingTabProps> = ({
                   />
                 </div>
               </div>
-            </div>
-            
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
-              <div>
-                <label className="block text-sm font-medium text-blue-800 mb-1">Tamaño</label>
-                <input
-                  type="number"
-                  name="size"
-                  className="block w-full rounded-md shadow-sm border border-blue-200 p-2.5 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                  value={newItem.size}
-                  onChange={handleInputChange}
-                  min="0"
-                  step="0.1"
-                  placeholder="0.0"
-                />
-              </div>
-              
-              <div>
-                <label className="block text-sm font-medium text-blue-800 mb-1">Unidad de Medida</label>
-                <div className="relative">
-                  <select
-                    name="sizeUnit"
-                    className="block w-full rounded-md shadow-sm border border-blue-200 p-2.5 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 appearance-none"
-                    value={newItem.sizeUnit}
-                    onChange={handleInputChange}
-                  >
-                    {sizeUnits[newItem.category].map(unit => (
-                      <option key={unit} value={unit}>{unit}</option>
-                    ))}
-                  </select>
-                  <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 text-blue-400 pointer-events-none" size={18} />
+
+              <div className="grid grid-cols-1 mt-5 gap-4 ml-2">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+                  <div>
+                    <label className="block text-sm font-medium text-blue-800 mb-1">Tamaño</label>
+                    <input
+                      type="text"
+                      name="size"
+                      className="block w-full rounded-md shadow-sm border border-blue-200 p-2.5 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      value={newItem.size}
+                      onChange={handleInputChange}
+                      placeholder="ej. Botella 750"
+                    />
+                  </div>
+                  
+                  <div>
+                    <label className="block text-sm font-medium text-blue-800 mb-1">Unidad de Medida</label>
+                    <div className="relative">
+                      <select
+                        name="sizeUnit"
+                        className="block w-full rounded-md shadow-sm border border-blue-200 p-2.5 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 appearance-none"
+                        value={newItem.sizeUnit}
+                        onChange={handleInputChange}
+                      >
+                        {sizeUnits[newItem.category].map(unit => (
+                          <option key={unit} value={unit}>{unit}</option>
+                        ))}
+                      </select>
+                      <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 text-blue-400 pointer-events-none" size={18} />
+                    </div>
+                  </div>
                 </div>
-              </div>
-              
-              <div>
-                <label className="block text-sm font-medium text-blue-800 mb-1">Porciones</label>
-                <input
-                  type="number"
-                  name="servings"
-                  className="block w-full rounded-md shadow-sm border border-blue-200 p-2.5 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                  value={newItem.servings}
-                  onChange={handleInputChange}
-                  min="0"
-                  placeholder="0"
-                />
+                
+                <div>
+                  <label className="block text-sm font-medium text-blue-800 mb-1">Porciones</label>
+                  <input
+                    type="number"
+                    name="servings"
+                    className="block w-full rounded-md shadow-sm border border-blue-200 p-2.5 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    value={newItem.servings}
+                    onChange={handleInputChange}
+                    min="0"
+                    placeholder="0"
+                  />
+                </div>
               </div>
             </div>
             
@@ -335,6 +350,9 @@ const ShoppingTab: React.FC<ShoppingTabProps> = ({
                   Unidades
                 </th>
                 <th scope="col" className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Total Porciones
+                </th>
+                <th scope="col" className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Total
                 </th>
                 <th scope="col" className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -348,14 +366,25 @@ const ShoppingTab: React.FC<ShoppingTabProps> = ({
                   <td className="px-6 py-4 whitespace-nowrap">
                     <div className="flex items-center">
                       {getCategoryIcon(item.category)}
-                      <span className="ml-2 font-medium text-gray-900">{item.name}</span>
+                      {item.url ? (
+                        <a 
+                          href={item.url} 
+                          target="_blank" 
+                          rel="noopener noreferrer" 
+                          className="ml-2 font-medium text-blue-600 hover:text-blue-800 hover:underline"
+                        >
+                          {item.name}
+                        </a>
+                      ) : (
+                        <span className="ml-2 font-medium text-gray-900">{item.name}</span>
+                      )}
                     </div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    {item.size}
+                    {item.size} {item.sizeUnit}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-right text-gray-500">
-                    {item.servings * item.units}
+                    {item.servings}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-right text-gray-900">
                     S/ {item.cost.toFixed(2)}
@@ -385,7 +414,10 @@ const ShoppingTab: React.FC<ShoppingTabProps> = ({
                       </button>
                     </div>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-right font-medium text-gray-900">
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-right text-gray-500">
+                    {item.servings * item.units}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-right font-bold text-gray-900">
                     S/ {(item.cost * item.units).toFixed(2)}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
@@ -410,7 +442,7 @@ const ShoppingTab: React.FC<ShoppingTabProps> = ({
               
               {getFilteredItems().length === 0 && (
                 <tr>
-                  <td colSpan={7} className="px-6 py-10 text-center text-gray-500">
+                  <td colSpan={8} className="px-6 py-10 text-center text-gray-500">
                     <Package className="mx-auto h-12 w-12 text-gray-400 mb-2" />
                     <p className="text-lg font-medium text-gray-900 mb-1">No hay artículos</p>
                     <p className="text-sm">
@@ -426,13 +458,13 @@ const ShoppingTab: React.FC<ShoppingTabProps> = ({
             {/* Total Row */}
             <tfoot>
               <tr className="bg-gray-50 font-medium">
-                <td colSpan={5} className="px-6 py-4 text-right text-gray-700">
+                <td colSpan={6} className="px-6 py-4 text-right text-gray-700">
                   {activeCategory === 'all' 
                     ? 'Total de compras:' 
                     : `Total de ${getCategoryLabel(activeCategory)}:`}
                 </td>
                 <td className="px-6 py-4 text-gray-900 font-bold">
-                  {getFilteredTotal().toFixed(2)}
+                  S/ {getFilteredTotal().toFixed(2)}
                 </td>
                 <td></td>
               </tr>

@@ -115,14 +115,14 @@ export const usePartyStore = create<PartyState>()(
 
       // Initial shopping items
       shoppingItems: [
-        { id: '1', name: 'Ron Cartavio Black', category: 'spirits', cost: 45, units: 1, size: 'Botella 750ml', sizeUnit: 'bottle', servings: 15, totalCost: 45 },
-        { id: '2', name: 'Coca-Cola Pack', category: 'mixers', cost: 30, units: 1, size: 'Pack 6 botellas 1.5L', sizeUnit: 'pack', servings: 30, totalCost: 30 },
-        { id: '3', name: 'Hielo en Bolsa', category: 'ice', cost: 12, units: 1, size: 'Bolsa 5kg', sizeUnit: 'bag', servings: 25, totalCost: 12 },
-        { id: '4', name: 'Pollo Entero', category: 'meat', cost: 18, units: 1, size: 'Piezas 1kg', sizeUnit: 'piece', servings: 4, totalCost: 18 },
-        { id: '5', name: 'Ensalada de Papa', category: 'sides', cost: 25, units: 1, size: 'Bandeja 1kg', sizeUnit: 'tray', servings: 5, totalCost: 25 },
-        { id: '6', name: 'Pack de Salsas BBQ', category: 'condiments', cost: 15, units: 1, size: 'Pack 3 salsas', sizeUnit: 'pack', servings: 10, totalCost: 15 },
-        { id: '7', name: 'Vasos Rojos 16oz', category: 'supplies', cost: 15, units: 1, size: 'Pack 50 vasos', sizeUnit: 'pack', servings: 50, totalCost: 15 },
-        { id: '8', name: 'Hamburguesas Parrilleras', category: 'meat', cost: 33.90, units: 1, size: 'Pack 4un x 150g', sizeUnit: 'pack', servings: 4, totalCost: 33.90 },
+        { id: '1', name: 'Hamburguesas Parrilleras Oregon Foods', category: 'meat', cost: 33.90, units: 1, size: '150', sizeUnit: 'g', servings: 4, totalCost: 33.90, url: 'https://www.wong.pe/hamburguesas-parrilleras-oregon-foods-4un-404812/p' },
+        { id: '2', name: 'Pan Hamburguesa Brioche Wong', category: 'sides', cost: 8.90, units: 1, size: '300', sizeUnit: 'g', servings: 4, totalCost: 8.90, url: 'https://www.wong.pe/pan-hamburguesa-brioche-wong-4un-926992/p' },
+        { id: '3', name: 'Chorizo Parrillero Zimmermann', category: 'meat', cost: 16.90, units: 1, size: '400', sizeUnit: 'g', servings: 4, totalCost: 16.90, url: 'https://www.wong.pe/chorizo-parrillero-zimmermann-400g-2-2/p' },
+        { id: '4', name: 'Twelvepack Cerveza Pilsen Callao', category: 'spirits', cost: 49.90, units: 1, size: '355', sizeUnit: 'ml', servings: 12, totalCost: 49.90, url: 'https://www.wong.pe/twelvepack-cerveza-pilsen-callao-lata-355ml/p' },
+        { id: '5', name: 'Ron Cartavio Solera 12 Años', category: 'spirits', cost: 94.90, units: 1, size: '750', sizeUnit: 'ml', servings: 15, totalCost: 94.90, url: 'https://www.wong.pe/ron-cartavio-solera-12-a-os-botella-750ml-46994/p' },
+        { id: '6', name: 'Hielo Cuisine&Co', category: 'ice', cost: 6.50, units: 1, size: '3', sizeUnit: 'kg', servings: 15, totalCost: 6.50, url: 'https://www.wong.pe/hielo-cuisine-co-bolsa-3-kg/p' },
+        { id: '7', name: 'Twopack Gaseosa Coca Cola Original', category: 'mixers', cost: 20.50, units: 1, size: '3', sizeUnit: 'L', servings: 30, totalCost: 20.50, url: 'https://www.wong.pe/twopack-gaseosa-coca-cola-sabor-original-botella-3l-148354/p' },
+        { id: '8', name: 'Vasos Rojos 16oz', category: 'supplies', cost: 29.90, units: 1, size: 'Pack 50 vasos', sizeUnit: 'pack', servings: 50, totalCost: 29.90, url: 'https://www.sodimac.com.pe/sodimac-pe/articulo/135800501/Vasos-para-Fiesta-SET-X-50-UND-Desechable-Descartable-16-OZ-color-Rojo/135800502' },
       ],
 
       // Initial new item state
@@ -134,7 +134,8 @@ export const usePartyStore = create<PartyState>()(
         size: '',
         sizeUnit: 'unit',
         servings: 0,
-        totalCost: 0
+        totalCost: 0,
+        url: ''
       },
 
       // Initial editing state
@@ -232,7 +233,7 @@ export const usePartyStore = create<PartyState>()(
         get().updateFinancials();
       },
 
-      setDrinksPerPerson: (value) => {
+      setDrinksPerPerson: ( value) => {
         set({ drinksPerPerson: value });
       },
 
@@ -287,7 +288,7 @@ export const usePartyStore = create<PartyState>()(
       saveEdit: () => {
         const { editingItem, newItem, shoppingItems } = get();
 
-        if (editingItem && newItem.name && newItem.cost > 0) {
+        if (editingItem && newItem.name && newItem.cost > 0 ) {
           const totalCost = newItem.cost * newItem.units;
 
           set({
