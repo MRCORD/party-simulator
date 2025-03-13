@@ -1,6 +1,13 @@
-import React from 'react';
+import React, { ReactNode } from 'react';
 
 // Centralized type definitions for the party simulator
+
+// Tab system types
+export interface Tab {
+  label: string;
+  icon?: ReactNode;
+  content?: ReactNode;
+}
 
 // Base shopping item definition used throughout all components
 export interface ShoppingItem {
