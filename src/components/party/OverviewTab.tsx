@@ -1,7 +1,10 @@
+"use client";
 import React from 'react';
 import { 
   Users, DollarSign, AlertCircle, Wine, 
-  Utensils, Calendar, Info, PieChart
+  Utensils, Calendar, Info, PieChart,
+  ChevronRight, TrendingUp, ArrowUp, ArrowDown,
+  Activity
 } from 'lucide-react';
 import { 
   PieChart as RechartsPieChart, Pie, Cell, Tooltip, BarChart, Bar, 
@@ -10,6 +13,8 @@ import {
 } from 'recharts';
 import Button from '@/components/ui/Button';
 import { useTheme } from '@/components/ui/ThemeProvider';
+
+import StatusRow from './StatusRow';
 
 interface CostBreakdownItem {
   name: string;
@@ -60,6 +65,11 @@ interface OverviewTabProps {
   calculateFoodRequirements: () => FoodRequirements;
   getCategoryServings: (category: string) => number;
   COLORS: string[];
+  
+  // New props for food simulator integration
+  useAdvancedFoodSim: boolean;
+  setUseAdvancedFoodSim: (value: boolean) => void;
+  setActiveTab: (tab: 'overview' | 'shopping' | 'drinks' | 'food' | 'venue' | 'reports') => void;
 }
 
 // Types for chart components
@@ -106,16 +116,20 @@ const OverviewTab: React.FC<OverviewTabProps> = ({
   perPersonCost, breakEvenAttendees, recommendedTicketPrice,
   isViable, costBreakdown, financialOverview, 
   calculateDrinkRequirements, calculateFoodRequirements, 
-  getCategoryServings, COLORS
+  getCategoryServings, COLORS,
+  useAdvancedFoodSim, setUseAdvancedFoodSim, setActiveTab
 }) => {
   const theme = useTheme();
-  // Get calculated requirements
   const drinkRequirements = calculateDrinkRequirements();
   const foodRequirements = calculateFoodRequirements();
-  
-  // Active section for the pie chart (for hover effect)
   const [activeIndex, setActiveIndex] = React.useState<number | null>(null);
-  
+
+  // Calculate status percentages
+  const ticketPricePercentage = Math.min(100, (ticketPrice / recommendedTicketPrice) * 100);
+  const attendancePercentage = Math.min(100, (attendees / breakEvenAttendees) * 100);
+  const viabilityPercentage = isViable ? 100 : 
+    Math.min(100, ((ticketPricePercentage + attendancePercentage) / 2));
+
   // Basic parameters card
   const renderBasicParameters = () => {
     return (
@@ -195,32 +209,54 @@ const OverviewTab: React.FC<OverviewTabProps> = ({
             <label className="block text-sm text-primary mb-1 flex items-center">
               <Utensils className="w-4 h-4 mr-1 text-blue-600" /> Porciones/Persona
             </label>
-            <div className="flex rounded shadow-sm">
-              <Button
-                variant="outline"
-                color="primary"
-                size="sm"
-                onClick={() => setFoodServingsPerPerson(Math.max(1, foodServingsPerPerson - 1))}
-                className="rounded-r-none"
-              >
-                -
-              </Button>
-              <input
-                type="text"
-                className="block w-full min-w-0 flex-1 text-center border-y border-gray-300 py-2 text-gray-900 focus:border-blue-500 focus:outline-none focus:ring-blue-500"
-                value={foodServingsPerPerson}
-                readOnly
-                aria-label="Porciones por persona"
-              />
-              <Button
-                variant="outline"
-                color="primary"
-                size="sm"
-                onClick={() => setFoodServingsPerPerson(foodServingsPerPerson + 1)}
-                className="rounded-l-none"
-              >
-                +
-              </Button>
+            <div className="relative">
+              <div className="flex rounded shadow-sm">
+                <Button
+                  variant="outline"
+                  color="primary"
+                  size="sm"
+                  onClick={() => setFoodServingsPerPerson(Math.max(1, foodServingsPerPerson - 1))}
+                  className="rounded-r-none"
+                >
+                  -
+                </Button>
+                <input
+                  type="text"
+                  className="block w-full min-w-0 flex-1 text-center border-y border-gray-300 py-2 text-gray-900 focus:border-blue-500 focus:outline-none focus:ring-blue-500"
+                  value={foodServingsPerPerson}
+                  readOnly
+                  aria-label="Porciones por persona"
+                />
+                <Button
+                  variant="outline"
+                  color="primary"
+                  size="sm"
+                  onClick={() => setFoodServingsPerPerson(foodServingsPerPerson + 1)}
+                  className="rounded-l-none"
+                >
+                  +
+                </Button>
+              </div>
+              
+              {/* NEW: Advanced Food Simulation Button */}
+              <div className="mt-3">
+                <Button
+                  variant={useAdvancedFoodSim ? "gradient" : "outline"}
+                  color="warning"
+                  size="sm"
+                  className="w-full"
+                  onClick={() => {
+                    setUseAdvancedFoodSim(!useAdvancedFoodSim);
+                    if (!useAdvancedFoodSim) {
+                      // When enabling advanced sim, navigate to food tab
+                      setTimeout(() => setActiveTab('food'), 300);
+                    }
+                  }}
+                >
+                  {useAdvancedFoodSim ? 'Usar Simulación Avanzada' : 'Habilitar Simulación Avanzada'} 
+                  <ChevronRight className="w-4 h-4 ml-1" />
+                </Button>
+              </div>
             </div>
           </div>
         </div>
@@ -524,22 +560,9 @@ const OverviewTab: React.FC<OverviewTabProps> = ({
     );
   };
   
-  // Status section with actual data and equal card sizes
   const renderStatusSection = () => {
     const totalDrinkRequirement = attendees * drinksPerPerson;
     const totalFoodRequirement = attendees * foodServingsPerPerson;
-    
-    const StatusRow = ({ title, current, total, isOk }: { title: string, current: number, total: number, isOk: boolean }) => (
-      <div className="flex justify-between items-center py-2">
-        <span className="text-sm">{title}</span>
-        <div className="flex items-center">
-          <span className="text-sm text-right w-16">{current}/{total}</span>
-          <span className={`ml-2 px-2 py-0.5 text-xs rounded ${isOk ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'} min-w-[48px] text-center`}>
-            {isOk ? 'OK' : 'Falta'}
-          </span>
-        </div>
-      </div>
-    );
 
     // Check if everything is balanced (all requirements met)
     const isEverythingBalanced = 
@@ -550,20 +573,7 @@ const OverviewTab: React.FC<OverviewTabProps> = ({
       foodRequirements.hasEnoughMeat &&
       foodRequirements.hasEnoughSides &&
       foodRequirements.hasEnoughCondiments;
-    
-    // Calculate percentages for recommendation bars
-    const ticketPricePercentage = Math.min(100, Math.max(0, (ticketPrice / recommendedTicketPrice) * 100));
-    const attendancePercentage = Math.min(100, Math.max(0, (attendees / breakEvenAttendees) * 100));
-    
-    // For overall viability, calculate a more nuanced percentage based on multiple factors
-    const viabilityFactors = [
-      ticketPrice >= recommendedTicketPrice ? 1 : 0,
-      attendees >= breakEvenAttendees ? 1 : 0,
-      isEverythingBalanced ? 1 : 0
-    ];
-    
-    const viabilityPercentage = (viabilityFactors.reduce((a, b) => a + b, 0) / viabilityFactors.length) * 100;
-    
+
     return (
       <div className="bg-white rounded-lg border border-gray-200 p-4">
         <div className="flex items-center mb-4">
@@ -608,9 +618,17 @@ const OverviewTab: React.FC<OverviewTabProps> = ({
           
           {/* Food Status */}
           <div className="rounded overflow-hidden border border-gray-200">
-            <div className={`${theme.getGradient('warning')} text-white px-3 py-2 flex items-center`}>
-              <Utensils className="w-4 h-4 mr-2" />
-              <span className="font-medium">Estado de Comida</span>
+            <div className={`${useAdvancedFoodSim 
+              ? theme.getGradient('warning') 
+              : theme.getGradient('success')
+            } text-white px-3 py-2 flex items-center justify-between`}>
+              <div className="flex items-center">
+                <Utensils className="w-4 h-4 mr-2" />
+                <span className="font-medium">Estado de Comida</span>
+              </div>
+              {useAdvancedFoodSim && (
+                <span className="text-xs bg-white/20 px-2 py-0.5 rounded-full">Avanzado</span>
+              )}
             </div>
             <div className="p-3">
               <StatusRow 
@@ -631,6 +649,14 @@ const OverviewTab: React.FC<OverviewTabProps> = ({
                 total={totalFoodRequirement} 
                 isOk={foodRequirements.hasEnoughCondiments} 
               />
+              {useAdvancedFoodSim && (
+                <div className="mt-2 bg-warning-light/50 p-2 rounded text-xs text-warning-dark">
+                  <div className="flex items-center">
+                    <Info className="w-3 h-3 mr-1 flex-shrink-0" />
+                    <span>Usando simulación avanzada. Ver pestaña Comida.</span>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
           

@@ -1,7 +1,7 @@
 "use client";
 import React, { useState } from 'react';
 import { 
-  ShoppingCart, FileText, Edit, Trash2, PlusCircle, 
+  ShoppingCart, FileText, Edit, Trash2, PlusCircle, MinusCircle,
   Save, Package, ChevronDown, X,
   Wine, Droplets, Snowflake, Beef, Salad, Utensils
 } from 'lucide-react';
@@ -325,16 +325,16 @@ const ShoppingTab: React.FC<ShoppingTabProps> = ({
                 <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Tamaño
                 </th>
-                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Precio
-                </th>
-                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Unidades
-                </th>
-                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th scope="col" className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Porciones
                 </th>
-                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th scope="col" className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Precio
+                </th>
+                <th scope="col" className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Unidades
+                </th>
+                <th scope="col" className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Total
                 </th>
                 <th scope="col" className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -352,19 +352,41 @@ const ShoppingTab: React.FC<ShoppingTabProps> = ({
                     </div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    {item.size} {item.sizeUnit}
+                    {item.size}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    {item.cost.toFixed(2)}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    {item.units}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-right text-gray-500">
                     {item.servings * item.units}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap font-medium text-gray-900">
-                    {(item.cost * item.units).toFixed(2)}
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-right text-gray-900">
+                    S/ {item.cost.toFixed(2)}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <div className="flex items-center justify-center space-x-2">
+                      <button 
+                        onClick={() => {
+                          const updatedItem = { ...item, units: Math.max(1, item.units - 1) };
+                          startEdit(updatedItem);
+                          saveEdit();
+                        }}
+                        className="p-1 rounded-md hover:bg-gray-100 text-gray-500"
+                      >
+                        <MinusCircle size={16} />
+                      </button>
+                      <span className="text-sm font-medium w-8 text-center">{item.units}</span>
+                      <button 
+                        onClick={() => {
+                          const updatedItem = { ...item, units: item.units + 1 };
+                          startEdit(updatedItem);
+                          saveEdit();
+                        }}
+                        className="p-1 rounded-md hover:bg-gray-100 text-gray-500"
+                      >
+                        <PlusCircle size={16} />
+                      </button>
+                    </div>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-right font-medium text-gray-900">
+                    S/ {(item.cost * item.units).toFixed(2)}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                     <button 

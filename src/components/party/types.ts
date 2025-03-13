@@ -9,7 +9,7 @@ export interface ShoppingItem {
     category: 'spirits' | 'mixers' | 'ice' | 'meat' | 'sides' | 'condiments' | 'supplies' | 'other';
     cost: number;
     units: number;
-    size: number;
+    size: string;
     sizeUnit: string;
     servings: number;
     totalCost: number;
@@ -101,3 +101,23 @@ export interface ShoppingItem {
     shoppingItems: ShoppingItem[];
     getCategoryTotal: (category: string) => number;
   }
+
+  // Food Simulator types
+export interface EaterProfile {
+  name: string;
+  percentage: number;
+  servingsMultiplier: number;
+}
+
+export interface SimulationResult {
+  mean: number;
+  min: number;
+  max: number;
+  recommended: number;
+  recommendedUnits: number;
+  risks: {
+    low: { servings: number, riskPercentage: number };
+    medium: { servings: number, riskPercentage: number };
+    high: { servings: number, riskPercentage: number };
+  }
+}

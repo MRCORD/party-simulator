@@ -51,6 +51,11 @@ export default function PartySimulator() {
     recommendedTicketPrice,
     isViable,
 
+    // Food simulation state
+    useAdvancedFoodSim, 
+    setUseAdvancedFoodSim,
+    simulationResults,
+
     // Constant values
     categories,
     sizeUnits,
@@ -133,6 +138,10 @@ export default function PartySimulator() {
           calculateDrinkRequirements={calculateDrinkRequirements}
           calculateFoodRequirements={calculateFoodRequirements}
           getCategoryServings={getCategoryServings}
+          // New props for food simulator integration
+          useAdvancedFoodSim={useAdvancedFoodSim}
+          setUseAdvancedFoodSim={setUseAdvancedFoodSim}
+          setActiveTab={setActiveTab}
         />
       )
     },
@@ -185,6 +194,11 @@ export default function PartySimulator() {
           calculateFoodRequirements={calculateFoodRequirements}
           getCategoryServings={getCategoryServings}
           getRecommendedUnits={getRecommendedUnits}
+          // New props for food simulator integration
+          useAdvancedFoodSim={useAdvancedFoodSim}
+          setUseAdvancedFoodSim={setUseAdvancedFoodSim}
+          simulationResults={simulationResults}
+          setActiveTab={setActiveTab}
         />
       )
     },
@@ -292,6 +306,12 @@ export default function PartySimulator() {
                 }
                 <span>{isViable ? 'Viable' : 'No Viable'}</span>
               </div>
+              {useAdvancedFoodSim && (
+                <div className="bg-warning/80 px-4 py-2 rounded-full flex items-center">
+                  <Utensils size={16} className="mr-2" />
+                  <span>Simulación de Comida Avanzada</span>
+                </div>
+              )}
             </div>
           </div>
         </div>
