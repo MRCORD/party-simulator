@@ -590,24 +590,28 @@ const OverviewTab: React.FC<OverviewTabProps> = ({
             </div>
             <div className="p-3">
               <StatusRow 
+                key="spirits"
                 title="Licores" 
                 current={getCategoryServings('spirits')} 
                 total={totalDrinkRequirement} 
                 isOk={drinkRequirements.hasEnoughSpirits} 
               />
               <StatusRow 
+                key="mixers"
                 title="Mezcladores" 
                 current={getCategoryServings('mixers')} 
                 total={totalDrinkRequirement} 
                 isOk={drinkRequirements.hasEnoughMixers} 
               />
               <StatusRow 
+                key="ice"
                 title="Hielo" 
                 current={getCategoryServings('ice')} 
                 total={totalDrinkRequirement} 
                 isOk={drinkRequirements.hasEnoughIce} 
               />
               <StatusRow 
+                key="supplies"
                 title="Suministros" 
                 current={getCategoryServings('supplies')} 
                 total={totalDrinkRequirement} 
@@ -632,18 +636,21 @@ const OverviewTab: React.FC<OverviewTabProps> = ({
             </div>
             <div className="p-3">
               <StatusRow 
+                key="meat"
                 title="Carnes" 
                 current={getCategoryServings('meat')} 
                 total={totalFoodRequirement} 
                 isOk={foodRequirements.hasEnoughMeat} 
               />
               <StatusRow 
+                key="sides"
                 title="Guarniciones" 
                 current={getCategoryServings('sides')} 
                 total={totalFoodRequirement} 
                 isOk={foodRequirements.hasEnoughSides} 
               />
               <StatusRow 
+                key="condiments"
                 title="Condimentos" 
                 current={getCategoryServings('condiments')} 
                 total={totalFoodRequirement} 
