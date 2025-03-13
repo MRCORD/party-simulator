@@ -56,7 +56,6 @@ const FoodSimulator: React.FC<FoodSimulatorProps> = ({
   // Component state
   const [menuModalOpen, setMenuModalOpen] = useState(false);
   const [selectedFoodItems, setSelectedFoodItems] = useState<string[]>([]);
-  const [profileModalOpen, setProfileModalOpen] = useState(false);
   const [showDetailedResults, setShowDetailedResults] = useState(false);
   const [highlightedItemId, setHighlightedItemId] = useState<string | null>(null);
   
@@ -162,42 +161,56 @@ const FoodSimulator: React.FC<FoodSimulatorProps> = ({
       .filter(item => item !== null) as { item: typeof shoppingItems[0], result: SimulationResult }[];
   };
   
-  // Handle profile change
-  const handleProfileChange = (index: number, field: keyof EaterProfile, value: number) => {
-    updateEaterProfile(index, field, value);
+  // Handle profile percentage change with automatic adjustment of other profiles
+  const handleProfilePercentageChange = (index: number, newValue: number) => {
+    // Don't allow values below 1% or above 98%
+    if (newValue < 1) newValue = 1;
+    if (newValue > 98) newValue = 98;
+    
+    // Get current profiles and the one being changed
+    const currentProfiles = [...eaterProfiles];
+    const originalValue = currentProfiles[index].percentage;
+    const difference = newValue - originalValue;
+    
+    if (difference === 0) return;
+    
+    // Calculate how much we need to adjust other profiles
+    const otherProfilesTotal = 100 - originalValue;
+    
+    // Update the current profile
+    updateEaterProfile(index, 'percentage', newValue);
+    
+    // Adjust other profiles proportionally
+    currentProfiles.forEach((profile, i) => {
+      if (i !== index) {
+        // Calculate new percentage proportionally
+        const adjustmentFactor = (100 - newValue) / otherProfilesTotal;
+        const adjustedPercentage = Math.round(profile.percentage * adjustmentFactor);
+        
+        // Ensure we don't go below 1%
+        const finalPercentage = Math.max(1, adjustedPercentage);
+        updateEaterProfile(i, 'percentage', finalPercentage);
+      }
+    });
+    
+    // Ensure percentages sum to 100% by adjusting the last profile
+    let total = 0;
+    currentProfiles.forEach((profile, i) => {
+      if (i !== currentProfiles.length - 1) {
+        total += (i === index) ? newValue : profile.percentage;
+      }
+    });
+    
+    // Adjust the last profile if it's not the one being changed
+    if (index !== currentProfiles.length - 1) {
+      const lastProfilePercentage = Math.max(1, 100 - total);
+      updateEaterProfile(currentProfiles.length - 1, 'percentage', lastProfilePercentage);
+    }
   };
   
-  // Ensure profile percentages sum to 100%
-  const normalizeProfiles = () => {
-    const sum = eaterProfiles.reduce((acc, profile) => acc + profile.percentage, 0);
-    
-    if (sum !== 100) {
-      const normalizedProfiles = [...eaterProfiles];
-      const factor = 100 / sum;
-      
-      normalizedProfiles.forEach((profile, index) => {
-        if (index < normalizedProfiles.length - 1) {
-          normalizedProfiles[index] = {
-            ...profile,
-            percentage: Math.round(profile.percentage * factor)
-          };
-        } else {
-          // Last profile gets the remainder to ensure sum is exactly 100
-          const othersSum = normalizedProfiles.slice(0, index).reduce(
-            (acc, p) => acc + p.percentage, 0
-          );
-          normalizedProfiles[index] = {
-            ...profile,
-            percentage: 100 - othersSum
-          };
-        }
-      });
-      
-      // Update profiles in store
-      normalizedProfiles.forEach((profile, index) => {
-        updateEaterProfile(index, 'percentage', profile.percentage);
-      });
-    }
+  // Handle profile multiplier change
+  const handleProfileMultiplierChange = (index: number, value: number) => {
+    updateEaterProfile(index, 'servingsMultiplier', value);
   };
   
   // Apply recommendations to shopping list
@@ -290,7 +303,7 @@ const FoodSimulator: React.FC<FoodSimulatorProps> = ({
       </div>
 
       {/* Key Metrics */}
-      <div className="grid grid-cols-1 sm:grid-cols-4 gap-4 p-6 bg-warning-light/10">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 p-6 bg-warning-light/10">
         {/* Attendees */}
         <div className="flex flex-col items-center justify-center bg-white rounded-lg p-4 shadow-sm">
           <p className="text-sm font-semibold text-warning-dark uppercase tracking-wide mb-1">ASISTENTES</p>
@@ -311,83 +324,169 @@ const FoodSimulator: React.FC<FoodSimulatorProps> = ({
           <p className="text-sm font-semibold text-warning-dark uppercase tracking-wide mb-1">SIMULACIONES</p>
           <p className="text-3xl font-bold text-gray-800">{simulationCount.toLocaleString()}</p>
         </div>
-        
-        {/* Eater Profiles Summary */}
-        <div className="flex flex-col items-center justify-center bg-white rounded-lg p-4 shadow-sm relative group cursor-pointer"
-          onClick={() => setProfileModalOpen(true)}>
-          <p className="text-sm font-semibold text-warning-dark uppercase tracking-wide mb-1">PERFILES DE CONSUMO</p>
-          <div className="flex space-x-1">
-            {eaterProfiles.map((profile, index) => (
-              <div key={index} className="relative" style={{ width: `${profile.percentage}px`, maxWidth: '100px' }}>
-                <div 
-                  className="h-8 rounded" 
-                  style={{ 
-                    backgroundColor: PROFILE_COLORS[index % PROFILE_COLORS.length],
-                    opacity: 0.7 + (profile.servingsMultiplier / 5)
-                  }}
-                ></div>
-                <span className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-xs font-bold text-white">
-                  {profile.percentage}%
-                </span>
-              </div>
-            ))}
-          </div>
-          <div className="absolute inset-0 bg-white bg-opacity-0 group-hover:bg-opacity-10 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity rounded-lg">
-            <span className="text-sm font-medium text-warning-dark bg-white px-2 py-1 rounded">
-              Click para editar
-            </span>
-          </div>
-        </div>
       </div>
 
       {/* Settings */}
-      <div className="p-6 grid grid-cols-1 sm:grid-cols-2 gap-6 bg-white">
-        {/* Confidence Level Dropdown */}
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">Nivel de Confianza</label>
-          <div className="relative">
-            <select
-              value={confidenceLevel}
-              onChange={handleConfidenceLevelChange}
-              className="block w-full rounded-md border border-gray-300 py-2 px-3 bg-white shadow-sm focus:outline-none focus:ring-2 focus:ring-warning focus:border-warning appearance-none text-gray-700"
-            >
-              {confidenceLevelOptions.map(option => (
-                <option key={option.value} value={option.value}>
-                  {option.value}% - {option.label}
-                </option>
-              ))}
-            </select>
-            <div className="absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none">
-              <ChevronDown className="w-5 h-5 text-gray-400" />
+      <div className="p-6 bg-white">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-6">
+          {/* Confidence Level Dropdown */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Nivel de Confianza</label>
+            <div className="relative">
+              <select
+                value={confidenceLevel}
+                onChange={handleConfidenceLevelChange}
+                className="block w-full rounded-md border border-gray-300 py-2 px-3 bg-white shadow-sm focus:outline-none focus:ring-2 focus:ring-warning focus:border-warning appearance-none text-gray-700"
+              >
+                {confidenceLevelOptions.map(option => (
+                  <option key={option.value} value={option.value}>
+                    {option.value}% - {option.label}
+                  </option>
+                ))}
+              </select>
+              <div className="absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none">
+                <ChevronDown className="w-5 h-5 text-gray-400" />
+              </div>
             </div>
+            <p className="mt-1 text-xs text-gray-500">
+              Un nivel de confianza más alto requerirá más unidades pero reducirá el riesgo de quedarse sin provisiones.
+            </p>
           </div>
-          <p className="mt-1 text-xs text-gray-500">
-            Un nivel de confianza más alto requerirá más unidades pero reducirá el riesgo de quedarse sin provisiones.
-          </p>
-        </div>
 
-        {/* Simulation Count Dropdown */}
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">Número de Simulaciones</label>
-          <div className="relative">
-            <select
-              value={simulationCount}
-              onChange={handleSimulationsChange}
-              className="block w-full rounded-md border border-gray-300 py-2 px-3 bg-white shadow-sm focus:outline-none focus:ring-2 focus:ring-warning focus:border-warning appearance-none text-gray-700"
-            >
-              {simulationOptions.map(option => (
-                <option key={option.value} value={option.value}>
-                  {option.value.toLocaleString()} - {option.label}
-                </option>
-              ))}
-            </select>
-            <div className="absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none">
-              <ChevronDown className="w-5 h-5 text-gray-400" />
+          {/* Simulation Count Dropdown */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Número de Simulaciones</label>
+            <div className="relative">
+              <select
+                value={simulationCount}
+                onChange={handleSimulationsChange}
+                className="block w-full rounded-md border border-gray-300 py-2 px-3 bg-white shadow-sm focus:outline-none focus:ring-2 focus:ring-warning focus:border-warning appearance-none text-gray-700"
+              >
+                {simulationOptions.map(option => (
+                  <option key={option.value} value={option.value}>
+                    {option.value.toLocaleString()} - {option.label}
+                  </option>
+                ))}
+              </select>
+              <div className="absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none">
+                <ChevronDown className="w-5 h-5 text-gray-400" />
+              </div>
+            </div>
+            <p className="mt-1 text-xs text-gray-500">
+              Más simulaciones producen resultados más precisos pero requieren más tiempo de cálculo.
+            </p>
+          </div>
+        </div>
+        
+        {/* Perfiles de Consumo (Directly Integrated) */}
+        <div className="mb-6">
+          <h4 className="text-sm font-medium text-gray-700 mb-3 flex items-center">
+            <Users className="w-4 h-4 mr-2 text-warning" />
+            Perfiles de Consumo
+          </h4>
+          
+          {/* Profile Distribution Chart */}
+          <div className="bg-gray-50 p-4 rounded-lg mb-4">
+            <div className="h-24">
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart
+                  data={profileChartData}
+                  layout="vertical"
+                  barSize={20}
+                  margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
+                >
+                  <XAxis type="number" domain={[0, 100]} />
+                  <YAxis dataKey="name" type="category" width={100} />
+                  <Tooltip 
+                    formatter={(value: any, name: any, props: any) => {
+                      const { multiplier } = props.payload;
+                      return [`${value}% (${multiplier}x consumo)`, 'Distribución'];
+                    }}
+                  />
+                  <Bar dataKey="value" radius={[4, 4, 0, 0]}>
+                    {profileChartData.map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={PROFILE_COLORS[index % PROFILE_COLORS.length]} />
+                    ))}
+                  </Bar>
+                </BarChart>
+              </ResponsiveContainer>
             </div>
           </div>
-          <p className="mt-1 text-xs text-gray-500">
-            Más simulaciones producen resultados más precisos pero requieren más tiempo de cálculo.
-          </p>
+          
+          {/* Profile Configuration Controls - Directly in the interface */}
+          <div className="space-y-4">
+            {eaterProfiles.map((profile, index) => (
+              <div key={index} className="border rounded-lg p-3" style={{ borderColor: PROFILE_COLORS[index % PROFILE_COLORS.length] }}>
+                <div className="flex items-center justify-between mb-2">
+                  <h5 className="font-medium" style={{ color: PROFILE_COLORS[index % PROFILE_COLORS.length] }}>{profile.name}</h5>
+                  <Badge 
+                    variant="success" 
+                    size="sm"
+                    style={{ 
+                      backgroundColor: PROFILE_COLORS[index % PROFILE_COLORS.length] + '20',
+                      color: PROFILE_COLORS[index % PROFILE_COLORS.length]
+                    }}
+                  >
+                    {profile.percentage}% de asistentes
+                  </Badge>
+                </div>
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                  {/* Percentage Slider */}
+                  <div>
+                    <label className="block text-xs text-gray-600 mb-1">Porcentaje en el Evento</label>
+                    <div className="flex items-center">
+                      <input 
+                        type="range" 
+                        min="1" 
+                        max="98" 
+                        value={profile.percentage} 
+                        onChange={(e) => handleProfilePercentageChange(index, parseInt(e.target.value))}
+                        className="w-full mr-3"
+                      />
+                      <span className="w-10 text-center text-sm">{profile.percentage}%</span>
+                    </div>
+                  </div>
+                  
+                  {/* Multiplier Slider */}
+                  <div>
+                    <label className="block text-xs text-gray-600 mb-1">
+                      Multiplicador de Consumo
+                    </label>
+                    <div className="flex items-center">
+                      <input 
+                        type="range" 
+                        min="0.5" 
+                        max="3" 
+                        step="0.1" 
+                        value={profile.servingsMultiplier} 
+                        onChange={(e) => handleProfileMultiplierChange(index, parseFloat(e.target.value))}
+                        className="w-full mr-3"
+                      />
+                      <span className="w-10 text-center text-sm">{profile.servingsMultiplier}x</span>
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="mt-1 text-xs text-gray-500">
+                  {profile.servingsMultiplier < 1 
+                    ? "Consume menos que el promedio" 
+                    : profile.servingsMultiplier > 1 
+                      ? "Consume más que el promedio" 
+                      : "Consumo promedio"
+                  }
+                </div>
+              </div>
+            ))}
+          </div>
+          
+          <div className="mt-2 text-xs text-gray-500 flex items-center">
+            <Info className="w-3 h-3 mr-1 text-gray-400" />
+            <span>
+              Los perfiles definen cómo se distribuyen los participantes y cuánto consume cada grupo.
+              El total siempre suma 100%.
+            </span>
+          </div>
         </div>
       </div>
 
@@ -517,160 +616,6 @@ const FoodSimulator: React.FC<FoodSimulatorProps> = ({
                 >
                   Confirmar Selección
                 </Button>
-              </div>
-            </div>
-          </div>
-        )}
-        
-        {/* Eater Profiles Modal */}
-        {profileModalOpen && (
-          <div className="fixed inset-0 bg-gray-500 bg-opacity-75 flex items-center justify-center p-4 z-50">
-            <div className="bg-white rounded-lg max-w-2xl w-full max-h-[80vh] overflow-auto">
-              <div className="p-4 border-b border-gray-200 flex justify-between">
-                <h3 className="text-lg font-medium">Perfiles de Consumo</h3>
-                <button onClick={() => {
-                  setProfileModalOpen(false);
-                  normalizeProfiles();
-                }} className="text-gray-400 hover:text-gray-500">
-                  ×
-                </button>
-              </div>
-              <div className="p-4">
-                <p className="text-sm text-gray-600 mb-4">
-                  Configura los diferentes perfiles de consumidores y sus porcentajes en tu evento. 
-                  Esto afectará la distribución de consumo en la simulación.
-                </p>
-                
-                {/* Profile Distribution Chart */}
-                <div className="mb-6 bg-gray-50 p-4 rounded-lg">
-                  <h4 className="text-sm font-medium text-gray-700 mb-2">Distribución de Perfiles</h4>
-                  <div className="h-64">
-                    <ResponsiveContainer width="100%" height="100%">
-                      <BarChart
-                        data={profileChartData}
-                        layout="vertical"
-                        margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
-                      >
-                        <CartesianGrid strokeDasharray="3 3" />
-                        <XAxis type="number" domain={[0, 100]} />
-                        <YAxis dataKey="name" type="category" width={100} />
-                        <Tooltip 
-                          formatter={(value: any, name: any, props: any) => {
-                            const { multiplier } = props.payload;
-                            return [`${value}% (${multiplier}x consumo)`, 'Distribución'];
-                          }}
-                        />
-                        <Bar dataKey="value" fill="#8884d8">
-                          {profileChartData.map((entry, index) => (
-                            <Cell key={`cell-${index}`} fill={PROFILE_COLORS[index % PROFILE_COLORS.length]} />
-                          ))}
-                        </Bar>
-                      </BarChart>
-                    </ResponsiveContainer>
-                  </div>
-                </div>
-                
-                {/* Profile Configuration */}
-                <div className="space-y-6">
-                  {eaterProfiles.map((profile, index) => (
-                    <div key={index} className="border rounded-lg p-4" style={{ borderColor: PROFILE_COLORS[index % PROFILE_COLORS.length] }}>
-                      <div className="flex items-center justify-between mb-3">
-                        <h4 className="font-medium" style={{ color: PROFILE_COLORS[index % PROFILE_COLORS.length] }}>{profile.name}</h4>
-                        <Badge 
-                          variant="success" 
-                          size="sm"
-                          style={{ 
-                            backgroundColor: PROFILE_COLORS[index % PROFILE_COLORS.length] + '20',
-                            color: PROFILE_COLORS[index % PROFILE_COLORS.length]
-                          }}
-                        >
-                          {profile.percentage}% de asistentes
-                        </Badge>
-                      </div>
-                      
-                      <div className="mb-4">
-                        <label className="block text-sm text-gray-600 mb-1">Porcentaje en el Evento</label>
-                        <div className="flex items-center">
-                          <input 
-                            type="range" 
-                            min="1" 
-                            max="100" 
-                            value={profile.percentage} 
-                            onChange={(e) => handleProfileChange(index, 'percentage', parseInt(e.target.value))}
-                            className="w-full mr-3"
-                          />
-                          <span className="w-10 text-center">{profile.percentage}%</span>
-                        </div>
-                      </div>
-                      
-                      <div>
-                        <label className="block text-sm text-gray-600 mb-1">
-                          Multiplicador de Consumo <span className="text-gray-500">({profile.servingsMultiplier}x)</span>
-                        </label>
-                        <div className="flex items-center">
-                          <input 
-                            type="range" 
-                            min="0.5" 
-                            max="3" 
-                            step="0.1" 
-                            value={profile.servingsMultiplier} 
-                            onChange={(e) => handleProfileChange(index, 'servingsMultiplier', parseFloat(e.target.value))}
-                            className="w-full mr-3"
-                          />
-                          <span className="w-10 text-center">{profile.servingsMultiplier}x</span>
-                        </div>
-                        <p className="text-xs text-gray-500 mt-1">
-                          {profile.servingsMultiplier < 1 
-                            ? "Consume menos que el promedio" 
-                            : profile.servingsMultiplier > 1 
-                              ? "Consume más que el promedio" 
-                              : "Consumo promedio"
-                          }
-                        </p>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-              <div className="p-4 border-t border-gray-200 flex justify-between items-center">
-                <p className="text-sm text-gray-500">
-                  Total: {eaterProfiles.reduce((acc, profile) => acc + profile.percentage, 0)}% 
-                  {eaterProfiles.reduce((acc, profile) => acc + profile.percentage, 0) !== 100 && (
-                    <span className="text-error ml-1">(Debe sumar 100%)</span>
-                  )}
-                </p>
-                <div>
-                  <Button
-                    variant="outline"
-                    color="gray"
-                    className="mr-2"
-                    onClick={() => {
-                      // Reset to default profiles
-                      const defaultProfiles = [
-                        { name: "Light Eater", percentage: 25, servingsMultiplier: 0.7 },
-                        { name: "Average Eater", percentage: 50, servingsMultiplier: 1.0 },
-                        { name: "Heavy Eater", percentage: 25, servingsMultiplier: 1.5 }
-                      ];
-                      
-                      defaultProfiles.forEach((profile, index) => {
-                        updateEaterProfile(index, 'percentage', profile.percentage);
-                        updateEaterProfile(index, 'servingsMultiplier', profile.servingsMultiplier);
-                      });
-                    }}
-                  >
-                    Restaurar Valores
-                  </Button>
-                  <Button
-                    variant="gradient"
-                    color="warning"
-                    onClick={() => {
-                      normalizeProfiles();
-                      setProfileModalOpen(false);
-                    }}
-                  >
-                    Aplicar Cambios
-                  </Button>
-                </div>
               </div>
             </div>
           </div>
