@@ -70,7 +70,7 @@ export function runMonteCarlo(config: SimulationConfig): Record<string, Simulati
     // For each food item, calculate consumption in this simulation
     foodItems.forEach(item => {
       // Base consumption from direct attendee consumption
-      let totalServings = calculateServingsForProfiles(profileDistribution);
+      const totalServings = calculateServingsForProfiles(profileDistribution);
       rawResults[item.id].push(totalServings);
     });
   }

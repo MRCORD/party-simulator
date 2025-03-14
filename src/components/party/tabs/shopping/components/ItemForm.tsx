@@ -203,7 +203,7 @@ const ItemForm: React.FC<ItemFormProps> = ({
           <div>
             <p className="text-sm text-indigo-800 font-medium">¿Sabías que puedes vincular artículos complementarios?</p>
             <p className="text-sm text-indigo-700 mt-1">
-              Después de agregar tus artículos, usa la sección "Artículos Complementarios" para crear relaciones
+              Después de agregar tus artículos, usa la sección &quot;Artículos Complementarios&quot; para crear relaciones
               entre productos que se consumen juntos, como hamburguesas y panes, o ron y cola.
             </p>
           </div>

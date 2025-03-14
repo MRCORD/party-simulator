@@ -1,3 +1,5 @@
+import type { ShoppingItem, ItemRelationship } from './shopping';
+
 /**
  * Types for the Monte Carlo food consumption simulator
  */
@@ -50,8 +52,8 @@ export interface SimulationResult {
 export interface SimulationConfig {
   attendees: number;
   eaterProfiles: EaterProfile[];
-  foodItems: any[]; // Will be ShoppingItem[] but using any to avoid circular imports
-  itemRelationships: any[]; // Will be ItemRelationship[] but using any to avoid circular imports
+  foodItems: ShoppingItem[];
+  itemRelationships: ItemRelationship[];
   confidenceLevel: number;
   simulationCount: number;
 }
@@ -85,8 +87,17 @@ export interface SimulationCountOption {
 export interface FoodSimulatorProps {
   attendees: number;
   foodServingsPerPerson: number;
-  shoppingItems: any[]; // Will be ShoppingItem[] 
-  calculateFoodRequirements: () => any;
+  shoppingItems: ShoppingItem[];
+  calculateFoodRequirements: () => {
+    totalServings: number;
+    hasEnoughMeat: boolean;
+    hasEnoughSides: boolean;
+    hasEnoughCondiments: boolean;
+    meatCost: number;
+    sidesCost: number;
+    condimentsCost: number;
+    totalCost: number;
+  };
   getCategoryServings: (category: string) => number;
   toggleView: () => void;
   setActiveTab: (tab: 'overview' | 'shopping' | 'drinks' | 'food' | 'venue' | 'reports') => void;
