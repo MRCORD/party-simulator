@@ -29,8 +29,8 @@ const FoodTab: React.FC<FoodTabProps> = ({
   getRecommendedUnits,
   useAdvancedFoodSim,
   setUseAdvancedFoodSim,
-  // Using proper destructuring and rename to avoid unused variable warning
-  simulationResults: _simulationResults,
+  // Omitting simulationResults from destructuring since we don't use it
+  // simulationResults,
   setActiveTab
 }) => {
   const [showSimpleView, setShowSimpleView] = useState(true);
