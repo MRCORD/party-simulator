@@ -62,15 +62,6 @@ const FoodSimulator: React.FC<FoodSimulatorProps> = ({
     applySimulationRecommendations
   } = usePartyStore();
 
-  // Initialize selectedFoodItems with all food items on component mount
-  useEffect(() => {
-    const foodItemIds = shoppingItems
-      .filter(item => ['meat', 'sides', 'condiments'].includes(item.category))
-      .map(item => item.id);
-    
-    setSelectedFoodItems(foodItemIds);
-  }, [shoppingItems]);
-
   // Function to run the simulation with selected food items
   const runSimulation = () => {
     if (selectedFoodItems.length === 0) {
