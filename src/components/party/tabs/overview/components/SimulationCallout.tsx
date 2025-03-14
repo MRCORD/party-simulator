@@ -1,7 +1,6 @@
 import React from 'react';
 import { Sparkles, ChevronRight } from 'lucide-react';
 import Button from '@/components/ui/Button';
-import { useTheme } from '@/components/ui/ThemeProvider';
 
 interface SimulationCalloutProps {
   setUseAdvancedFoodSim: (value: boolean) => void;
@@ -12,8 +11,6 @@ const SimulationCallout: React.FC<SimulationCalloutProps> = ({
   setUseAdvancedFoodSim,
   setActiveTab
 }) => {
-  const theme = useTheme();
-  
   return (
     <div className="bg-warning-light/20 border border-warning rounded-lg p-4">
       <div className="flex items-center justify-between">

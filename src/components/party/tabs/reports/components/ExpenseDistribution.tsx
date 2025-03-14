@@ -12,6 +12,38 @@ interface ExpenseDistributionProps {
   expenseCategories: ExpenseCategory[];
 }
 
+type PieSectorProps = {
+  cx: number;
+  cy: number;
+  innerRadius: number;
+  outerRadius: number;
+  startAngle: number;
+  endAngle: number;
+  fill: string;
+  payload: ExpenseCategory;
+  percent: number;
+  value: number;
+};
+
+interface TooltipProps {
+  active?: boolean;
+  payload?: Array<{
+    name: string;
+    value: number;
+    payload: ExpenseCategory;
+  }>;
+}
+
+interface CustomLabelProps {
+  cx: number;
+  cy: number;
+  midAngle: number;
+  outerRadius: number;
+  name: string;
+  value: number;
+  index: number;
+}
+
 const ExpenseDistribution: React.FC<ExpenseDistributionProps> = ({ expenseCategories }) => {
   const [activeIndex, setActiveIndex] = useState<number | null>(null);
 
@@ -19,8 +51,8 @@ const ExpenseDistribution: React.FC<ExpenseDistributionProps> = ({ expenseCatego
   const total = expenseCategories.reduce((sum, item) => sum + item.value, 0);
   
   // Custom active shape for pie chart with better hover effect
-  const renderActiveShape = (props: any) => {
-    const { cx, cy, innerRadius, outerRadius, startAngle, endAngle, fill } = props;
+  const renderActiveShape = (props: unknown) => {
+    const { cx, cy, innerRadius, outerRadius, startAngle, endAngle, fill } = props as PieSectorProps;
     
     return (
       <g>
@@ -47,7 +79,7 @@ const ExpenseDistribution: React.FC<ExpenseDistributionProps> = ({ expenseCatego
   };
   
   // Enhanced custom tooltip for pie chart
-  const CustomTooltip = ({ active, payload }: any) => {
+  const CustomTooltip = ({ active, payload }: TooltipProps) => {
     if (active && payload && payload.length) {
       const data = payload[0];
       const percentage = ((data.value / total) * 100).toFixed(1);
@@ -66,7 +98,7 @@ const ExpenseDistribution: React.FC<ExpenseDistributionProps> = ({ expenseCatego
   };
   
   // Custom label renderer for pie chart (outside labels with lines)
-  const renderCustomizedLabel = (props: any) => {
+  const renderCustomizedLabel = (props: CustomLabelProps) => {
     const { cx, cy, midAngle, outerRadius, name, value, index } = props;
     const RADIAN = Math.PI / 180;
     // Position the label further from the pie
@@ -107,7 +139,7 @@ const ExpenseDistribution: React.FC<ExpenseDistributionProps> = ({ expenseCatego
     );
   };
   
-  const onPieEnter = (_, index: number) => {
+  const onPieEnter = (_: unknown, index: number) => {
     setActiveIndex(index);
   };
   

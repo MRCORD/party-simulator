@@ -1,12 +1,19 @@
 "use client";
 import React from 'react';
+import { DrinkRequirements, FoodRequirements } from '@/types/food';
 
 // Import components
-import ParametersCard from './components/ParametersCard';
-import FinancialSummary from './components/FinancialSummary';
-import CostBreakdown from './components/CostBreakdown';
-import StatusSection from './components/StatusSection';
-import SimulationCallout from './components/SimulationCallout';
+import ParametersCard from '../components/ParametersCard';
+import FinancialSummary from '../components/FinancialSummary';
+import CostBreakdown from '../components/CostBreakdown';
+import StatusSection from '../components/StatusSection';
+import SimulationCallout from '../components/SimulationCallout';
+
+// Add proper types for components
+interface CostBreakdownItem {
+  name: string;
+  value: number;
+}
 
 interface OverviewTabProps {
   attendees: number;
@@ -24,17 +31,14 @@ interface OverviewTabProps {
   breakEvenAttendees: number;
   recommendedTicketPrice: number;
   isViable: boolean;
-  costBreakdown: {
-    name: string;
-    value: number;
-  }[];
+  costBreakdown: CostBreakdownItem[];
   financialOverview: {
     name: string;
     amount: number;
   }[];
   COLORS: string[];
-  calculateDrinkRequirements: () => any;
-  calculateFoodRequirements: () => any;
+  calculateDrinkRequirements: () => DrinkRequirements;
+  calculateFoodRequirements: () => FoodRequirements;
   getCategoryServings: (category: string) => number;
   
   // Food simulator props
@@ -102,24 +106,24 @@ const OverviewTab: React.FC<OverviewTabProps> = ({
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <CostBreakdown 
           costBreakdown={costBreakdown}
-          COLORS={COLORS}
+          colors={COLORS}
         />
         <CostBreakdown 
-          costBreakdown={financialOverview}
-          COLORS={COLORS}
+          costBreakdown={financialOverview.map(item => ({
+            name: item.name,
+            value: item.amount
+          }))}
+          colors={COLORS}
           isFinancialOverview={true}
         />
       </div>
       
       <StatusSection 
         attendees={attendees}
-        drinksPerPerson={drinksPerPerson}
-        foodServingsPerPerson={foodServingsPerPerson}
-        isViable={isViable}
+        breakEvenAttendees={breakEvenAttendees}
         ticketPrice={ticketPrice}
         recommendedTicketPrice={recommendedTicketPrice}
-        attendancePercentage={Math.min(100, (attendees / breakEvenAttendees) * 100)}
-        breakEvenAttendees={breakEvenAttendees}
+        isViable={isViable}
         drinkRequirements={drinkRequirements}
         foodRequirements={foodRequirements}
         getCategoryServings={getCategoryServings}

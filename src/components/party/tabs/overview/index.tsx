@@ -8,6 +8,8 @@ import CostBreakdown from './components/CostBreakdown';
 import StatusSection from './components/StatusSection';
 import SimulationCallout from './components/SimulationCallout';
 
+import { DrinkRequirements, FoodRequirements } from '@/types/food';
+
 interface OverviewTabProps {
   attendees: number;
   ticketPrice: number;
@@ -33,8 +35,8 @@ interface OverviewTabProps {
     amount: number;
   }[];
   COLORS: string[];
-  calculateDrinkRequirements: () => any;
-  calculateFoodRequirements: () => any;
+  calculateDrinkRequirements: () => DrinkRequirements;
+  calculateFoodRequirements: () => FoodRequirements;
   getCategoryServings: (category: string) => number;
   
   // Food simulator props
