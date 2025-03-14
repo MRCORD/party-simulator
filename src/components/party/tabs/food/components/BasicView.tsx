@@ -3,7 +3,7 @@ import React from 'react';
 import { 
   Utensils, Users, Beef, Salad, 
   CheckCircle, AlertCircle, List, 
-  Package, Clipboard, Sparkles
+  Package, Clipboard, Sparkles, Link as LinkIcon
 } from 'lucide-react';
 import Badge from '@/components/ui/Badge';
 import ProgressBar from '@/components/ui/ProgressBar';
@@ -21,6 +21,7 @@ interface BasicViewProps {
   getRecommendedUnits: (category: string, totalServings: number) => number;
   toggleView: () => void;
   setActiveTab: (tab: 'overview' | 'shopping' | 'drinks' | 'food' | 'venue' | 'reports') => void;
+  itemRelationships?: { primaryItemId: string; secondaryItemId: string; ratio: number }[];
 }
 
 const BasicView: React.FC<BasicViewProps> = ({
@@ -31,7 +32,8 @@ const BasicView: React.FC<BasicViewProps> = ({
   getCategoryServings,
   getRecommendedUnits,
   toggleView,
-  setActiveTab
+  setActiveTab,
+  itemRelationships = []
 }) => {
   const theme = useTheme();
   const foodRequirements = calculateFoodRequirements();
@@ -49,6 +51,27 @@ const BasicView: React.FC<BasicViewProps> = ({
       case 'condiments': return <Utensils className="w-4 h-4 text-warning" />;
       default: return <Package className="w-4 h-4 text-gray-500" />;
     }
+  };
+
+  // Find complementary items for a given item ID
+  const findComplementaryItemIds = (itemId: string): string[] => {
+    const relatedItems: string[] = [];
+    
+    // Check for relationships where this item is involved
+    itemRelationships?.forEach(rel => {
+      if (rel.primaryItemId === itemId) {
+        relatedItems.push(rel.secondaryItemId);
+      } else if (rel.secondaryItemId === itemId) {
+        relatedItems.push(rel.primaryItemId);
+      }
+    });
+    
+    return relatedItems;
+  };
+
+  // Check if an item has any complementary relationships
+  const hasComplementaryItems = (itemId: string): boolean => {
+    return findComplementaryItemIds(itemId).length > 0;
   };
   
   // Define inventory status items
@@ -302,31 +325,61 @@ const BasicView: React.FC<BasicViewProps> = ({
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
-              {foodItems.map((item) => (
-                <tr key={item.id} className="hover:bg-gray-50">
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="flex items-center">
-                      {getCategoryIcon(item.category)}
-                      <span className="ml-2 font-medium text-gray-900">{item.name}</span>
-                    </div>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    {item.size} {item.sizeUnit}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    {item.units}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    {item.servings * item.units}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    S/ {item.cost.toFixed(2)}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap font-medium text-gray-900">
-                    S/ {(item.cost * item.units).toFixed(2)}
-                  </td>
-                </tr>
-              ))}
+              {foodItems.map((item) => {
+                // Check if the item has complementary relationships
+                const isComplementary = hasComplementaryItems(item.id);
+                const complementaryIds = findComplementaryItemIds(item.id);
+                
+                return (
+                  <tr key={item.id} className={`hover:bg-gray-50 ${isComplementary ? 'bg-indigo-50/30' : ''}`}>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div className="flex items-center">
+                        {getCategoryIcon(item.category)}
+                        <div className="ml-2">
+                          <div className="font-medium text-gray-900 flex items-center">
+                            {item.name}
+                            {isComplementary && (
+                              <Badge 
+                                variant="primary" 
+                                size="sm" 
+                                className="ml-2"
+                                icon={<LinkIcon className="w-3 h-3" />}
+                              >
+                                Complementario
+                              </Badge>
+                            )}
+                          </div>
+                          {isComplementary && (
+                            <div className="text-xs text-indigo-600 mt-0.5">
+                              Complementa con: {
+                                complementaryIds.map(id => {
+                                  const compItem = shoppingItems.find(item => item.id === id);
+                                  return compItem?.name || '';
+                                }).join(', ')
+                              }
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                      {item.size} {item.sizeUnit}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                      {item.units}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                      {item.servings * item.units}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                      S/ {item.cost.toFixed(2)}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap font-medium text-gray-900">
+                      S/ {(item.cost * item.units).toFixed(2)}
+                    </td>
+                  </tr>
+                );
+              })}
               
               {foodItems.length === 0 && (
                 <tr>

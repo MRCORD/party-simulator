@@ -1,179 +1,175 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { 
-  Utensils, Plus, Trash2, 
-  Beef, Salad, UtensilsCrossed, Package 
+  Utensils, 
+  Beef, 
+  Salad, 
+  UtensilsCrossed, 
+  Package, 
+  Link as LinkIcon
 } from 'lucide-react';
-import Button from '@/components/ui/Button';
 import { ShoppingItem } from '@/types/shopping';
+import Badge from '@/components/ui/Badge';
 
 interface FoodSelectionSectionProps {
   shoppingItems: ShoppingItem[];
   selectedFoodItems: string[];
   setSelectedFoodItems: (itemIds: string[]) => void;
+  itemRelationships?: { primaryItemId: string; secondaryItemId: string; ratio: number }[];
 }
 
 const FoodSelectionSection: React.FC<FoodSelectionSectionProps> = ({
   shoppingItems,
   selectedFoodItems,
-  setSelectedFoodItems
+  setSelectedFoodItems,
+  itemRelationships = []
 }) => {
-  const [showItemsModal, setShowItemsModal] = useState(false);
-  
   // Filter food-related items
   const availableFoodItems = shoppingItems.filter(item => 
     ['meat', 'sides', 'condiments'].includes(item.category)
   );
   
-  // Toggle food item selection
+  // Function to find complementary items for a given item ID
+  const findComplementaryItemIds = (itemId: string): string[] => {
+    const relatedItems: string[] = [];
+    itemRelationships.forEach(rel => {
+      if (rel.primaryItemId === itemId) {
+        relatedItems.push(rel.secondaryItemId);
+      } else if (rel.secondaryItemId === itemId) {
+        relatedItems.push(rel.primaryItemId);
+      }
+    });
+    return relatedItems;
+  };
+
+  // Toggle food item selection, handling complementary items
   const toggleFoodItem = (itemId: string) => {
-    setSelectedFoodItems(
-      selectedFoodItems.includes(itemId)
-        ? selectedFoodItems.filter(id => id !== itemId)
-        : [...selectedFoodItems, itemId]
-    );
+    if (selectedFoodItems.includes(itemId)) {
+      setSelectedFoodItems(selectedFoodItems.filter(id => id !== itemId));
+    } else {
+      const complementaryIds = findComplementaryItemIds(itemId);
+      const newSelectedItems = [...selectedFoodItems, itemId];
+      complementaryIds.forEach(compId => {
+        if (!newSelectedItems.includes(compId)) {
+          newSelectedItems.push(compId);
+        }
+      });
+      setSelectedFoodItems(newSelectedItems);
+    }
   };
   
-  // Get category icon for display
-  const getCategoryIcon = (category: string) => {
+  // Get category icon and formatted name
+  const getCategoryInfo = (category: string) => {
     switch(category) {
-      case 'meat': return <Beef className="w-4 h-4 text-accent-amber" />;
-      case 'sides': return <Salad className="w-4 h-4 text-success" />;
-      case 'condiments': return <UtensilsCrossed className="w-4 h-4 text-warning" />;
-      default: return <Package className="w-4 h-4 text-gray-500" />;
+      case 'meat':
+        return { icon: <Beef className="w-4 h-4 text-accent-amber" />, name: 'Carnes' };
+      case 'sides':
+        return { icon: <Salad className="w-4 h-4 text-success" />, name: 'Guarniciones' };
+      case 'condiments':
+        return { icon: <UtensilsCrossed className="w-4 h-4 text-warning" />, name: 'Condimentos' };
+      default:
+        return { icon: <Package className="w-4 h-4 text-gray-500" />, name: category };
     }
   };
-  
-  // Format category name
-  const formatCategory = (category: string) => {
-    switch (category) {
-      case 'meat': return 'Carnes';
-      case 'sides': return 'Guarniciones';
-      case 'condiments': return 'Condimentos';
-      default: return category;
-    }
-  };
-  
+
   return (
-    <div className="p-6 bg-white border-t border-warning-light/20">
-      <div className="flex items-center justify-between mb-4">
-        <div className="flex items-center">
-          <Utensils className="w-5 h-5 mr-2 text-warning" />
-          <h2 className="text-lg font-medium text-gray-800">Selección de Alimentos</h2>
-        </div>
-        <Button
-          variant="gradient"
-          color="warning"
-          size="sm"
-          onClick={() => setShowItemsModal(true)}
-        >
-          <Plus className="w-4 h-4 mr-2" />
-          Agregar Alimentos
-        </Button>
-      </div>
-
-      {/* Selected Food Items */}
-      {selectedFoodItems.length === 0 ? (
-        <div className="text-center py-8 border-2 border-dashed border-warning-light rounded-lg">
-          <Utensils className="w-12 h-12 text-warning mx-auto mb-3" />
-          <p className="text-gray-700 mb-1 font-medium">No has seleccionado ningún alimento</p>
-          <p className="text-sm text-gray-600">Haz clic en "Agregar Alimentos" para comenzar la simulación</p>
-        </div>
-      ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 mb-6">
-          {selectedFoodItems.map((itemId) => {
-            const item = shoppingItems.find(item => item.id === itemId);
-            if (!item) return null;
-            
-            return (
-              <div
-                key={itemId}
-                className="flex items-center justify-between bg-warning-light/20 border border-warning-light rounded-lg p-3"
-              >
-                <div>
-                  <div className="font-medium text-warning-dark">{item.name}</div>
-                  <div className="text-xs text-warning">
-                    {formatCategory(item.category)} • {item.size} {item.sizeUnit} • {item.servings} porciones/unidad
-                  </div>
-                </div>
-                <button
-                  onClick={() => toggleFoodItem(itemId)}
-                  className="p-1 text-warning hover:text-warning-dark hover:bg-warning-light rounded-full"
-                >
-                  <Trash2 size={16} />
-                </button>
-              </div>
-            );
-          })}
-        </div>
-      )}
-
-      {/* Food Selection Modal */}
-      {showItemsModal && (
-        <div className="fixed inset-0 bg-gray-500 bg-opacity-75 flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-lg max-w-2xl w-full max-h-[80vh] overflow-auto">
-            <div className="p-4 border-b border-gray-200 flex justify-between">
-              <h3 className="text-lg font-medium">Agregar Alimentos</h3>
-              <button onClick={() => setShowItemsModal(false)} className="text-gray-400 hover:text-gray-500">
-                ×
-              </button>
-            </div>
-            <div className="p-4">
-              {/* Group by category */}
-              {['meat', 'sides', 'condiments'].map(category => (
-                <div key={category} className="mb-6">
-                  <h4 className="font-medium text-gray-700 mb-2">{formatCategory(category)}</h4>
-                  <div className="grid grid-cols-1 gap-2">
-                    {availableFoodItems
-                      .filter(item => item.category === category)
-                      .map((item) => (
-                        <div 
-                          key={item.id} 
-                          className={`flex items-center justify-between p-3 border rounded-lg cursor-pointer
-                            ${selectedFoodItems.includes(item.id) 
-                              ? 'bg-warning-light border-warning' 
-                              : 'hover:bg-gray-50 border-gray-200'
-                            }`}
-                          onClick={() => toggleFoodItem(item.id)}
-                        >
-                          <div>
-                            <h4 className="font-medium">{item.name}</h4>
-                            <p className="text-sm text-gray-500">
-                              {item.size} {item.sizeUnit} • {item.servings} porciones/unidad • S/ {item.cost.toFixed(2)}
-                            </p>
-                          </div>
-                          <div className="w-6 h-6 flex items-center justify-center">
-                            {selectedFoodItems.includes(item.id) && (
-                              <svg className="w-5 h-5 text-warning" fill="currentColor" viewBox="0 0 20 20">
-                                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                              </svg>
-                            )}
-                          </div>
-                        </div>
-                      ))}
-                  </div>
-                </div>
-              ))}
-            </div>
-            <div className="p-4 border-t border-gray-200 flex justify-end">
-              <Button
-                variant="outline"
-                color="primary"
-                className="mr-2"
-                onClick={() => setShowItemsModal(false)}
-              >
-                Cancelar
-              </Button>
-              <Button
-                variant="gradient"
-                color="warning"
-                onClick={() => setShowItemsModal(false)}
-              >
-                Confirmar Selección
-              </Button>
-            </div>
+    <div className="bg-white border rounded-lg">
+      <div className="p-4 border-b">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <Utensils className="w-5 h-5 text-warning" />
+            <h2 className="text-lg font-medium text-gray-800">Selección de Alimentos</h2>
+          </div>
+          <div className="text-sm text-gray-500">
+            {selectedFoodItems.length} items seleccionados
           </div>
         </div>
-      )}
+      </div>
+
+      <div className="p-4 space-y-6">
+        {['meat', 'sides', 'condiments'].map(category => {
+          const { icon, name } = getCategoryInfo(category);
+          const categoryItems = availableFoodItems.filter(item => item.category === category);
+
+          return (
+            <div key={category}>
+              <h3 className="flex items-center gap-2 font-medium text-gray-800 mb-3 pb-2 border-b">
+                {icon}
+                {name}
+              </h3>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+                {categoryItems.map(item => {
+                  const complementaryIds = findComplementaryItemIds(item.id);
+                  const isComplementary = complementaryIds.length > 0;
+                  const isSelected = selectedFoodItems.includes(item.id);
+                  const hasSelectedComplementary = complementaryIds.some(id => 
+                    selectedFoodItems.includes(id)
+                  );
+
+                  return (
+                    <button
+                      key={item.id}
+                      onClick={() => toggleFoodItem(item.id)}
+                      className={`
+                        p-3 rounded-lg text-left transition-all duration-200
+                        ${isSelected 
+                          ? 'bg-warning-light border-warning ring-1 ring-warning' 
+                          : hasSelectedComplementary
+                            ? 'bg-indigo-50 border-indigo-200'
+                            : 'bg-white border-gray-200 hover:bg-gray-50'
+                        }
+                        border
+                      `}
+                    >
+                      <div className="flex items-start gap-3">
+                        <div className="flex-1">
+                          <div className="font-medium text-gray-800 flex items-center gap-2">
+                            {item.name}
+                            {isComplementary && (
+                              <Badge 
+                                variant="primary" 
+                                size="sm"
+                                icon={<LinkIcon className="w-3 h-3" />}
+                              >
+                                Complementario
+                              </Badge>
+                            )}
+                          </div>
+                          <div className="text-xs text-gray-600 mt-1">
+                            {item.size} {item.sizeUnit} • {item.servings} porciones • S/ {item.cost.toFixed(2)}
+                          </div>
+                          {isComplementary && (
+                            <div className="mt-1 text-xs text-indigo-600">
+                              Complementa con: {
+                                complementaryIds
+                                  .map(id => shoppingItems.find(item => item.id === id)?.name)
+                                  .filter(Boolean)
+                                  .join(', ')
+                              }
+                            </div>
+                          )}
+                        </div>
+                        <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center
+                          ${isSelected 
+                            ? 'bg-warning border-warning text-white'
+                            : 'border-gray-300'
+                          }`}
+                        >
+                          {isSelected && (
+                            <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                            </svg>
+                          )}
+                        </div>
+                      </div>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          );
+        })}
+      </div>
     </div>
   );
 };

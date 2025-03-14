@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
 import { 
   ChevronDown, Plus, Trash2, Beef, 
-  Salad, UtensilsCrossed, Package, Utensils, Info
+  Salad, UtensilsCrossed, Package, Utensils, Info, Link as LinkIcon
 } from 'lucide-react';
 import Button from '@/components/ui/Button';
 import { ShoppingItem } from '@/types/shopping';
+import Badge from '@/components/ui/Badge';
 
 interface SimulationFormProps {
   confidenceLevel: number;
@@ -16,6 +17,7 @@ interface SimulationFormProps {
   simulationRun: boolean;
   showItemSelection?: boolean; // New prop to control whether to show item selection
   showRunButton?: boolean; // Added prop to control whether to show the Run button
+  itemRelationships?: { primaryItemId: string; secondaryItemId: string; ratio: number }[];
 }
 
 const SimulationForm: React.FC<SimulationFormProps> = ({
@@ -27,7 +29,8 @@ const SimulationForm: React.FC<SimulationFormProps> = ({
   runFoodSimulation,
   simulationRun,
   showItemSelection = true,
-  showRunButton = false // Set default to false
+  showRunButton = false, // Set default to false
+  itemRelationships = []
 }) => {
   const [showForm, setShowForm] = useState(false);
   const [showItemsModal, setShowItemsModal] = useState(false);
@@ -64,15 +67,44 @@ const SimulationForm: React.FC<SimulationFormProps> = ({
     ['meat', 'sides', 'condiments'].includes(item.category)
   );
   
-  // Add food item to selection
-  const toggleFoodItem = (itemId: string) => {
-    setSelectedFoodItems(prev => {
-      if (prev.includes(itemId)) {
-        return prev.filter(id => id !== itemId);
-      } else {
-        return [...prev, itemId];
+  // Function to find complementary items for a given item ID
+  const findComplementaryItemIds = (itemId: string): string[] => {
+    const relatedItems: string[] = [];
+    
+    // Check for relationships where this item is involved
+    itemRelationships.forEach(rel => {
+      if (rel.primaryItemId === itemId) {
+        relatedItems.push(rel.secondaryItemId);
+      } else if (rel.secondaryItemId === itemId) {
+        // Also check if this item is a secondary item
+        relatedItems.push(rel.primaryItemId);
       }
     });
+    
+    return relatedItems;
+  };
+  
+  // Toggle food item selection, handling complementary items
+  const toggleFoodItem = (itemId: string) => {
+    if (selectedFoodItems.includes(itemId)) {
+      // If deselecting an item
+      setSelectedFoodItems(selectedFoodItems.filter(id => id !== itemId));
+    } else {
+      // If selecting an item
+      const complementaryIds = findComplementaryItemIds(itemId);
+      
+      // Add both the selected item and any complementary items
+      const newSelectedItems = [...selectedFoodItems, itemId];
+      
+      // Add any complementary items that aren't already selected
+      complementaryIds.forEach(compId => {
+        if (!newSelectedItems.includes(compId)) {
+          newSelectedItems.push(compId);
+        }
+      });
+      
+      setSelectedFoodItems(newSelectedItems);
+    }
   };
 
   // Run the simulation
@@ -216,16 +248,48 @@ const SimulationForm: React.FC<SimulationFormProps> = ({
                   const item = shoppingItems.find(item => item.id === itemId);
                   if (!item) return null;
                   
+                  // Find complementary item IDs for this item
+                  const complementaryIds = findComplementaryItemIds(itemId);
+                  const hasComplementary = complementaryIds.length > 0;
+                  
                   return (
                     <div
                       key={itemId}
-                      className="flex items-center justify-between bg-warning-light/20 border border-warning-light rounded-lg p-3"
+                      className={`flex items-center justify-between ${
+                        hasComplementary 
+                          ? "bg-indigo-50 border border-indigo-200"
+                          : "bg-warning-light/20 border border-warning-light"
+                      } rounded-lg p-3`}
                     >
                       <div>
-                        <div className="font-medium text-warning-dark">{item.name}</div>
+                        <div className="font-medium text-warning-dark flex items-center">
+                          {item.name}
+                          {hasComplementary && (
+                            <Badge 
+                              variant="primary" 
+                              size="sm"
+                              className="ml-2"
+                              icon={<LinkIcon className="w-3 h-3" />}
+                            >
+                              Complementario
+                            </Badge>
+                          )}
+                        </div>
                         <div className="text-xs text-warning">
                           {formatCategory(item.category)} • {item.size} {item.sizeUnit} • {item.servings} porciones/unidad
                         </div>
+                        
+                        {/* Show list of complementary items if any */}
+                        {hasComplementary && (
+                          <div className="mt-1 text-xs text-indigo-600">
+                            Complementa con: {
+                              complementaryIds.map(id => {
+                                const compItem = shoppingItems.find(item => item.id === id);
+                                return compItem?.name || '';
+                              }).join(', ')
+                            }
+                          </div>
+                        )}
                       </div>
                       <button
                         onClick={() => toggleFoodItem(itemId)}
@@ -239,69 +303,144 @@ const SimulationForm: React.FC<SimulationFormProps> = ({
               </div>
             )}
 
-            {/* Food Selection Modal - This would be a dialog/modal in a real implementation */}
+            {/* Food Selection Modal */}
             {showItemsModal && (
-              <div className="fixed inset-0 bg-gray-500 bg-opacity-75 flex items-center justify-center p-4 z-50">
-                <div className="bg-white rounded-lg max-w-2xl w-full max-h-[80vh] overflow-auto">
-                  <div className="p-4 border-b border-gray-200 flex justify-between">
-                    <h3 className="text-lg font-medium">Agregar Alimentos</h3>
-                    <button onClick={() => setShowItemsModal(false)} className="text-gray-400 hover:text-gray-500">
-                      ×
+              <div className="fixed inset-0 z-50" style={{ backgroundColor: 'rgba(0, 0, 0, 0.8)' }}>
+                <div className="flex flex-col w-full h-full">
+                  {/* Modal Header */}
+                  <div className="bg-warning text-white px-6 py-4 flex justify-between items-center">
+                    <h2 className="text-xl font-semibold flex items-center">
+                      <Utensils size={24} className="mr-3" />
+                      Agregar Alimentos
+                    </h2>
+                    <button 
+                      onClick={() => setShowItemsModal(false)}
+                      className="text-white hover:text-yellow-200 transition-colors"
+                    >
+                      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M18 6L6 18" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                        <path d="M6 6L18 18" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                      </svg>
                     </button>
                   </div>
-                  <div className="p-4">
-                    {/* Group by category */}
-                    {['meat', 'sides', 'condiments'].map(category => (
-                      <div key={category} className="mb-6">
-                        <h4 className="font-medium text-gray-700 mb-2">{formatCategory(category)}</h4>
-                        <div className="grid grid-cols-1 gap-2">
-                          {availableFoodItems
-                            .filter(item => item.category === category)
-                            .map((item) => (
-                              <div 
-                                key={item.id} 
-                                className={`flex items-center justify-between p-3 border rounded-lg cursor-pointer
-                                  ${selectedFoodItems.includes(item.id) 
-                                    ? 'bg-warning-light border-warning' 
-                                    : 'hover:bg-gray-50 border-gray-200'
-                                  }`}
-                                onClick={() => toggleFoodItem(item.id)}
-                              >
-                                <div>
-                                  <h4 className="font-medium">{item.name}</h4>
-                                  <p className="text-sm text-gray-500">
-                                    {item.size} {item.sizeUnit} • {item.servings} porciones/unidad • S/ {item.cost.toFixed(2)}
-                                  </p>
-                                </div>
-                                <div className="w-6 h-6 flex items-center justify-center">
-                                  {selectedFoodItems.includes(item.id) && (
-                                    <svg className="w-5 h-5 text-warning" fill="currentColor" viewBox="0 0 20 20">
-                                      <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                                    </svg>
-                                  )}
-                                </div>
-                              </div>
-                            ))}
+                  
+                  {/* Modal Content */}
+                  <div className="flex-1 bg-white p-8 overflow-y-auto">
+                    <div className="max-w-6xl mx-auto">
+                      {['meat', 'sides', 'condiments'].map(category => (
+                        <div key={category} className="mb-10">
+                          <h3 className="text-xl font-semibold mb-4 flex items-center">
+                            {getCategoryIcon(category)}
+                            <span className="ml-2">{formatCategory(category)}</span>
+                          </h3>
+                          
+                          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                            {availableFoodItems
+                              .filter(item => item.category === category)
+                              .map(item => {
+                                // Check if this item has complementary relationships
+                                const complementaryIds = findComplementaryItemIds(item.id);
+                                const isComplementary = complementaryIds.length > 0;
+                                const isSelected = selectedFoodItems.includes(item.id);
+                                
+                                // Check if any complementary items are already selected
+                                const hasSelectedComplementary = complementaryIds.some(id => 
+                                  selectedFoodItems.includes(id)
+                                );
+                                
+                                return (
+                                  <div 
+                                    key={item.id} 
+                                    onClick={() => toggleFoodItem(item.id)}
+                                    className={`
+                                      p-4 rounded-lg border cursor-pointer transition-all duration-200
+                                      ${isSelected 
+                                        ? 'border-warning bg-warning-light shadow-md' 
+                                        : hasSelectedComplementary
+                                          ? 'border-indigo-300 bg-indigo-50'
+                                          : isComplementary
+                                            ? 'border-indigo-200 bg-indigo-50/50'
+                                            : 'border-gray-200 hover:bg-gray-50'
+                                      }
+                                    `}
+                                  >
+                                    <div className="flex justify-between items-start">
+                                      <div>
+                                        <h4 className="font-semibold text-gray-800 flex items-center">
+                                          {item.name}
+                                          {isComplementary && (
+                                            <Badge 
+                                              variant="primary" 
+                                              size="sm" 
+                                              className="ml-2"
+                                              icon={<LinkIcon className="w-3 h-3" />}
+                                            >
+                                              Complementario
+                                            </Badge>
+                                          )}
+                                        </h4>
+                                        <p className="text-sm text-gray-600 mt-1">
+                                          {item.size} {item.sizeUnit} • {item.servings} porciones/unidad
+                                        </p>
+                                        <p className="text-sm font-medium text-gray-700 mt-1">
+                                          S/ {item.cost.toFixed(2)}
+                                        </p>
+                                        
+                                        {/* Show complementary items */}
+                                        {isComplementary && (
+                                          <p className="mt-2 text-xs text-indigo-600">
+                                            Complementa con: {
+                                              complementaryIds.map(id => {
+                                                const compItem = shoppingItems.find(item => item.id === id);
+                                                return compItem?.name || '';
+                                              }).join(', ')
+                                            }
+                                          </p>
+                                        )}
+                                      </div>
+                                      
+                                      <div className="ml-2">
+                                        {isSelected ? (
+                                          <div className="w-6 h-6 bg-warning rounded-full flex items-center justify-center">
+                                            <svg className="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                                            </svg>
+                                          </div>
+                                        ) : (
+                                          <div className="w-6 h-6 border-2 border-gray-300 rounded-full"></div>
+                                        )}
+                                      </div>
+                                    </div>
+                                  </div>
+                                );
+                              })}
+                          </div>
                         </div>
-                      </div>
-                    ))}
+                      ))}
+                    </div>
                   </div>
-                  <div className="p-4 border-t border-gray-200 flex justify-end">
-                    <Button
-                      variant="outline"
-                      color="primary"
-                      className="mr-2"
-                      onClick={() => setShowItemsModal(false)}
-                    >
-                      Cancelar
-                    </Button>
-                    <Button
-                      variant="gradient"
-                      color="warning"
-                      onClick={() => setShowItemsModal(false)}
-                    >
-                      Confirmar Selección
-                    </Button>
+                  
+                  {/* Modal Footer */}
+                  <div className="bg-gray-100 px-6 py-4 border-t border-gray-200 flex justify-between items-center">
+                    <div className="text-sm text-gray-500">
+                      {selectedFoodItems.length} items seleccionados
+                    </div>
+                    <div className="flex space-x-3">
+                      <Button
+                        variant="outline"
+                        color="primary"
+                        onClick={() => setShowItemsModal(false)}
+                      >
+                        Cancelar
+                      </Button>
+                      <Button
+                        variant="gradient"
+                        color="warning"
+                        onClick={() => setShowItemsModal(false)}
+                      >
+                        Confirmar Selección
+                      </Button>
+                    </div>
                   </div>
                 </div>
               </div>

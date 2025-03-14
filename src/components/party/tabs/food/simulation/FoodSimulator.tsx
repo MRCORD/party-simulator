@@ -53,6 +53,7 @@ const FoodSimulator: React.FC<FoodSimulatorProps> = ({
     simulationCount,
     simulationResults,
     simulationRun,
+    itemRelationships,
     
     // Actions
     setConfidenceLevel,
@@ -106,7 +107,7 @@ const FoodSimulator: React.FC<FoodSimulatorProps> = ({
           </div>
         </div>
       </div>
-      
+
       {/* Advanced simulation capabilities callout */}
       <Alert 
         variant="info" 
@@ -163,6 +164,7 @@ const FoodSimulator: React.FC<FoodSimulatorProps> = ({
           simulationRun={simulationRun}
           showItemSelection={false}
           showRunButton={false}
+          itemRelationships={itemRelationships}
         />
         
         {/* Profiles Section */}
@@ -176,6 +178,7 @@ const FoodSimulator: React.FC<FoodSimulatorProps> = ({
           shoppingItems={shoppingItems}
           selectedFoodItems={selectedFoodItems}
           setSelectedFoodItems={setSelectedFoodItems}
+          itemRelationships={itemRelationships}
         />
 
         {/* Run Simulation Button - After the food selection */}

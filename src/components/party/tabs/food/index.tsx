@@ -4,6 +4,7 @@ import BasicView from '@/components/party/tabs/food/components/BasicView';
 import FoodSimulator from '@/components/party/tabs/food/simulation/FoodSimulator';
 import { ShoppingItem } from '@/types/shopping';
 import { FoodRequirements } from '@/types/food';
+import { usePartyStore } from '@/store/usePartyStore';
 
 interface FoodTabProps {
   attendees: number;
@@ -31,6 +32,7 @@ const FoodTab: React.FC<FoodTabProps> = ({
   setActiveTab
 }) => {
   const [showSimpleView, setShowSimpleView] = useState(true);
+  const { itemRelationships } = usePartyStore();
 
   // Update showSimpleView when useAdvancedFoodSim changes
   useEffect(() => {
@@ -56,6 +58,7 @@ const FoodTab: React.FC<FoodTabProps> = ({
           getRecommendedUnits={getRecommendedUnits}
           toggleView={toggleView}
           setActiveTab={setActiveTab}
+          itemRelationships={itemRelationships}
         />
       ) : (
         <FoodSimulator 
