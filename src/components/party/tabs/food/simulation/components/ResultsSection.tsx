@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { 
-  BarChart4, Info, CheckCircle, AlertCircle, 
+  BarChart4, Info, 
   Save, Beef, Salad, UtensilsCrossed, ChevronDown
 } from 'lucide-react';
 import Badge from '@/components/ui/Badge';
@@ -24,7 +24,6 @@ const ResultsSection: React.FC<ResultsSectionProps> = ({
   applySimulationRecommendations,
   confidenceLevel
 }) => {
-  const [showDetailedResults, setShowDetailedResults] = useState(false);
   const [highlightedItemId, setHighlightedItemId] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [showDistributions, setShowDistributions] = useState(false);

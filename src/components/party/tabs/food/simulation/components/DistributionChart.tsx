@@ -19,9 +19,6 @@ const DistributionChart: React.FC<DistributionChartProps> = ({ data }) => {
     x: (bin.min + bin.max) / 2
   }));
 
-  // Find max frequency for scaling
-  const maxFrequency = Math.max(...chartData.map(d => d.frequency));
-
   return (
     <div className="mb-4">
       <h5 className="font-medium text-gray-700 mb-3">Distribución de Consumo</h5>
@@ -62,8 +59,8 @@ const DistributionChart: React.FC<DistributionChartProps> = ({ data }) => {
               }}
             />
             <Tooltip 
-              formatter={(value: any) => [`${value} simulaciones`, 'Frecuencia']}
-              labelFormatter={(value) => `${value} porciones`}
+              formatter={(value: number) => [`${value} simulaciones`, 'Frecuencia']}
+              labelFormatter={(value: number) => `${value} porciones`}
             />
             <Area
               type="monotone"

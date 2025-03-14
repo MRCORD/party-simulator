@@ -1,8 +1,8 @@
 "use client";
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { 
   Utensils, Info, ArrowLeft,
-  ShoppingBag, AlertCircle, RefreshCw
+  RefreshCw
 } from 'lucide-react';
 import { useTheme } from '@/components/ui/ThemeProvider';
 import { usePartyStore } from '@/store/usePartyStore';
