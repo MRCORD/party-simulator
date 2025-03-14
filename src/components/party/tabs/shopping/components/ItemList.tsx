@@ -212,12 +212,12 @@ const ItemList: React.FC<ItemListProps> = ({
           {/* Total Row */}
           <tfoot>
             <tr className="bg-gray-50 font-medium">
-              <td colSpan={6} className="px-6 py-4 text-right text-gray-700">
+              <td colSpan={6} className="px-6 py-4 text-right text-gray-700 whitespace-nowrap">
                 {activeCategory === 'all' 
                   ? 'Total de compras:' 
                   : `Total de ${getCategoryLabel(activeCategory)}:`}
               </td>
-              <td className="px-6 py-4 text-gray-900 font-bold">
+              <td className="px-6 py-4 text-gray-900 font-bold whitespace-nowrap">
                 S/ {getFilteredTotal().toFixed(2)}
               </td>
               <td></td>
