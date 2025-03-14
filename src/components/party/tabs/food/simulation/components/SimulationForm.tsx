@@ -192,13 +192,15 @@ const SimulationForm: React.FC<SimulationFormProps> = ({
                 <Utensils className="w-5 h-5 mr-2 text-warning" />
                 <h2 className="text-lg font-medium text-gray-800">Selección de Alimentos</h2>
               </div>
-              <button 
+              <Button 
+                variant="gradient"
+                color="warning"
+                size="sm"
                 onClick={() => setShowItemsModal(true)}
-                className="inline-flex items-center px-3 py-2 text-sm font-medium rounded-md shadow-sm text-white bg-gradient-to-r from-warning to-accent-amber"
               >
                 <Plus className="w-4 h-4 mr-2" />
                 Agregar Alimentos
-              </button>
+              </Button>
             </div>
 
             {/* Selected Food Items */}
