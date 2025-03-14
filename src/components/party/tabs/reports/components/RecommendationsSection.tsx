@@ -1,7 +1,7 @@
 import React from 'react';
 import { Target, Info, CheckCircle, AlertCircle } from 'lucide-react';
 import { useTheme } from '@/components/ui/ThemeProvider';
-import Badge from '@/components/ui/Badge';
+import { DrinkRequirements, FoodRequirements } from '@/types/food';
 
 interface RecommendationsSectionProps {
   isViable: boolean;
@@ -9,8 +9,8 @@ interface RecommendationsSectionProps {
   recommendedTicketPrice: number;
   attendees: number;
   breakEvenAttendees: number;
-  drinkRequirements: any;
-  foodRequirements: any;
+  drinkRequirements: DrinkRequirements;
+  foodRequirements: FoodRequirements;
   profitMargin: number;
   totalCosts: number;
 }

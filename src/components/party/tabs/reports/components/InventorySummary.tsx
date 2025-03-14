@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
-import { BarChart, List } from 'lucide-react';
-import { useTheme } from '@/components/ui/ThemeProvider';
+import { List } from 'lucide-react';
 import Button from '@/components/ui/Button';
 
 interface CategoryData {
@@ -18,7 +17,6 @@ const InventorySummary: React.FC<InventorySummaryProps> = ({
   beverageData,
   foodData
 }) => {
-  const theme = useTheme();
   const [activeTab, setActiveTab] = useState<'beverage' | 'food'>('beverage');
   
   const renderDataTable = (data: CategoryData[]) => {

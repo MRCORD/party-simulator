@@ -1,14 +1,15 @@
 import React from 'react';
 import { DollarSign, AlertCircle } from 'lucide-react';
 import { useTheme } from '@/components/ui/ThemeProvider';
+import { DrinkRequirements, FoodRequirements } from '@/types/food';
 
 interface FinancialSummaryProps {
   totalRevenue: number;
   totalCosts: number;
   netProfit: number;
   venueCost: number;
-  drinkRequirements: any;
-  foodRequirements: any;
+  drinkRequirements: DrinkRequirements;
+  foodRequirements: FoodRequirements;
   miscCosts: number;
   isViable: boolean;
 }

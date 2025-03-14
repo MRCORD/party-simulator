@@ -13,6 +13,7 @@ import ExportOptions from './components/ExportOptions';
 
 // Import types
 import { ShoppingItem } from '@/types';
+import { DrinkRequirements, FoodRequirements } from '@/types/food';
 
 interface ReportsTabProps {
   venueCost: number;
@@ -25,8 +26,8 @@ interface ReportsTabProps {
   breakEvenAttendees: number;
   recommendedTicketPrice: number;
   isViable: boolean;
-  calculateDrinkRequirements: () => any;
-  calculateFoodRequirements: () => any;
+  calculateDrinkRequirements: () => DrinkRequirements;
+  calculateFoodRequirements: () => FoodRequirements;
   shoppingItems: ShoppingItem[];
   getCategoryTotal: (category: string) => number;
 }

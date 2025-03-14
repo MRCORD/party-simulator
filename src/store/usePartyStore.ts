@@ -270,16 +270,9 @@ export const usePartyStore = create<PartyState>()(
       },
 
       deleteItem: (id) => {
-        // Find any relationships involving this item
-        const { itemRelationships } = get();
-        const relationshipsToRemove = itemRelationships.filter(
-          rel => rel.primaryItemId === id || rel.secondaryItemId === id
-        );
-          
-        // Remove item from shopping list
+        // Remove item from shopping list and any relationships involving it
         set(state => ({
           shoppingItems: state.shoppingItems.filter(item => item.id !== id),
-          // Also remove any relationships involving this item
           itemRelationships: state.itemRelationships.filter(
             rel => rel.primaryItemId !== id && rel.secondaryItemId !== id
           )
