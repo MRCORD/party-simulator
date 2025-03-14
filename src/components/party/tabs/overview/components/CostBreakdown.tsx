@@ -1,5 +1,5 @@
 import React from 'react';
-import { PieChart, BarChart as BarChartIcon, DollarSign } from 'lucide-react';
+import { PieChart, DollarSign } from 'lucide-react';
 import { 
   PieChart as RechartsPieChart, 
   Pie, 
@@ -15,8 +15,8 @@ import {
   ReferenceLine,
   LabelList
 } from 'recharts';
-import { useTheme } from '@/components/ui/ThemeProvider';
 import { CostBreakdownItem } from '@/types/party';
+import { PieSectorDataItem } from 'recharts/types/polar/Pie';
 
 interface CostBreakdownProps {
   costBreakdown: CostBreakdownItem[];
@@ -24,12 +24,41 @@ interface CostBreakdownProps {
   isFinancialOverview?: boolean;
 }
 
+interface TooltipProps {
+  active?: boolean;
+  payload?: Array<{
+    payload: {
+      name: string;
+      value: number;
+    };
+  }>;
+}
+
+interface CustomizedLabelProps {
+  cx: number;
+  cy: number;
+  midAngle: number;
+  outerRadius: number;
+  name: string;
+  value: number;
+  index: number;
+}
+
+interface ActiveShapeProps extends PieSectorDataItem {
+  cx: number;
+  cy: number;
+  innerRadius: number;
+  outerRadius: number;
+  startAngle: number;
+  endAngle: number;
+  fill: string;
+}
+
 const CostBreakdown: React.FC<CostBreakdownProps> = ({ 
   costBreakdown, 
   colors,
   isFinancialOverview = false 
 }) => {
-  const theme = useTheme();
   const [activeIndex, setActiveIndex] = React.useState<number | null>(null);
   
   // Validate and filter out invalid entries (allow negative values)
@@ -182,8 +211,8 @@ const CostBreakdown: React.FC<CostBreakdownProps> = ({
   }));
 
   // Custom active shape for pie chart
-  const renderActiveShape = (props: any) => {
-    const { cx, cy, innerRadius, outerRadius, startAngle, endAngle, fill } = props;
+  const renderActiveShape = (props: unknown) => {
+    const { cx, cy, innerRadius, outerRadius, startAngle, endAngle, fill } = props as ActiveShapeProps;
     return (
       <g>
         <Sector
@@ -209,7 +238,7 @@ const CostBreakdown: React.FC<CostBreakdownProps> = ({
   };
 
   // Tooltip for pie chart
-  const CustomTooltip = ({ active, payload }: any) => {
+  const CustomTooltip = ({ active, payload }: TooltipProps) => {
     if (active && payload && payload.length) {
       const data = payload[0].payload;
       const percentage = ((Math.abs(data.value) / total) * 100).toFixed(1);
@@ -228,7 +257,7 @@ const CostBreakdown: React.FC<CostBreakdownProps> = ({
   };
 
   // Label renderer for pie chart
-  const renderCustomizedLabel = (props: any) => {
+  const renderCustomizedLabel = (props: CustomizedLabelProps) => {
     const { cx, cy, midAngle, outerRadius, name, value, index } = props;
     const RADIAN = Math.PI / 180;
     const radius = outerRadius * 1.25;
@@ -268,7 +297,7 @@ const CostBreakdown: React.FC<CostBreakdownProps> = ({
     );
   };
 
-  const onPieEnter = (_: any, index: number) => {
+  const onPieEnter = (_: unknown, index: number) => {
     setActiveIndex(index);
   };
   
