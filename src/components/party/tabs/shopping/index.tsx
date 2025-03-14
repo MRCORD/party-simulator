@@ -147,6 +147,7 @@ const ShoppingTab: React.FC<ShoppingTabProps> = ({
         getFilteredItems={getFilteredItems}
         getFilteredTotal={getFilteredTotal}
         startEdit={startEdit}
+        saveEdit={saveEdit}
         deleteItem={deleteItem}
         setShowForm={setShowForm}
         activeCategory={activeCategory}

@@ -11,6 +11,7 @@ interface ItemListProps {
   getFilteredItems: () => ShoppingItem[];
   getFilteredTotal: () => number;
   startEdit: (item: ShoppingItem) => void;
+  saveEdit: () => void;
   deleteItem: (id: string) => void;
   setShowForm: (show: boolean) => void;
   activeCategory: string;
@@ -24,6 +25,7 @@ const ItemList: React.FC<ItemListProps> = ({
   getFilteredItems,
   getFilteredTotal,
   startEdit,
+  saveEdit,
   deleteItem,
   setShowForm,
   activeCategory,
@@ -139,6 +141,7 @@ const ItemList: React.FC<ItemListProps> = ({
                       onClick={() => {
                         const updatedItem = { ...item, units: Math.max(1, item.units - 1) };
                         startEdit(updatedItem);
+                        saveEdit();
                       }}
                       className="p-1"
                     >
@@ -152,6 +155,7 @@ const ItemList: React.FC<ItemListProps> = ({
                       onClick={() => {
                         const updatedItem = { ...item, units: item.units + 1 };
                         startEdit(updatedItem);
+                        saveEdit();
                       }}
                       className="p-1"
                     >
