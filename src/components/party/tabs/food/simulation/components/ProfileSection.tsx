@@ -1,5 +1,5 @@
-import React from 'react';
-import { Users, Info } from 'lucide-react';
+import React, { useState } from 'react';
+import { Users, Info, ChevronDown } from 'lucide-react';
 
 // Define the EaterProfile type
 interface EaterProfile {
@@ -16,7 +16,12 @@ interface ProfileSectionProps {
 const ProfileSection = ({ eaterProfiles, updateEaterProfile }: ProfileSectionProps) => {
   // Profile colors - one distinct color per profile type
   const PROFILE_COLORS = ['#10b981', '#4f86f7', '#f59e0b'];
-  
+  const [isExpanded, setIsExpanded] = useState(false);
+
+  const toggleAllProfiles = () => {
+    setIsExpanded(prev => !prev);
+  };
+
   // Handle profile percentage change with automatic adjustment of other profiles
   const handleProfilePercentageChange = (index: number, newValue: number) => {
     // Don't allow values below 1% or above 98%
@@ -70,10 +75,21 @@ const ProfileSection = ({ eaterProfiles, updateEaterProfile }: ProfileSectionPro
 
   return (
     <div className="p-4">
-      <h3 className="text-xl font-medium text-gray-800 mb-4 flex items-center">
-        <Users className="w-6 h-6 mr-2 text-gray-600" />
-        Perfiles de Consumo
-      </h3>
+      <div className="flex justify-between items-center mb-4">
+        <h3 className="text-xl font-medium text-gray-800 flex items-center">
+          <Users className="w-6 h-6 mr-2 text-gray-600" />
+          Perfiles de Consumo
+        </h3>
+        <button
+          onClick={toggleAllProfiles}
+          className="flex items-center gap-2 text-gray-600 hover:text-gray-800 transition-colors"
+        >
+          <span className="text-sm">{isExpanded ? 'Colapsar Todo' : 'Expandir Todo'}</span>
+          <ChevronDown 
+            className={`w-5 h-5 transform transition-transform ${isExpanded ? 'rotate-180' : ''}`}
+          />
+        </button>
+      </div>
       
       {/* Profile cards in a grid */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -97,7 +113,7 @@ const ProfileSection = ({ eaterProfiles, updateEaterProfile }: ProfileSectionPro
               </div>
               
               {/* Percentage slider section */}
-              <div className="mb-6">
+              <div className="mb-4">
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Porcentaje en el Evento
                 </label>
@@ -117,50 +133,52 @@ const ProfileSection = ({ eaterProfiles, updateEaterProfile }: ProfileSectionPro
                   />
                 </div>
               </div>
-              
-              {/* Multiplier slider section */}
-              <div>
-                <div className="flex justify-between mb-2">
-                  <label className="text-sm font-medium text-gray-700">
-                    Multiplicador de Consumo
-                  </label>
-                  <span className="text-lg font-bold" style={{ color }}>
-                    {profile.servingsMultiplier}x
-                  </span>
+
+              {/* Description text */}
+              <p className="text-sm text-gray-600 mb-4">
+                {profile.servingsMultiplier < 1 
+                  ? "Consume menos que el promedio" 
+                  : profile.servingsMultiplier > 1 
+                    ? "Consume más que el promedio" 
+                    : "Consumo promedio"
+                }
+              </p>
+
+              {/* Collapsible multiplier section */}
+              {isExpanded && (
+                <div className="mt-4 pt-4 border-t border-gray-200">
+                  <div className="flex justify-between mb-2">
+                    <label className="text-sm font-medium text-gray-700">
+                      Multiplicador de Consumo
+                    </label>
+                    <span className="text-lg font-bold" style={{ color }}>
+                      {profile.servingsMultiplier}x
+                    </span>
+                  </div>
+                  
+                  <div className="relative">
+                    <input 
+                      type="range" 
+                      min="0.5" 
+                      max="3.0" 
+                      step="0.1" 
+                      value={profile.servingsMultiplier} 
+                      onChange={(e) => handleProfileMultiplierChange(index, parseFloat(e.target.value))}
+                      className="w-full h-2 appearance-none rounded-full bg-gray-200 focus:outline-none"
+                      style={{
+                        background: `linear-gradient(to right, ${color} 0%, ${color} ${((profile.servingsMultiplier - 0.5) / 2.5) * 100}%, #e5e7eb ${((profile.servingsMultiplier - 0.5) / 2.5) * 100}%, #e5e7eb 100%)`,
+                        '--thumb-color': color
+                      } as React.CSSProperties}
+                    />
+                  </div>
+                  
+                  {/* Min/max labels */}
+                  <div className="flex justify-between text-xs text-gray-500 mt-1">
+                    <span>0.5x</span>
+                    <span>3.0x</span>
+                  </div>
                 </div>
-                
-                <div className="relative">
-                  <input 
-                    type="range" 
-                    min="0.5" 
-                    max="3.0" 
-                    step="0.1" 
-                    value={profile.servingsMultiplier} 
-                    onChange={(e) => handleProfileMultiplierChange(index, parseFloat(e.target.value))}
-                    className="w-full h-2 appearance-none rounded-full bg-gray-200 focus:outline-none"
-                    style={{
-                      background: `linear-gradient(to right, ${color} 0%, ${color} ${((profile.servingsMultiplier - 0.5) / 2.5) * 100}%, #e5e7eb ${((profile.servingsMultiplier - 0.5) / 2.5) * 100}%, #e5e7eb 100%)`,
-                      '--thumb-color': color
-                    } as React.CSSProperties}
-                  />
-                </div>
-                
-                {/* Min/max labels */}
-                <div className="flex justify-between text-xs text-gray-500 mt-1">
-                  <span>0.5x</span>
-                  <span>3.0x</span>
-                </div>
-                
-                {/* Description text */}
-                <p className="mt-2 text-sm text-gray-600">
-                  {profile.servingsMultiplier < 1 
-                    ? "Consume menos que el promedio" 
-                    : profile.servingsMultiplier > 1 
-                      ? "Consume más que el promedio" 
-                      : "Consumo promedio"
-                  }
-                </p>
-              </div>
+              )}
             </div>
           );
         })}
