@@ -5,6 +5,7 @@ import FoodSimulator from '@/components/party/tabs/food/simulation/FoodSimulator
 import { ShoppingItem } from '@/types/shopping';
 import { FoodRequirements } from '@/types/food';
 import { usePartyStore } from '@/store/usePartyStore';
+import { SimulationResult } from '@/types/simulator';
 
 interface FoodTabProps {
   attendees: number;
@@ -15,6 +16,7 @@ interface FoodTabProps {
   getRecommendedUnits: (category: string, totalServings: number) => number;
   useAdvancedFoodSim: boolean;
   setUseAdvancedFoodSim: (value: boolean) => void;
+  simulationResults: Record<string, SimulationResult>;
   setActiveTab: (tab: 'overview' | 'shopping' | 'drinks' | 'food' | 'venue' | 'reports') => void;
 }
 
@@ -27,6 +29,7 @@ const FoodTab: React.FC<FoodTabProps> = ({
   getRecommendedUnits,
   useAdvancedFoodSim,
   setUseAdvancedFoodSim,
+  simulationResults,
   setActiveTab
 }) => {
   const [showSimpleView, setShowSimpleView] = useState(true);
