@@ -1,29 +1,21 @@
 import React from 'react';
 import { Users, Info } from 'lucide-react';
-import { 
-  BarChart, Bar, XAxis, YAxis, 
-  Tooltip, ResponsiveContainer, Cell
-} from 'recharts';
-import Badge from '@/components/ui/Badge';
-import { EaterProfile } from '@/types/simulator';
+
+// Define the EaterProfile type
+interface EaterProfile {
+  name: string;
+  percentage: number;
+  servingsMultiplier: number;
+}
 
 interface ProfileSectionProps {
   eaterProfiles: EaterProfile[];
   updateEaterProfile: (index: number, field: keyof EaterProfile, value: number) => void;
 }
 
-const ProfileSection: React.FC<ProfileSectionProps> = ({
-  eaterProfiles,
-  updateEaterProfile
-}) => {
-  // Profile distribution chart data
-  const profileChartData = eaterProfiles.map(profile => ({
-    name: profile.name,
-    value: profile.percentage,
-    multiplier: profile.servingsMultiplier
-  }));
-  
-  const PROFILE_COLORS = ['#10b981', '#6366f1', '#f59e0b'];
+const ProfileSection = ({ eaterProfiles, updateEaterProfile }: ProfileSectionProps) => {
+  // Profile colors - one distinct color per profile type
+  const PROFILE_COLORS = ['#10b981', '#4f86f7', '#f59e0b'];
   
   // Handle profile percentage change with automatic adjustment of other profiles
   const handleProfilePercentageChange = (index: number, newValue: number) => {
@@ -32,8 +24,7 @@ const ProfileSection: React.FC<ProfileSectionProps> = ({
     if (newValue > 98) newValue = 98;
     
     // Get current profiles and the one being changed
-    const currentProfiles = [...eaterProfiles];
-    const originalValue = currentProfiles[index].percentage;
+    const originalValue = eaterProfiles[index].percentage;
     const difference = newValue - originalValue;
     
     if (difference === 0) return;
@@ -45,7 +36,7 @@ const ProfileSection: React.FC<ProfileSectionProps> = ({
     updateEaterProfile(index, 'percentage', newValue);
     
     // Adjust other profiles proportionally
-    currentProfiles.forEach((profile, i) => {
+    eaterProfiles.forEach((profile, i) => {
       if (i !== index) {
         // Calculate new percentage proportionally
         const adjustmentFactor = (100 - newValue) / otherProfilesTotal;
@@ -59,16 +50,16 @@ const ProfileSection: React.FC<ProfileSectionProps> = ({
     
     // Ensure percentages sum to 100% by adjusting the last profile
     let total = 0;
-    currentProfiles.forEach((profile, i) => {
-      if (i !== currentProfiles.length - 1) {
+    eaterProfiles.forEach((profile, i) => {
+      if (i !== eaterProfiles.length - 1) {
         total += (i === index) ? newValue : profile.percentage;
       }
     });
     
     // Adjust the last profile if it's not the one being changed
-    if (index !== currentProfiles.length - 1) {
+    if (index !== eaterProfiles.length - 1) {
       const lastProfilePercentage = Math.max(1, 100 - total);
-      updateEaterProfile(currentProfiles.length - 1, 'percentage', lastProfilePercentage);
+      updateEaterProfile(eaterProfiles.length - 1, 'percentage', lastProfilePercentage);
     }
   };
   
@@ -78,115 +69,110 @@ const ProfileSection: React.FC<ProfileSectionProps> = ({
   };
 
   return (
-    <div className="p-6 bg-white">
-      <div className="mb-6">
-        <h4 className="text-sm font-medium text-gray-700 mb-3 flex items-center">
-          <Users className="w-4 h-4 mr-2 text-warning" />
-          Perfiles de Consumo
-        </h4>
-        
-        {/* Profile Distribution Chart */}
-        <div className="bg-gray-50 p-4 rounded-lg mb-4">
-          <div className="h-24">
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart
-                data={profileChartData}
-                layout="vertical"
-                barSize={20}
-                margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
-              >
-                <XAxis type="number" domain={[0, 100]} />
-                <YAxis dataKey="name" type="category" width={100} />
-                <Tooltip 
-                  formatter={(value: any, name: any, props: any) => {
-                    const { multiplier } = props.payload;
-                    return [`${value}% (${multiplier}x consumo)`, 'Distribución'];
-                  }}
-                />
-                <Bar dataKey="value" radius={[4, 4, 0, 0]}>
-                  {profileChartData.map((entry, index) => (
-                    <Cell key={`cell-${index}`} fill={PROFILE_COLORS[index % PROFILE_COLORS.length]} />
-                  ))}
-                </Bar>
-              </BarChart>
-            </ResponsiveContainer>
-          </div>
-        </div>
-        
-        {/* Profile Configuration Controls */}
-        <div className="space-y-4">
-          {eaterProfiles.map((profile, index) => (
-            <div key={index} className="border rounded-lg p-3" style={{ borderColor: PROFILE_COLORS[index % PROFILE_COLORS.length] }}>
-              <div className="flex items-center justify-between mb-2">
-                <h5 className="font-medium" style={{ color: PROFILE_COLORS[index % PROFILE_COLORS.length] }}>{profile.name}</h5>
-                <Badge 
-                  variant="success" 
-                  size="sm"
-                  style={{ 
-                    backgroundColor: PROFILE_COLORS[index % PROFILE_COLORS.length] + '20',
-                    color: PROFILE_COLORS[index % PROFILE_COLORS.length]
-                  }}
-                >
-                  {profile.percentage}% de asistentes
-                </Badge>
+    <div className="p-4">
+      <h3 className="text-xl font-medium text-gray-800 mb-4 flex items-center">
+        <Users className="w-6 h-6 mr-2 text-gray-600" />
+        Perfiles de Consumo
+      </h3>
+      
+      {/* Profile cards in a grid */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        {eaterProfiles.map((profile, index) => {
+          const color = PROFILE_COLORS[index % PROFILE_COLORS.length];
+          
+          return (
+            <div 
+              key={index} 
+              className="border rounded-lg p-4"
+              style={{ borderColor: color }}
+            >
+              {/* Header with profile name and percentage */}
+              <div className="flex justify-between items-center mb-4">
+                <h4 className="text-xl font-medium" style={{ color }}>
+                  {profile.name}
+                </h4>
+                <span className="text-xl font-bold" style={{ color }}>
+                  {profile.percentage}%
+                </span>
               </div>
               
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                {/* Percentage Slider */}
-                <div>
-                  <label className="block text-xs text-gray-600 mb-1">Porcentaje en el Evento</label>
-                  <div className="flex items-center">
-                    <input 
-                      type="range" 
-                      min="1" 
-                      max="98" 
-                      value={profile.percentage} 
-                      onChange={(e) => handleProfilePercentageChange(index, parseInt(e.target.value))}
-                      className="w-full mr-3"
-                    />
-                    <span className="w-10 text-center text-sm">{profile.percentage}%</span>
-                  </div>
-                </div>
+              {/* Percentage slider section */}
+              <div className="mb-6">
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Porcentaje en el Evento
+                </label>
                 
-                {/* Multiplier Slider */}
-                <div>
-                  <label className="block text-xs text-gray-600 mb-1">
+                <div className="relative">
+                  <input 
+                    type="range" 
+                    min="1" 
+                    max="98" 
+                    value={profile.percentage} 
+                    onChange={(e) => handleProfilePercentageChange(index, parseInt(e.target.value))}
+                    className="w-full h-2 appearance-none rounded-full bg-gray-200 focus:outline-none"
+                    style={{
+                      background: `linear-gradient(to right, ${color} 0%, ${color} ${profile.percentage}%, #e5e7eb ${profile.percentage}%, #e5e7eb 100%)`,
+                      '--thumb-color': color
+                    } as React.CSSProperties}
+                  />
+                </div>
+              </div>
+              
+              {/* Multiplier slider section */}
+              <div>
+                <div className="flex justify-between mb-2">
+                  <label className="text-sm font-medium text-gray-700">
                     Multiplicador de Consumo
                   </label>
-                  <div className="flex items-center">
-                    <input 
-                      type="range" 
-                      min="0.5" 
-                      max="3" 
-                      step="0.1" 
-                      value={profile.servingsMultiplier} 
-                      onChange={(e) => handleProfileMultiplierChange(index, parseFloat(e.target.value))}
-                      className="w-full mr-3"
-                    />
-                    <span className="w-10 text-center text-sm">{profile.servingsMultiplier}x</span>
-                  </div>
+                  <span className="text-lg font-bold" style={{ color }}>
+                    {profile.servingsMultiplier}x
+                  </span>
                 </div>
-              </div>
-              
-              <div className="mt-1 text-xs text-gray-500">
-                {profile.servingsMultiplier < 1 
-                  ? "Consume menos que el promedio" 
-                  : profile.servingsMultiplier > 1 
-                    ? "Consume más que el promedio" 
-                    : "Consumo promedio"
-                }
+                
+                <div className="relative">
+                  <input 
+                    type="range" 
+                    min="0.5" 
+                    max="3.0" 
+                    step="0.1" 
+                    value={profile.servingsMultiplier} 
+                    onChange={(e) => handleProfileMultiplierChange(index, parseFloat(e.target.value))}
+                    className="w-full h-2 appearance-none rounded-full bg-gray-200 focus:outline-none"
+                    style={{
+                      background: `linear-gradient(to right, ${color} 0%, ${color} ${((profile.servingsMultiplier - 0.5) / 2.5) * 100}%, #e5e7eb ${((profile.servingsMultiplier - 0.5) / 2.5) * 100}%, #e5e7eb 100%)`,
+                      '--thumb-color': color
+                    } as React.CSSProperties}
+                  />
+                </div>
+                
+                {/* Min/max labels */}
+                <div className="flex justify-between text-xs text-gray-500 mt-1">
+                  <span>0.5x</span>
+                  <span>3.0x</span>
+                </div>
+                
+                {/* Description text */}
+                <p className="mt-2 text-sm text-gray-600">
+                  {profile.servingsMultiplier < 1 
+                    ? "Consume menos que el promedio" 
+                    : profile.servingsMultiplier > 1 
+                      ? "Consume más que el promedio" 
+                      : "Consumo promedio"
+                  }
+                </p>
               </div>
             </div>
-          ))}
-        </div>
-        
-        <div className="mt-2 text-xs text-gray-500 flex items-center">
-          <Info className="w-3 h-3 mr-1 text-gray-400" />
-          <span>
-            Los perfiles definen cómo se distribuyen los participantes y cuánto consume cada grupo.
-            El total siempre suma 100%.
-          </span>
-        </div>
+          );
+        })}
+      </div>
+      
+      {/* Info footer */}
+      <div className="mt-4 text-xs text-gray-500 flex items-center">
+        <Info className="w-4 h-4 mr-1 text-gray-400" />
+        <span>
+          Los perfiles definen cómo se distribuyen los participantes y cuánto consume cada grupo.
+          El total siempre suma 100%.
+        </span>
       </div>
     </div>
   );

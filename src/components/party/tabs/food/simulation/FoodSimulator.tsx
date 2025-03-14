@@ -9,9 +9,9 @@ import { usePartyStore } from '@/store/usePartyStore';
 import Button from '@/components/ui/Button';
 import Alert from '@/components/ui/Alert';
 
-// Import simulator components
-import ProfileSection from './components/ProfileSection';
+// Import simulator components - we'll update these separately
 import SimulationForm from './components/SimulationForm';
+import ProfileSection from './components/ProfileSection';
 import ResultsSection from './components/ResultsSection';
 import ShoppingActions from './components/ShoppingActions';
 
@@ -137,13 +137,7 @@ const FoodSimulator: React.FC<FoodSimulatorProps> = ({
           </div>
         </div>
         
-        {/* Profiles Section */}
-        <ProfileSection 
-          eaterProfiles={eaterProfiles}
-          updateEaterProfile={updateEaterProfile}
-        />
-        
-        {/* Simulation Form */}
+        {/* Simulation Form - Dropdowns Only */}
         <SimulationForm 
           confidenceLevel={confidenceLevel}
           simulationCount={simulationCount}
@@ -152,6 +146,13 @@ const FoodSimulator: React.FC<FoodSimulatorProps> = ({
           shoppingItems={shoppingItems}
           runFoodSimulation={runFoodSimulation}
           simulationRun={simulationRun}
+          showItemSelection={false}
+        />
+        
+        {/* Profiles Section */}
+        <ProfileSection 
+          eaterProfiles={eaterProfiles}
+          updateEaterProfile={updateEaterProfile}
         />
       </div>
       
