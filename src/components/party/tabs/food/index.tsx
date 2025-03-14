@@ -12,7 +12,6 @@ interface FoodTabProps {
   shoppingItems: ShoppingItem[];
   calculateFoodRequirements: () => FoodRequirements;
   getCategoryServings: (category: string) => number;
-  getRecommendedUnits: (category: string, totalServings: number) => number;
   useAdvancedFoodSim: boolean;
   setUseAdvancedFoodSim: (value: boolean) => void;
   setActiveTab: (tab: 'overview' | 'shopping' | 'drinks' | 'food' | 'venue' | 'reports') => void;
@@ -24,7 +23,6 @@ const FoodTab: React.FC<FoodTabProps> = ({
   shoppingItems,
   calculateFoodRequirements,
   getCategoryServings,
-  getRecommendedUnits,
   useAdvancedFoodSim,
   setUseAdvancedFoodSim,
   setActiveTab
@@ -59,10 +57,7 @@ const FoodTab: React.FC<FoodTabProps> = ({
       ) : (
         <FoodSimulator 
           attendees={attendees}
-          foodServingsPerPerson={foodServingsPerPerson}
           shoppingItems={shoppingItems}
-          calculateFoodRequirements={calculateFoodRequirements}
-          getCategoryServings={getCategoryServings}
           toggleView={toggleView}
           setActiveTab={setActiveTab}
           integratedMode={true}

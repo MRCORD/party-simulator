@@ -22,10 +22,7 @@ import { FoodRequirements } from '@/types/food';
 
 interface FoodSimulatorProps {
   attendees: number;
-  foodServingsPerPerson: number;
   shoppingItems: ShoppingItem[];
-  calculateFoodRequirements: () => FoodRequirements;
-  getCategoryServings: (category: string) => number;
   toggleView: () => void;
   setActiveTab: (tab: 'overview' | 'shopping' | 'drinks' | 'food' | 'venue' | 'reports') => void;
   integratedMode?: boolean;
@@ -33,13 +30,9 @@ interface FoodSimulatorProps {
 
 const FoodSimulator: React.FC<FoodSimulatorProps> = ({
   attendees,
-  foodServingsPerPerson,
   shoppingItems,
-  calculateFoodRequirements,
-  getCategoryServings,
   toggleView,
-  setActiveTab,
-  integratedMode = false
+  setActiveTab
 }) => {
   const theme = useTheme();
   

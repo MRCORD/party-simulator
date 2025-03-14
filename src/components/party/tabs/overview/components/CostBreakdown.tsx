@@ -176,7 +176,7 @@ const CostBreakdown: React.FC<CostBreakdownProps> = ({
                 tickFormatter={formatYAxisTick}
               />
               <Tooltip
-                formatter={(value: any) => [formatCurrency(value, true), '']}
+                formatter={(value: number) => [formatCurrency(value, true), '']}
                 cursor={{ fill: 'rgba(0, 0, 0, 0.05)' }}
               />
               <ReferenceLine y={0} stroke="#666" strokeWidth={1} />

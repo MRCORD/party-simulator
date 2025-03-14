@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { 
   ChevronDown, Plus, Trash2, Beef, 
-  Salad, UtensilsCrossed, Package, Utensils, Info, Link as LinkIcon
+  Salad, UtensilsCrossed, Package, Utensils, LinkIcon
 } from 'lucide-react';
 import Button from '@/components/ui/Button';
 import { ShoppingItem } from '@/types/shopping';
@@ -27,12 +27,10 @@ const SimulationForm: React.FC<SimulationFormProps> = ({
   setSimulationCount,
   shoppingItems,
   runFoodSimulation,
-  simulationRun,
   showItemSelection = true,
   showRunButton = false, // Set default to false
   itemRelationships = []
 }) => {
-  const [showForm, setShowForm] = useState(false);
   const [showItemsModal, setShowItemsModal] = useState(false);
   const [selectedFoodItems, setSelectedFoodItems] = useState<string[]>([]);
   const [isSimulating, setIsSimulating] = useState(false);
@@ -252,7 +250,7 @@ const SimulationForm: React.FC<SimulationFormProps> = ({
               <div className="text-center py-8 border-2 border-dashed border-warning-light rounded-lg">
                 <Utensils className="w-12 h-12 text-warning mx-auto mb-3" />
                 <p className="text-gray-700 mb-1 font-medium">No has seleccionado ningún alimento</p>
-                <p className="text-sm text-gray-600">Haz clic en "Agregar Alimentos" para comenzar la simulación</p>
+                <p className="text-sm text-gray-600">Haz clic en &quot;Agregar Alimentos&quot; para comenzar la simulación</p>
               </div>
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 mb-6">
