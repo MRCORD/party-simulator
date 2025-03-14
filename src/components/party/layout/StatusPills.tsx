@@ -1,12 +1,17 @@
 import React from 'react';
 import { Users, CheckCircle, AlertCircle, Utensils, Link } from 'lucide-react';
 
+interface ItemRelationship {
+  itemId: string;
+  relatedItems: string[];
+}
+
 interface StatusPillsProps {
   attendees: number;
   ticketPrice: number;
   isViable: boolean;
   useAdvancedFoodSim: boolean;
-  itemRelationships: any[];
+  itemRelationships: ItemRelationship[];
 }
 
 const StatusPills: React.FC<StatusPillsProps> = ({

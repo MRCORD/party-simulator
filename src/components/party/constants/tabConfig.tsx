@@ -1,7 +1,7 @@
-import React, { ReactNode, ReactElement } from 'react';
+import React, { ReactElement } from 'react';
 import { 
   Users, Wine, Utensils, MapPin, 
-  FileBarChart, ShoppingBag, LucideProps 
+  FileBarChart, ShoppingBag
 } from 'lucide-react';
 
 type IconProps = {

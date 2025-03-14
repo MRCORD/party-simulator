@@ -1,6 +1,5 @@
 import React from 'react';
 import { Tab } from '@/types/party';
-import { useTheme } from '@/components/ui/ThemeProvider';
 import Tabs from '@/components/ui/Tabs';
 
 interface PartyTabsProps {

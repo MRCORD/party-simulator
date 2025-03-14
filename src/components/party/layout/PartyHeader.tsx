@@ -1,14 +1,18 @@
 import React from 'react';
 import { Sparkles } from 'lucide-react';
-import Button from '@/components/ui/Button';
 import StatusPills from './StatusPills';
+
+interface ItemRelationship {
+  itemId: string;
+  relatedItems: string[];
+}
 
 interface PartyHeaderProps {
   attendees: number;
   ticketPrice: number;
   isViable: boolean;
   useAdvancedFoodSim: boolean;
-  itemRelationships: any[];
+  itemRelationships: ItemRelationship[];
   resetAllData: () => void;
 }
 
