@@ -9,7 +9,7 @@ import Button from '@/components/ui/Button';
 import ItemList from './components/ItemList';
 import ItemForm from './components/ItemForm';
 import HeaderStats from './components/HeaderStats';
-import ComplementaryItemsManager from '../../ComplementaryItemsManager';
+import ComplementaryItemsManager from '../../shared/ComplementaryItemsManager';
 
 // Import types
 import { ShoppingItem, ItemRelationship, Category } from '@/types';

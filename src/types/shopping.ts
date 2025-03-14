@@ -1,3 +1,5 @@
+import { Category } from './party';
+
 /**
  * Base shopping item definition used throughout all components
  */
@@ -31,4 +33,23 @@ export interface ShoppingItem {
     itemRelationships: ItemRelationship[];
     addItemRelationship: (relationship: ItemRelationship) => void;
     removeItemRelationship: (index: number) => void;
+  }
+
+  /**
+   * Shopping tab props
+   */
+  export interface ShoppingTabProps {
+    newItem: Omit<ShoppingItem, 'id'>;
+    editingItem: ShoppingItem | null;
+    handleInputChange: (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => void;
+    addItem: () => void;
+    saveEdit: () => void;
+    categories: Category[];
+    sizeUnits: { [key: string]: string[] };
+    shoppingItems: ShoppingItem[];
+    getItemsByCategory: () => { [key: string]: ShoppingItem[] };
+    startEdit: (item: ShoppingItem) => void;
+    deleteItem: (id: string) => void;
+    jsonPreview: string;
+    itemRelationships?: ItemRelationship[];
   }

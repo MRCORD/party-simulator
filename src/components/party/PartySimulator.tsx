@@ -1,6 +1,8 @@
+"use client"
+
 import React, { useEffect } from 'react';
 import { usePartyStore } from '@/store/usePartyStore';
-import { CostBreakdownItem, FinancialOverviewItem } from './types';
+import { CostBreakdownItem, FinancialOverviewItem } from '@/types/party';
 
 // Import refactored components
 import PartyHeader from './layout/PartyHeader';
@@ -8,12 +10,12 @@ import PartyTabs from './navigation/PartyTabs';
 import { tabConfigs, getIndexFromTabKey, getTabKeyFromIndex } from './constants/tabConfig';
 
 // Import tabs
-import OverviewTab from './tabs/overview/OverviewTab';
-import ShoppingTab from './tabs/shopping/ShoppingTab';
-import DrinksTab from './tabs/drinks/DrinksTab';
-import FoodTab from './tabs/food/FoodTab';
-import VenueTab from './tabs/venue/VenueTab';
-import ReportsTab from './tabs/reports/ReportsTab';
+import OverviewTab from './tabs/overview';
+import ShoppingTab from './tabs/shopping';
+import DrinksTab from './tabs/drinks';
+import FoodTab from './tabs/food';
+import VenueTab from './tabs/venue';
+import ReportsTab from './tabs/reports';
 
 // Main component
 export default function PartySimulator() {

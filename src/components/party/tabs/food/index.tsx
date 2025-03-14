@@ -1,11 +1,9 @@
 "use client";
 import React, { useState, useEffect } from 'react';
-import BasicView from './components/BasicView';
-import FoodSimulator from './simulation/FoodSimulator';
-import { 
-  ShoppingItem, 
-  FoodRequirements 
-} from '@/components/party/types';
+import BasicView from '@/components/party/tabs/food/components/BasicView';
+import FoodSimulator from '@/components/party/tabs/food/simulation/FoodSimulator';
+import { ShoppingItem } from '@/types/shopping';
+import { FoodRequirements } from '@/types/food';
 
 interface FoodTabProps {
   attendees: number;

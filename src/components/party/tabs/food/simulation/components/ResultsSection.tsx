@@ -5,7 +5,8 @@ import {
 } from 'lucide-react';
 import Badge from '@/components/ui/Badge';
 import Button from '@/components/ui/Button';
-import { ShoppingItem, SimulationResult } from '@/components/party/types';
+import { ShoppingItem } from '@/types/shopping';
+import { SimulationResult } from '@/types/simulator';
 import DistributionChart from './DistributionChart';
 
 interface ResultsSectionProps {

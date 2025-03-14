@@ -9,7 +9,7 @@ import {
   ResponsiveContainer
 } from 'recharts';
 import { useTheme } from '@/components/ui/ThemeProvider';
-import { CostBreakdownItem } from '@/components/party/types';
+import { CostBreakdownItem } from '@/types/party';
 
 interface CostBreakdownProps {
   costBreakdown: CostBreakdownItem[];

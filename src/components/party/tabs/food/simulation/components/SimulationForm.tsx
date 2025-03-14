@@ -4,7 +4,7 @@ import {
   Salad, UtensilsCrossed, Package
 } from 'lucide-react';
 import Button from '@/components/ui/Button';
-import { ShoppingItem } from '@/components/party/types';
+import { ShoppingItem } from '@/types/shopping';
 
 interface SimulationFormProps {
   confidenceLevel: number;

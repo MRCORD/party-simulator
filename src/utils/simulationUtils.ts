@@ -5,7 +5,8 @@
  * used to predict food consumption patterns at events.
  */
 
-import { ShoppingItem, ItemRelationship, EaterProfile, SimulationResult } from '../components/party/types';
+import { ShoppingItem, ItemRelationship } from '@/types/shopping';
+import { EaterProfile, SimulationResult } from '@/types/simulator';
 
 /**
  * Distribution bin for visualization

@@ -1,4 +1,4 @@
-import { ShoppingItem, ItemRelationship } from '../components/party/types';
+import { ShoppingItem, ItemRelationship } from '@/types/shopping';
 
 /**
  * Calculates the optimal quantities for all items based on their relationships

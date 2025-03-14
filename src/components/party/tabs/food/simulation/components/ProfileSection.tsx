@@ -5,7 +5,7 @@ import {
   Tooltip, ResponsiveContainer, Cell
 } from 'recharts';
 import Badge from '@/components/ui/Badge';
-import { EaterProfile } from '@/components/party/types';
+import { EaterProfile } from '@/types/simulator';
 
 interface ProfileSectionProps {
   eaterProfiles: EaterProfile[];

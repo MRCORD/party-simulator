@@ -1,8 +1,10 @@
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
-import { ShoppingItem, Category, ItemRelationship, EaterProfile, SimulationResult } from '@/components/party/types';
-import { synchronizeRelatedItems } from '@/utils/relationshipUtils';
-import { runMonteCarlo } from '../utils/simulationUtils';
+import { ShoppingItem, ItemRelationship } from '@/types/shopping';
+import { Category } from '@/types/party'; 
+import { EaterProfile, SimulationResult } from '@/types/simulator';
+import { DEFAULT_SHOPPING_ITEMS, DEFAULT_EATER_PROFILES } from '@/components/party/constants/defaults';
+import { runMonteCarlo } from '@/utils/simulationUtils';
 
 // Define the store state type
 interface PartyState {

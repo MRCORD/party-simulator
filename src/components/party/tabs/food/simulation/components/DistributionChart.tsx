@@ -3,7 +3,7 @@ import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, 
   Tooltip, ResponsiveContainer, Cell, ReferenceLine
 } from 'recharts';
-import { DistributionBin } from '@/components/party/types';
+import { DistributionBin } from '@/types/simulator';
 
 interface DistributionChartProps {
   data: DistributionBin[];

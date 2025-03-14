@@ -1,4 +1,6 @@
 import { ReactNode } from 'react';
+import { ShoppingItem } from './shopping';
+import { DrinkRequirements, FoodRequirements } from './food';
 
 /**
  * Tab definition
@@ -39,4 +41,26 @@ export interface FinancialOverviewItem {
 export interface VenueCosts {
   venue: number;
   misc: number;
+}
+
+/**
+ * Reports tab props
+ */
+export interface ReportsTabProps {
+  venueCost: number;
+  attendees: number;
+  ticketPrice: number;
+  totalCosts: number;
+  totalRevenue: number;
+  netProfit: number;
+  perPersonCost: number;
+  breakEvenAttendees: number;
+  recommendedTicketPrice: number;
+  isViable: boolean;
+  calculateDrinkRequirements: () => DrinkRequirements;
+  calculateFoodRequirements: () => FoodRequirements;
+  drinksPerPerson: number;
+  foodServingsPerPerson: number;
+  shoppingItems: ShoppingItem[];
+  getCategoryTotal: (category: string) => number;
 }

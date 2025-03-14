@@ -9,7 +9,8 @@ import Badge from '@/components/ui/Badge';
 import ProgressBar from '@/components/ui/ProgressBar';
 import Button from '@/components/ui/Button';
 import { useTheme } from '@/components/ui/ThemeProvider';
-import { ShoppingItem, FoodRequirements } from '@/components/party/types';
+import { ShoppingItem } from '@/types/shopping';
+import { FoodRequirements } from '@/types/food';
 
 interface BasicViewProps {
   attendees: number;
