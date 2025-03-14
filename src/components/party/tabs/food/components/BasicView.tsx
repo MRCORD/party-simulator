@@ -18,6 +18,7 @@ interface BasicViewProps {
   shoppingItems: ShoppingItem[];
   calculateFoodRequirements: () => FoodRequirements;
   getCategoryServings: (category: string) => number;
+  getRecommendedUnits: (category: string, totalServings: number) => number;
   toggleView: () => void;
   itemRelationships?: { primaryItemId: string; secondaryItemId: string; ratio: number }[];
 }

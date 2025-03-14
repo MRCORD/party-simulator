@@ -24,6 +24,7 @@ interface FoodSimulatorProps {
   shoppingItems: ShoppingItem[];
   toggleView: () => void;
   setActiveTab: (tab: 'overview' | 'shopping' | 'drinks' | 'food' | 'venue' | 'reports') => void;
+  getRecommendedUnits: (category: string, totalServings: number) => number;
   integratedMode?: boolean;
 }
 
