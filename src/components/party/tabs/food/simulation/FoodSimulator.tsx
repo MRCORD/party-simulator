@@ -171,6 +171,7 @@ const FoodSimulator: React.FC<FoodSimulatorProps> = ({
         <ProfileSection 
           eaterProfiles={eaterProfiles}
           updateEaterProfile={updateEaterProfile}
+          attendees={attendees}
         />
 
         {/* Food Selection Section - Added back */}

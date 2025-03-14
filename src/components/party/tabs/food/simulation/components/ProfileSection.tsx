@@ -11,9 +11,10 @@ interface EaterProfile {
 interface ProfileSectionProps {
   eaterProfiles: EaterProfile[];
   updateEaterProfile: (index: number, field: keyof EaterProfile, value: number) => void;
+  attendees: number;
 }
 
-const ProfileSection = ({ eaterProfiles, updateEaterProfile }: ProfileSectionProps) => {
+const ProfileSection = ({ eaterProfiles, updateEaterProfile, attendees }: ProfileSectionProps) => {
   // Profile colors - one distinct color per profile type
   const PROFILE_COLORS = ['#10b981', '#4f86f7', '#f59e0b'];
   const [isExpanded, setIsExpanded] = useState(false);
@@ -95,6 +96,10 @@ const ProfileSection = ({ eaterProfiles, updateEaterProfile }: ProfileSectionPro
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         {eaterProfiles.map((profile, index) => {
           const color = PROFILE_COLORS[index % PROFILE_COLORS.length];
+          // Calculate exact number of attendees for this profile
+          const exactAttendees = (profile.percentage / 100) * attendees;
+          // Round to closest whole number
+          const profileAttendees = Math.round(exactAttendees);
           
           return (
             <div 
@@ -107,9 +112,14 @@ const ProfileSection = ({ eaterProfiles, updateEaterProfile }: ProfileSectionPro
                 <h4 className="text-xl font-medium" style={{ color }}>
                   {profile.name}
                 </h4>
-                <span className="text-xl font-bold" style={{ color }}>
-                  {profile.percentage}%
-                </span>
+                <div className="text-right">
+                  <span className="text-xl font-bold" style={{ color }}>
+                    {profile.percentage}%
+                  </span>
+                  <span className="text-sm text-gray-500 block">
+                    ({profileAttendees} asistentes)
+                  </span>
+                </div>
               </div>
               
               {/* Percentage slider section */}
