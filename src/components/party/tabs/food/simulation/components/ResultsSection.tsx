@@ -181,19 +181,19 @@ const ResultsSection: React.FC<ResultsSectionProps> = ({
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-center">
                     <span className="px-2 py-1 inline-flex text-sm leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">
-                      {result.recommendedServings.toFixed(0)} porciones
+                      {result?.recommendedServings?.toFixed(0) || 0} porciones
                     </span>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-center">
                     <div className="flex flex-col items-center">
                       <span className="px-2 py-1 inline-flex text-sm leading-5 font-semibold rounded-full bg-green-100 text-green-800">
-                        {result.recommendedUnits} unidades
+                        {result?.recommendedUnits || 0} unidades
                       </span>
-                      {item.units !== result.recommendedUnits && (
+                      {item.units !== result?.recommendedUnits && (
                         <span className="text-xs mt-1">
-                          {item.units < result.recommendedUnits 
-                            ? <span className="text-error">Faltan {result.recommendedUnits - item.units}</span>
-                            : <span className="text-success">Sobran {item.units - result.recommendedUnits}</span>
+                          {item.units < (result?.recommendedUnits || 0)
+                            ? <span className="text-error">Faltan {(result?.recommendedUnits || 0) - item.units}</span>
+                            : <span className="text-success">Sobran {item.units - (result?.recommendedUnits || 0)}</span>
                           }
                         </span>
                       )}
@@ -201,14 +201,14 @@ const ResultsSection: React.FC<ResultsSectionProps> = ({
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-center">
                     <Badge 
-                      variant={getRiskColor(result.stockoutRisk)} 
+                      variant={getRiskColor(result?.stockoutRisk || 0)} 
                       size="sm"
                     >
-                      {result.stockoutRisk.toFixed(1)}% - {formatRiskLevel(result.stockoutRisk)}
+                      {result?.stockoutRisk?.toFixed(1) || '0.0'}% - {formatRiskLevel(result?.stockoutRisk || 0)}
                     </Badge>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium text-gray-900">
-                    S/ {result.totalCost.toFixed(2)}
+                    S/ {result?.totalCost?.toFixed(2) || '0.00'}
                   </td>
                 </tr>
               ))}
@@ -262,23 +262,23 @@ const ResultsSection: React.FC<ResultsSectionProps> = ({
                         <div className="space-y-2">
                           <div className="flex justify-between text-sm">
                             <span className="text-gray-600">Consumo Promedio:</span>
-                            <span className="font-medium">{result.mean.toFixed(1)} porciones</span>
+                            <span className="font-medium">{result?.mean?.toFixed(1) || '0.0'} porciones</span>
                           </div>
                           <div className="flex justify-between text-sm">
                             <span className="text-gray-600">Consumo Mediano:</span>
-                            <span className="font-medium">{result.median.toFixed(1)} porciones</span>
+                            <span className="font-medium">{result?.median?.toFixed(1) || '0.0'} porciones</span>
                           </div>
                           <div className="flex justify-between text-sm">
                             <span className="text-gray-600">Rango (Min-Max):</span>
-                            <span className="font-medium">{result.min.toFixed(1)} - {result.max.toFixed(1)} porciones</span>
+                            <span className="font-medium">{result?.min?.toFixed(1) || '0.0'} - {result?.max?.toFixed(1) || '0.0'} porciones</span>
                           </div>
                           <div className="flex justify-between text-sm">
                             <span className="text-gray-600">Unidades Recomendadas:</span>
-                            <span className="font-medium">{result.recommendedUnits} unidades</span>
+                            <span className="font-medium">{result?.recommendedUnits || 0} unidades</span>
                           </div>
                           <div className="flex justify-between text-sm">
                             <span className="text-gray-600">Riesgo de Escasez:</span>
-                            <span className="font-medium">{result.stockoutRisk.toFixed(1)}%</span>
+                            <span className="font-medium">{result?.stockoutRisk?.toFixed(1) || '0.0'}%</span>
                           </div>
                         </div>
                       </div>
@@ -296,7 +296,6 @@ const ResultsSection: React.FC<ResultsSectionProps> = ({
                               <span className="font-medium">{result.recommendedUnits} unidades</span>
                             </div>
                             <div className="flex justify-between text-sm">
-                              <span className="text-gray-600">Diferencia:</span>
                               <span className={`font-medium ${
                                 item.units < result.recommendedUnits ? 'text-error' : 'text-success'
                               }`}>
@@ -318,7 +317,6 @@ const ResultsSection: React.FC<ResultsSectionProps> = ({
                               <span className="font-medium">S/ {result.totalCost.toFixed(2)}</span>
                             </div>
                             <div className="flex justify-between text-sm">
-                              <span className="text-gray-600">Diferencia:</span>
                               <span className={`font-medium ${
                                 item.units < result.recommendedUnits ? 'text-error' : 'text-success'
                               }`}>
