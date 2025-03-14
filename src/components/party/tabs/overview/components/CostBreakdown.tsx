@@ -1,12 +1,18 @@
 import React, { useState } from 'react';
-import { PieChart } from 'lucide-react';
+import { PieChart, BarChart as BarChartIcon } from 'lucide-react';
 import { 
   PieChart as RechartsPieChart, 
   Pie, 
   Cell, 
   Tooltip, 
   Sector,
-  ResponsiveContainer
+  ResponsiveContainer,
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  ReferenceLine
 } from 'recharts';
 import { useTheme } from '@/components/ui/ThemeProvider';
 import { CostBreakdownItem } from '@/types/party';
@@ -25,9 +31,9 @@ const CostBreakdown: React.FC<CostBreakdownProps> = ({
   const theme = useTheme();
   const [activeIndex, setActiveIndex] = useState<number | null>(null);
   
-  // Validate and filter out invalid entries
+  // Validate and filter out invalid entries (allow negative values)
   const validData = costBreakdown.filter(item => 
-    item && typeof item.value === 'number' && !isNaN(item.value) && item.value > 0
+    item && typeof item.value === 'number' && !isNaN(item.value)
   );
   
   // Handle empty or invalid data
@@ -35,7 +41,11 @@ const CostBreakdown: React.FC<CostBreakdownProps> = ({
     return (
       <div className="bg-white rounded-xl border border-gray-200 p-4">
         <div className="flex items-center mb-4">
-          <PieChart className="w-5 h-5 text-primary mr-2" />
+          {isFinancialOverview ? (
+            <BarChartIcon className="w-5 h-5 text-primary mr-2" />
+          ) : (
+            <PieChart className="w-5 h-5 text-primary mr-2" />
+          )}
           <h3 className="text-lg font-medium">
             {isFinancialOverview ? 'Resumen Financiero' : 'Distribución de Gastos'}
           </h3>
@@ -56,6 +66,14 @@ const CostBreakdown: React.FC<CostBreakdownProps> = ({
     color: colors[index % colors.length],
     percent: item.value / total
   }));
+
+  // Calculate min and max for Y axis domain
+  const minValue = Math.min(...validData.map(item => item.value));
+  const maxValue = Math.max(...validData.map(item => item.value));
+  const yAxisDomain = [
+    Math.min(minValue, 0), // Include 0 or go lower if we have negative values
+    Math.max(maxValue, 0)  // Include 0 or go higher if we have positive values
+  ];
 
   // Custom active shape for pie chart with better hover effect
   const renderActiveShape = (props: any) => {
@@ -156,43 +174,82 @@ const CostBreakdown: React.FC<CostBreakdownProps> = ({
   return (
     <div className="bg-white rounded-xl border border-gray-200 p-4">
       <div className="flex items-center mb-4">
-        <PieChart className="w-5 h-5 text-primary mr-2" />
+        {isFinancialOverview ? (
+          <BarChartIcon className="w-5 h-5 text-primary mr-2" />
+        ) : (
+          <PieChart className="w-5 h-5 text-primary mr-2" />
+        )}
         <h3 className="text-lg font-medium">
-          {isFinancialOverview ? 'Resumen Financiero' : 'Distribución de Gastos'}
+          {isFinancialOverview ? 'Balance General' : 'Distribución de Gastos'}
         </h3>
       </div>
       
       <div className="w-full h-64">
         <ResponsiveContainer width="100%" height="100%">
-          <RechartsPieChart>
-            <Pie
-              activeIndex={activeIndex !== null ? [activeIndex] : []}
-              activeShape={renderActiveShape}
-              data={chartData}
-              cx="50%"
-              cy="50%"
-              innerRadius={60}
-              outerRadius={80}
-              paddingAngle={2}
-              dataKey="value"
-              labelLine={true}
-              label={renderCustomizedLabel}
-              onMouseEnter={onPieEnter}
-              onMouseLeave={onPieLeave}
-              isAnimationActive={true}
+          {isFinancialOverview ? (
+            <BarChart
+              data={validData}
+              margin={{ top: 10, right: 30, left: 40, bottom: 40 }}
             >
-              {chartData.map((entry, index) => (
-                <Cell key={`cell-${index}`} fill={entry.color} />
-              ))}
-            </Pie>
-            <Tooltip content={<CustomTooltip />} />
-            
-            {/* Center label */}
-            <text x="50%" y="50%" textAnchor="middle" dominantBaseline="middle">
-              <tspan x="50%" dy="-0.5em" fontSize="16" fontWeight="bold">S/ {total.toFixed(0)}</tspan>
-              <tspan x="50%" dy="1.5em" fontSize="12" fill="#666">Total</tspan>
-            </text>
-          </RechartsPieChart>
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis 
+                dataKey="name" 
+                angle={-45}
+                textAnchor="end"
+                height={60}
+                interval={0}
+                tick={{ fontSize: 12 }}
+              />
+              <YAxis
+                tickFormatter={(value) => `S/ ${value}`}
+                width={80}
+                domain={yAxisDomain}
+              />
+              <Tooltip content={<CustomTooltip />} />
+              {/* Reference line at y=0 */}
+              <ReferenceLine y={0} stroke="#666" />
+              <Bar dataKey="value" fill="#8884d8">
+                {validData.map((entry, index) => (
+                  <Cell 
+                    key={`cell-${index}`} 
+                    fill={entry.name === 'Beneficio Neto' ? 
+                      (entry.value >= 0 ? '#10b981' : '#ef4444') : 
+                      colors[index % colors.length]} 
+                  />
+                ))}
+              </Bar>
+            </BarChart>
+          ) : (
+            <RechartsPieChart>
+              <Pie
+                activeIndex={activeIndex !== null ? [activeIndex] : []}
+                activeShape={renderActiveShape}
+                data={chartData}
+                cx="50%"
+                cy="50%"
+                innerRadius={60}
+                outerRadius={80}
+                paddingAngle={2}
+                dataKey="value"
+                labelLine={true}
+                label={renderCustomizedLabel}
+                onMouseEnter={onPieEnter}
+                onMouseLeave={onPieLeave}
+                isAnimationActive={true}
+              >
+                {chartData.map((entry, index) => (
+                  <Cell key={`cell-${index}`} fill={entry.color} />
+                ))}
+              </Pie>
+              <Tooltip content={<CustomTooltip />} />
+              
+              {/* Center label */}
+              <text x="50%" y="50%" textAnchor="middle" dominantBaseline="middle">
+                <tspan x="50%" dy="-0.5em" fontSize="16" fontWeight="bold">S/ {total.toFixed(0)}</tspan>
+                <tspan x="50%" dy="1.5em" fontSize="12" fill="#666">Total</tspan>
+              </text>
+            </RechartsPieChart>
+          )}
         </ResponsiveContainer>
       </div>
     </div>

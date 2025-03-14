@@ -7,7 +7,7 @@ import { DrinkRequirements, FoodRequirements } from './food';
  */
 export interface Tab {
   label: string;
-  icon?: ReactNode;
+  icon?: (props?: { size?: number }) => ReactNode;
   content?: ReactNode;
 }
 
