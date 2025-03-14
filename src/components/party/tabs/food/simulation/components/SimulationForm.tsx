@@ -35,7 +35,8 @@ const SimulationForm: React.FC<SimulationFormProps> = ({
   const [showForm, setShowForm] = useState(false);
   const [showItemsModal, setShowItemsModal] = useState(false);
   const [selectedFoodItems, setSelectedFoodItems] = useState<string[]>([]);
-  
+  const [isSimulating, setIsSimulating] = useState(false);
+
   // Confidence level options for the dropdown
   const confidenceLevelOptions = [
     { value: 80, label: "Mínimo para una estimación básica" },
@@ -124,6 +125,16 @@ const SimulationForm: React.FC<SimulationFormProps> = ({
       runFoodSimulation(foodItems);
     }
   };
+
+  // Wrap the runSimulation function to handle loading state
+  const handleSimulation = async () => {
+    setIsSimulating(true);
+    try {
+      await runSimulation();
+    } finally {
+      setIsSimulating(false);
+    }
+  };
   
   // Get category icon for display
   const getCategoryIcon = (category: string) => {
@@ -206,8 +217,9 @@ const SimulationForm: React.FC<SimulationFormProps> = ({
               variant="gradient"
               color="warning"
               size="lg"
-              onClick={runSimulation}
+              onClick={handleSimulation}
               className="px-6"
+              isLoading={isSimulating}
             >
               Ejecutar Simulación Monte Carlo
             </Button>
@@ -453,8 +465,9 @@ const SimulationForm: React.FC<SimulationFormProps> = ({
                   variant="gradient"
                   color="warning"
                   size="lg"
-                  onClick={runSimulation}
+                  onClick={handleSimulation}
                   className="px-6"
+                  isLoading={isSimulating}
                 >
                   Ejecutar Simulación Monte Carlo
                 </Button>
