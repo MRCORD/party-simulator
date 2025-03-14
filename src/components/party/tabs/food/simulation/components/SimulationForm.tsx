@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { 
-  RefreshCw, ChevronDown, Plus, Trash2, Beef, 
+  ChevronDown, Plus, Trash2, Beef, 
   Salad, UtensilsCrossed, Package, Utensils, Info
 } from 'lucide-react';
 import Button from '@/components/ui/Button';
@@ -15,6 +15,7 @@ interface SimulationFormProps {
   runFoodSimulation: (selectedFoodItems?: string[]) => void;
   simulationRun: boolean;
   showItemSelection?: boolean; // New prop to control whether to show item selection
+  showRunButton?: boolean; // Added prop to control whether to show the Run button
 }
 
 const SimulationForm: React.FC<SimulationFormProps> = ({
@@ -25,7 +26,8 @@ const SimulationForm: React.FC<SimulationFormProps> = ({
   shoppingItems,
   runFoodSimulation,
   simulationRun,
-  showItemSelection = true
+  showItemSelection = true,
+  showRunButton = false // Set default to false
 }) => {
   const [showForm, setShowForm] = useState(false);
   const [showItemsModal, setShowItemsModal] = useState(false);
@@ -165,8 +167,8 @@ const SimulationForm: React.FC<SimulationFormProps> = ({
           </div>
         </div>
         
-        {/* Run Simulation Button - Show only if not showing item selection */}
-        {!showItemSelection && (
+        {/* Run Simulation Button - Show only if showRunButton is true and not showing item selection */}
+        {showRunButton && !showItemSelection && (
           <div className="flex justify-center mt-6">
             <Button
               variant="gradient"
@@ -175,7 +177,6 @@ const SimulationForm: React.FC<SimulationFormProps> = ({
               onClick={runSimulation}
               className="px-6"
             >
-              <RefreshCw className="w-5 h-5 mr-2" />
               Ejecutar Simulación Monte Carlo
             </Button>
           </div>
@@ -273,7 +274,7 @@ const SimulationForm: React.FC<SimulationFormProps> = ({
                                 <div className="w-6 h-6 flex items-center justify-center">
                                   {selectedFoodItems.includes(item.id) && (
                                     <svg className="w-5 h-5 text-warning" fill="currentColor" viewBox="0 0 20 20">
-                                      <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a 1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                                      <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                                     </svg>
                                   )}
                                 </div>
@@ -304,8 +305,8 @@ const SimulationForm: React.FC<SimulationFormProps> = ({
               </div>
             )}
 
-            {/* Run Simulation Button */}
-            {selectedFoodItems.length > 0 && (
+            {/* Run Simulation Button - Only show if we have items and showRunButton is true */}
+            {selectedFoodItems.length > 0 && showRunButton && (
               <div className="flex justify-center">
                 <Button
                   variant="gradient"
@@ -314,7 +315,6 @@ const SimulationForm: React.FC<SimulationFormProps> = ({
                   onClick={runSimulation}
                   className="px-6"
                 >
-                  <RefreshCw className="w-5 h-5 mr-2" />
                   Ejecutar Simulación Monte Carlo
                 </Button>
               </div>

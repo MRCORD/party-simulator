@@ -1,19 +1,20 @@
 "use client";
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   Utensils, Info, ArrowLeft,
-  ShoppingBag, AlertCircle
+  ShoppingBag, AlertCircle, RefreshCw
 } from 'lucide-react';
 import { useTheme } from '@/components/ui/ThemeProvider';
 import { usePartyStore } from '@/store/usePartyStore';
 import Button from '@/components/ui/Button';
 import Alert from '@/components/ui/Alert';
 
-// Import simulator components - we'll update these separately
+// Import simulator components
 import SimulationForm from './components/SimulationForm';
 import ProfileSection from './components/ProfileSection';
 import ResultsSection from './components/ResultsSection';
 import ShoppingActions from './components/ShoppingActions';
+import FoodSelectionSection from './components/FoodSelectionSection';
 
 // Types
 import { ShoppingItem } from '@/types/shopping';
@@ -42,6 +43,9 @@ const FoodSimulator: React.FC<FoodSimulatorProps> = ({
 }) => {
   const theme = useTheme();
   
+  // Local state for selected food items
+  const [selectedFoodItems, setSelectedFoodItems] = useState<string[]>([]);
+
   // Get data from store
   const {
     confidenceLevel,
@@ -57,6 +61,26 @@ const FoodSimulator: React.FC<FoodSimulatorProps> = ({
     runFoodSimulation,
     applySimulationRecommendations
   } = usePartyStore();
+
+  // Initialize selectedFoodItems with all food items on component mount
+  useEffect(() => {
+    const foodItemIds = shoppingItems
+      .filter(item => ['meat', 'sides', 'condiments'].includes(item.category))
+      .map(item => item.id);
+    
+    setSelectedFoodItems(foodItemIds);
+  }, [shoppingItems]);
+
+  // Function to run the simulation with selected food items
+  const runSimulation = () => {
+    if (selectedFoodItems.length === 0) {
+      // Maybe show an alert or toast that no food items are selected
+      alert('Por favor selecciona al menos un alimento para simular');
+      return;
+    }
+    
+    runFoodSimulation(selectedFoodItems);
+  };
 
   return (
     <div className="space-y-6">
@@ -147,6 +171,7 @@ const FoodSimulator: React.FC<FoodSimulatorProps> = ({
           runFoodSimulation={runFoodSimulation}
           simulationRun={simulationRun}
           showItemSelection={false}
+          showRunButton={false}
         />
         
         {/* Profiles Section */}
@@ -154,6 +179,28 @@ const FoodSimulator: React.FC<FoodSimulatorProps> = ({
           eaterProfiles={eaterProfiles}
           updateEaterProfile={updateEaterProfile}
         />
+
+        {/* Food Selection Section - Added back */}
+        <FoodSelectionSection
+          shoppingItems={shoppingItems}
+          selectedFoodItems={selectedFoodItems}
+          setSelectedFoodItems={setSelectedFoodItems}
+        />
+
+        {/* Run Simulation Button - After the food selection */}
+        <div className="flex justify-center py-6 bg-warning-light/10 border-t border-warning-light/20">
+          <Button
+            variant="gradient"
+            color="warning"
+            size="lg"
+            onClick={runSimulation}
+            className="px-6"
+            disabled={selectedFoodItems.length === 0}
+          >
+            <RefreshCw className="w-5 h-5 mr-2" />
+            Ejecutar Simulación Monte Carlo
+          </Button>
+        </div>
       </div>
       
       {/* Results Section - Only shown after simulation is run */}
