@@ -18,7 +18,6 @@ import FoodSelectionSection from './components/FoodSelectionSection';
 
 // Types
 import { ShoppingItem } from '@/types/shopping';
-import { FoodRequirements } from '@/types/food';
 
 interface FoodSimulatorProps {
   attendees: number;
