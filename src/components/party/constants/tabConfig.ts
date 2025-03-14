@@ -8,7 +8,7 @@ import {
 export interface TabConfig {
   key: 'overview' | 'shopping' | 'drinks' | 'food' | 'venue' | 'reports';
   label: string;
-  icon: ReactNode;
+  icon: (props?: { size?: number }) => ReactNode;
 }
 
 // Tab mapping
@@ -16,32 +16,32 @@ export const tabConfigs: TabConfig[] = [
   { 
     key: 'overview',
     label: 'Resumen', 
-    icon: <Users size={18} /> 
+    icon: (props) => Users({ size: props?.size || 18 })
   },
   { 
     key: 'shopping',
     label: 'Compras', 
-    icon: <ShoppingBag size={18} />
+    icon: (props) => ShoppingBag({ size: props?.size || 18 })
   },
   { 
     key: 'drinks',
     label: 'Bebidas', 
-    icon: <Wine size={18} />
+    icon: (props) => Wine({ size: props?.size || 18 })
   },
   { 
     key: 'food',
     label: 'Comida', 
-    icon: <Utensils size={18} /> 
+    icon: (props) => Utensils({ size: props?.size || 18 })
   },
   { 
     key: 'venue',
     label: 'Local', 
-    icon: <MapPin size={18} />
+    icon: (props) => MapPin({ size: props?.size || 18 })
   },
   { 
     key: 'reports',
     label: 'Informes', 
-    icon: <FileBarChart size={18} />
+    icon: (props) => FileBarChart({ size: props?.size || 18 })
   },
 ];
 
@@ -62,6 +62,6 @@ export const getIndexFromTabKey = (key: TabConfig['key']): number => {
 
 // Convert an index to its tab key
 export const getTabKeyFromIndex = (index: number): TabConfig['key'] => {
-  const keys = Object.keys(tabKeyToIndex) as TabConfig['key'][];
-  return keys[index] || 'overview';
+  const orderedKeys: TabConfig['key'][] = ['overview', 'shopping', 'drinks', 'food', 'venue', 'reports'];
+  return orderedKeys[index] || 'overview';
 };

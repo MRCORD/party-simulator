@@ -6,8 +6,10 @@ interface FinancialSummaryProps {
   totalRevenue: number;
   totalCosts: number;
   netProfit: number;
-  isViable: boolean;
+  perPersonCost: number;
+  breakEvenAttendees: number;
   recommendedTicketPrice: number;
+  isViable: boolean;
 }
 
 const FinancialSummary: React.FC<FinancialSummaryProps> = ({

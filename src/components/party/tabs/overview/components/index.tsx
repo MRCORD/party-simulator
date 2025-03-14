@@ -102,24 +102,24 @@ const OverviewTab: React.FC<OverviewTabProps> = ({
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <CostBreakdown 
           costBreakdown={costBreakdown}
-          colors={COLORS}
+          COLORS={COLORS}
         />
         <CostBreakdown 
-          costBreakdown={financialOverview.map(item => ({
-            name: item.name,
-            value: item.amount
-          }))}
-          colors={COLORS}
+          costBreakdown={financialOverview}
+          COLORS={COLORS}
           isFinancialOverview={true}
         />
       </div>
       
       <StatusSection 
         attendees={attendees}
-        breakEvenAttendees={breakEvenAttendees}
+        drinksPerPerson={drinksPerPerson}
+        foodServingsPerPerson={foodServingsPerPerson}
+        isViable={isViable}
         ticketPrice={ticketPrice}
         recommendedTicketPrice={recommendedTicketPrice}
-        isViable={isViable}
+        attendancePercentage={Math.min(100, (attendees / breakEvenAttendees) * 100)}
+        breakEvenAttendees={breakEvenAttendees}
         drinkRequirements={drinkRequirements}
         foodRequirements={foodRequirements}
         getCategoryServings={getCategoryServings}

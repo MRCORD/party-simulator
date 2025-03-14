@@ -14,29 +14,48 @@ import { CostBreakdownItem } from '@/types/party';
 interface CostBreakdownProps {
   costBreakdown: CostBreakdownItem[];
   colors: string[];
+  isFinancialOverview?: boolean;
 }
 
-const CostBreakdown: React.FC<CostBreakdownProps> = ({ costBreakdown, colors }) => {
+const CostBreakdown: React.FC<CostBreakdownProps> = ({ 
+  costBreakdown, 
+  colors,
+  isFinancialOverview = false 
+}) => {
   const theme = useTheme();
   const [activeIndex, setActiveIndex] = useState<number | null>(null);
   
+  // Validate and filter out invalid entries
+  const validData = costBreakdown.filter(item => 
+    item && typeof item.value === 'number' && !isNaN(item.value) && item.value > 0
+  );
+  
+  // Handle empty or invalid data
+  if (!validData.length) {
+    return (
+      <div className="bg-white rounded-xl border border-gray-200 p-4">
+        <div className="flex items-center mb-4">
+          <PieChart className="w-5 h-5 text-primary mr-2" />
+          <h3 className="text-lg font-medium">
+            {isFinancialOverview ? 'Resumen Financiero' : 'Distribución de Gastos'}
+          </h3>
+        </div>
+        <div className="h-64 flex items-center justify-center text-gray-500">
+          No hay datos disponibles para mostrar
+        </div>
+      </div>
+    );
+  }
+
   // Calculate total for percentages
-  const total = costBreakdown.reduce((sum, item) => sum + item.value, 0);
+  const total = validData.reduce((sum, item) => sum + item.value, 0);
   
   // Prepare data with percentages
-  const chartData = costBreakdown.map((item, index) => ({
+  const chartData = validData.map((item, index) => ({
     ...item,
     color: colors[index % colors.length],
     percent: item.value / total
   }));
-  
-  const onPieEnter = (_, index: number) => {
-    setActiveIndex(index);
-  };
-  
-  const onPieLeave = () => {
-    setActiveIndex(null);
-  };
 
   // Custom active shape for pie chart with better hover effect
   const renderActiveShape = (props: any) => {
@@ -65,11 +84,11 @@ const CostBreakdown: React.FC<CostBreakdownProps> = ({ costBreakdown, colors }) 
       </g>
     );
   };
-  
+
   // Enhanced custom tooltip for pie chart
-  const CustomTooltip = ({ active, payload }: any) => {
-    if (active && payload && payload.length) {
-      const data = payload[0];
+  const CustomTooltip = ({ active, payload }: { active?: boolean, payload?: any[] }) => {
+    if (active && payload?.[0]) {
+      const data = payload[0].payload;
       const percentage = ((data.value / total) * 100).toFixed(1);
       
       return (
@@ -84,12 +103,11 @@ const CostBreakdown: React.FC<CostBreakdownProps> = ({ costBreakdown, colors }) 
     }
     return null;
   };
-  
+
   // Custom label renderer for pie chart (outside labels with lines)
   const renderCustomizedLabel = (props: any) => {
     const { cx, cy, midAngle, outerRadius, name, value, index } = props;
     const RADIAN = Math.PI / 180;
-    // Position the label further from the pie
     const radius = outerRadius * 1.25;
     const x = cx + radius * Math.cos(-midAngle * RADIAN);
     const y = cy + radius * Math.sin(-midAngle * RADIAN);
@@ -127,11 +145,21 @@ const CostBreakdown: React.FC<CostBreakdownProps> = ({ costBreakdown, colors }) 
     );
   };
 
+  const onPieEnter = (_: any, index: number) => {
+    setActiveIndex(index);
+  };
+  
+  const onPieLeave = () => {
+    setActiveIndex(null);
+  };
+
   return (
     <div className="bg-white rounded-xl border border-gray-200 p-4">
       <div className="flex items-center mb-4">
         <PieChart className="w-5 h-5 text-primary mr-2" />
-        <h3 className="text-lg font-medium">Distribución de Gastos</h3>
+        <h3 className="text-lg font-medium">
+          {isFinancialOverview ? 'Resumen Financiero' : 'Distribución de Gastos'}
+        </h3>
       </div>
       
       <div className="w-full h-64">

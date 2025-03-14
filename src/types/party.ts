@@ -59,8 +59,7 @@ export interface ReportsTabProps {
   isViable: boolean;
   calculateDrinkRequirements: () => DrinkRequirements;
   calculateFoodRequirements: () => FoodRequirements;
-  drinksPerPerson: number;
-  foodServingsPerPerson: number;
   shoppingItems: ShoppingItem[];
   getCategoryTotal: (category: string) => number;
+  setActiveTab: (tab: 'overview' | 'shopping' | 'drinks' | 'food' | 'venue' | 'reports') => void;
 }

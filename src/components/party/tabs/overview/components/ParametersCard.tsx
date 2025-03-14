@@ -1,5 +1,5 @@
 import React from 'react';
-import { Users, Wine, Utensils, ChevronRight, Sparkles } from 'lucide-react';
+import { Users, Wine, Utensils, DollarSign, ChevronRight, Sparkles } from 'lucide-react';
 import Button from '@/components/ui/Button';
 
 interface ParametersCardProps {
@@ -38,7 +38,9 @@ const ParametersCard: React.FC<ParametersCardProps> = ({
       
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
         <div>
-          <label className="block text-sm text-primary mb-1">Asistentes</label>
+          <label className="block text-sm text-primary mb-1 flex items-center">
+            <Users className="w-4 h-4 mr-1 text-blue-600" /> Asistentes
+          </label>
           <div className="relative">
             <input
               type="number"
@@ -52,7 +54,9 @@ const ParametersCard: React.FC<ParametersCardProps> = ({
         </div>
         
         <div>
-          <label className="block text-sm text-primary mb-1">Precio de Entrada (S/)</label>
+          <label className="block text-sm text-primary mb-1 flex items-center">
+            <DollarSign className="w-4 h-4 mr-1 text-blue-600" /> Precio de Entrada
+          </label>
           <div className="relative">
             <div className="flex rounded shadow-sm">
               <span className="inline-flex items-center rounded-l border border-r-0 border-gray-300 bg-gray-50 px-3 text-gray-500">S/</span>
@@ -106,55 +110,51 @@ const ParametersCard: React.FC<ParametersCardProps> = ({
           <label className="block text-sm text-primary mb-1 flex items-center">
             <Utensils className="w-4 h-4 mr-1 text-blue-600" /> Porciones/Persona
           </label>
-          <div className="relative">
-            <div className="flex rounded shadow-sm">
-              <Button
-                variant="outline"
-                color="primary"
-                size="sm"
-                onClick={() => setFoodServingsPerPerson(Math.max(1, foodServingsPerPerson - 1))}
-                className="rounded-r-none"
-              >
-                -
-              </Button>
-              <input
-                type="text"
-                className="block w-full min-w-0 flex-1 text-center border-y border-gray-300 py-2 text-gray-900 focus:border-blue-500 focus:outline-none focus:ring-blue-500"
-                value={foodServingsPerPerson}
-                readOnly
-                aria-label="Porciones por persona"
-              />
-              <Button
-                variant="outline"
-                color="primary"
-                size="sm"
-                onClick={() => setFoodServingsPerPerson(foodServingsPerPerson + 1)}
-                className="rounded-l-none"
-              >
-                +
-              </Button>
-            </div>
-            
-            {/* Monte Carlo Simulation Button - Enhanced with Sparkles icon */}
-            <div className="mt-3">
-              <Button
-                variant={useAdvancedFoodSim ? "gradient" : "outline"}
-                color="warning"
-                size="sm"
-                className="w-full"
-                onClick={() => {
-                  setUseAdvancedFoodSim(!useAdvancedFoodSim);
-                  if (!useAdvancedFoodSim) {
-                    // When enabling advanced sim, navigate to food tab
-                    setTimeout(() => setActiveTab('food'), 300);
-                  }
-                }}
-              >
-                <Sparkles className="w-4 h-4 mr-1" />
-                {useAdvancedFoodSim ? 'Simulación Monte Carlo Activa' : 'Activar Simulación Monte Carlo'} 
-                <ChevronRight className="w-4 h-4 ml-1" />
-              </Button>
-            </div>
+          <div className="flex rounded shadow-sm">
+            <Button
+              variant="outline"
+              color="primary"
+              size="sm"
+              onClick={() => setFoodServingsPerPerson(Math.max(1, foodServingsPerPerson - 1))}
+              className="rounded-r-none"
+            >
+              -
+            </Button>
+            <input
+              type="text"
+              className="block w-full min-w-0 flex-1 text-center border-y border-gray-300 py-2 text-gray-900 focus:border-blue-500 focus:outline-none focus:ring-blue-500"
+              value={foodServingsPerPerson}
+              readOnly
+            />
+            <Button
+              variant="outline"
+              color="primary"
+              size="sm"
+              onClick={() => setFoodServingsPerPerson(foodServingsPerPerson + 1)}
+              className="rounded-l-none"
+            >
+              +
+            </Button>
+          </div>
+
+          {/* Monte Carlo Simulation Button */}
+          <div className="mt-3">
+            <Button
+              variant={useAdvancedFoodSim ? "gradient" : "outline"}
+              color="warning"
+              size="sm"
+              className="w-full"
+              onClick={() => {
+                setUseAdvancedFoodSim(!useAdvancedFoodSim);
+                if (!useAdvancedFoodSim) {
+                  setTimeout(() => setActiveTab('food'), 300);
+                }
+              }}
+            >
+              <Sparkles className="w-4 h-4 mr-1" />
+              {useAdvancedFoodSim ? 'Simulación Monte Carlo Activa' : 'Activar Simulación Monte Carlo'} 
+              <ChevronRight className="w-4 h-4 ml-1" />
+            </Button>
           </div>
         </div>
       </div>
