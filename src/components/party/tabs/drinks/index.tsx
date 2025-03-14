@@ -1,8 +1,7 @@
 "use client";
 
 import React from 'react';
-import { Wine } from 'lucide-react';
-import { useTheme } from '@/components/ui/ThemeProvider';
+// Remove Wine import since it's not used
 
 // Import components
 import MainHeader from './components/MainHeader';
@@ -15,11 +14,20 @@ import CostSavingTips from './components/CostSavingTips';
 // Import types
 import { ShoppingItem } from '@/types';
 
+interface DrinkRequirements {
+  hasEnoughSpirits: boolean;
+  hasEnoughMixers: boolean;
+  hasEnoughSupplies: boolean;
+  hasEnoughIce: boolean;
+  totalDrinks: number;
+  totalCost: number;
+}
+
 interface DrinksTabProps {
   attendees: number;
   drinksPerPerson: number;
   shoppingItems: ShoppingItem[];
-  calculateDrinkRequirements: () => any;
+  calculateDrinkRequirements: () => DrinkRequirements;
   getCategoryServings: (category: string) => number;
   getRecommendedUnits: (category: string, totalDrinks: number) => number;
 }
@@ -32,7 +40,6 @@ const DrinksTab: React.FC<DrinksTabProps> = ({
   getCategoryServings,
   getRecommendedUnits
 }) => {
-  const theme = useTheme();
   const drinkRequirements = calculateDrinkRequirements();
   
   // Filter drinks-related items

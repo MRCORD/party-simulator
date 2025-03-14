@@ -18,9 +18,7 @@ interface BasicViewProps {
   shoppingItems: ShoppingItem[];
   calculateFoodRequirements: () => FoodRequirements;
   getCategoryServings: (category: string) => number;
-  getRecommendedUnits: (category: string, totalServings: number) => number;
   toggleView: () => void;
-  setActiveTab: (tab: 'overview' | 'shopping' | 'drinks' | 'food' | 'venue' | 'reports') => void;
   itemRelationships?: { primaryItemId: string; secondaryItemId: string; ratio: number }[];
 }
 
@@ -30,9 +28,7 @@ const BasicView: React.FC<BasicViewProps> = ({
   shoppingItems,
   calculateFoodRequirements,
   getCategoryServings,
-  getRecommendedUnits,
   toggleView,
-  setActiveTab,
   itemRelationships = []
 }) => {
   const theme = useTheme();

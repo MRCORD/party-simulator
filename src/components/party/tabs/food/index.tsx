@@ -15,7 +15,6 @@ interface FoodTabProps {
   getRecommendedUnits: (category: string, totalServings: number) => number;
   useAdvancedFoodSim: boolean;
   setUseAdvancedFoodSim: (value: boolean) => void;
-  simulationResults?: Record<string, any>;
   setActiveTab: (tab: 'overview' | 'shopping' | 'drinks' | 'food' | 'venue' | 'reports') => void;
 }
 
@@ -28,7 +27,6 @@ const FoodTab: React.FC<FoodTabProps> = ({
   getRecommendedUnits,
   useAdvancedFoodSim,
   setUseAdvancedFoodSim,
-  simulationResults,
   setActiveTab
 }) => {
   const [showSimpleView, setShowSimpleView] = useState(true);
@@ -55,9 +53,7 @@ const FoodTab: React.FC<FoodTabProps> = ({
           shoppingItems={shoppingItems}
           calculateFoodRequirements={calculateFoodRequirements}
           getCategoryServings={getCategoryServings}
-          getRecommendedUnits={getRecommendedUnits}
           toggleView={toggleView}
-          setActiveTab={setActiveTab}
           itemRelationships={itemRelationships}
         />
       ) : (

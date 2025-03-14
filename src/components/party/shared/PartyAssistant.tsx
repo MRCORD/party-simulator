@@ -18,12 +18,9 @@ export default function PartyAssistant() {
     perPersonCost,
     recommendedTicketPrice,
     breakEvenAttendees,
-    shoppingItems,
     drinksPerPerson,
-    foodServingsPerPerson,
     calculateDrinkRequirements,
     calculateFoodRequirements,
-    getCategoryServings
   } = usePartyStore();
 
   // Generate insights based on the current party data
