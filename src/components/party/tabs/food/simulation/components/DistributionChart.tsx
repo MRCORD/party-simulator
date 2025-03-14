@@ -1,7 +1,7 @@
 import React from 'react';
 import {
-  BarChart, Bar, XAxis, YAxis, CartesianGrid, 
-  Tooltip, ResponsiveContainer, Cell, ReferenceLine
+  AreaChart, Area, XAxis, YAxis, CartesianGrid, 
+  Tooltip, ResponsiveContainer, ReferenceLine
 } from 'recharts';
 import { DistributionBin } from '@/types/simulator';
 
@@ -14,26 +14,44 @@ const DistributionChart: React.FC<DistributionChartProps> = ({ data }) => {
   const chartData = data.map((bin) => ({
     range: `${bin.min.toFixed(0)}-${bin.max.toFixed(0)}`,
     frequency: bin.count,
-    isRecommended: bin.containsRecommendation
+    isRecommended: bin.containsRecommendation,
+    // Use midpoint for smoother curve
+    x: (bin.min + bin.max) / 2
   }));
+
+  // Find max frequency for scaling
+  const maxFrequency = Math.max(...chartData.map(d => d.frequency));
 
   return (
     <div className="mb-4">
       <h5 className="font-medium text-gray-700 mb-3">Distribución de Consumo</h5>
       <div className="bg-white h-64">
         <ResponsiveContainer width="100%" height="100%">
-          <BarChart
+          <AreaChart
             data={chartData}
             margin={{ top: 5, right: 30, left: 20, bottom: 25 }}
           >
+            <defs>
+              <linearGradient id="colorFreq" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="5%" stopColor="#8884d8" stopOpacity={0.8}/>
+                <stop offset="95%" stopColor="#8884d8" stopOpacity={0.2}/>
+              </linearGradient>
+              <linearGradient id="colorRec" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="5%" stopColor="#f59e0b" stopOpacity={0.8}/>
+                <stop offset="95%" stopColor="#f59e0b" stopOpacity={0.2}/>
+              </linearGradient>
+            </defs>
             <CartesianGrid strokeDasharray="3 3" />
             <XAxis 
-              dataKey="range" 
-              angle={-45} 
-              textAnchor="end" 
-              height={50}
-              interval={0}
-              tick={{ fontSize: 10 }}
+              dataKey="x"
+              type="number"
+              domain={['auto', 'auto']}
+              tickFormatter={(value) => value.toFixed(0)}
+              label={{
+                value: 'Porciones',
+                position: 'insideBottom',
+                offset: -15
+              }}
             />
             <YAxis 
               label={{ 
@@ -41,24 +59,39 @@ const DistributionChart: React.FC<DistributionChartProps> = ({ data }) => {
                 angle: -90, 
                 position: 'insideLeft',
                 style: { textAnchor: 'middle' }
-              }} 
+              }}
             />
-            <Tooltip formatter={(value: any) => [`${value} simulaciones`, 'Frecuencia']} />
-            <Bar dataKey="frequency" fill="#8884d8">
-              {chartData.map((entry, index) => (
-                <Cell 
-                  key={`cell-${index}`} 
-                  fill={entry.isRecommended ? '#f59e0b' : '#8884d8'} 
-                />
-              ))}
-            </Bar>
-            <ReferenceLine x={0} stroke="#666" />
-            <ReferenceLine y={0} stroke="#666" />
-          </BarChart>
+            <Tooltip 
+              formatter={(value: any) => [`${value} simulaciones`, 'Frecuencia']}
+              labelFormatter={(value) => `${value} porciones`}
+            />
+            <Area
+              type="monotone"
+              dataKey="frequency"
+              stroke="#8884d8"
+              fillOpacity={1}
+              fill="url(#colorFreq)"
+              dot={false}
+              isAnimationActive={true}
+            />
+            {chartData.some(d => d.isRecommended) && (
+              <ReferenceLine
+                x={chartData.find(d => d.isRecommended)?.x}
+                stroke="#f59e0b"
+                strokeWidth={2}
+                strokeDasharray="3 3"
+                label={{
+                  value: 'Recomendado',
+                  position: 'top',
+                  fill: '#f59e0b'
+                }}
+              />
+            )}
+          </AreaChart>
         </ResponsiveContainer>
       </div>
       <p className="text-xs text-gray-500 mt-2 text-center">
-        Las barras amarillas indican el rango donde se encuentra la recomendación de confianza.
+        La línea punteada amarilla indica el valor recomendado según el nivel de confianza seleccionado.
       </p>
     </div>
   );

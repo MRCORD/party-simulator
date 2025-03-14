@@ -205,6 +205,7 @@ const FoodSimulator: React.FC<FoodSimulatorProps> = ({
           shoppingItems={shoppingItems}
           attendees={attendees}
           applySimulationRecommendations={applySimulationRecommendations}
+          confidenceLevel={confidenceLevel}
         />
       )}
       

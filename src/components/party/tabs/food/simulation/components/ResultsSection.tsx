@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { 
   BarChart4, Info, CheckCircle, AlertCircle, 
-  Save, Beef, Salad, UtensilsCrossed
+  Save, Beef, Salad, UtensilsCrossed, ChevronDown
 } from 'lucide-react';
 import Badge from '@/components/ui/Badge';
 import Button from '@/components/ui/Button';
@@ -14,17 +14,20 @@ interface ResultsSectionProps {
   shoppingItems: ShoppingItem[];
   attendees: number;
   applySimulationRecommendations: () => void;
+  confidenceLevel: number;
 }
 
 const ResultsSection: React.FC<ResultsSectionProps> = ({
   simulationResults,
   shoppingItems,
   attendees,
-  applySimulationRecommendations
+  applySimulationRecommendations,
+  confidenceLevel
 }) => {
   const [showDetailedResults, setShowDetailedResults] = useState(false);
   const [highlightedItemId, setHighlightedItemId] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [showDistributions, setShowDistributions] = useState(false);
 
   useEffect(() => {
     // Show loading state for 1 second
@@ -222,7 +225,7 @@ const ResultsSection: React.FC<ResultsSectionProps> = ({
                   Alimento
                 </th>
                 <th scope="col" className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Porciones (95%)
+                  Porciones ({confidenceLevel}%)
                 </th>
                 <th scope="col" className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Unidades Necesarias
@@ -414,6 +417,46 @@ const ResultsSection: React.FC<ResultsSectionProps> = ({
           </div>
         )}
         
+        {/* Distribution Charts Section */}
+        <div className="border-t border-gray-200 mt-6">
+          <button
+            onClick={() => setShowDistributions(!showDistributions)}
+            className="w-full px-6 py-4 flex items-center justify-between text-left hover:bg-gray-50 transition-colors"
+          >
+            <div className="flex items-center">
+              <BarChart4 className="w-5 h-5 text-primary mr-2" />
+              <span className="font-medium text-gray-900">
+                Ver Distribuciones de Consumo
+              </span>
+            </div>
+            <div className={`transform transition-transform ${showDistributions ? 'rotate-180' : ''}`}>
+              <ChevronDown className="w-5 h-5 text-gray-500" />
+            </div>
+          </button>
+          
+          {showDistributions && (
+            <div className="px-6 py-4 border-t border-gray-200">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {getSelectedItemsWithResults().map(({ item, result }) => (
+                  <div key={item.id} className="bg-gray-50 rounded-lg p-4">
+                    <div className="mb-3">
+                      <h4 className="font-medium text-gray-900">{item.name}</h4>
+                      <p className="text-sm text-gray-500">
+                        {formatCategory(item.category)} • {item.servings} porciones/unidad
+                      </p>
+                    </div>
+                    <DistributionChart data={result.distribution} />
+                  </div>
+                ))}
+              </div>
+              <p className="text-xs text-gray-500 text-center mt-4">
+                Las distribuciones muestran la frecuencia de cada rango de consumo en las simulaciones.
+                Las barras amarillas indican el rango donde se encuentra la recomendación con el nivel de confianza seleccionado.
+              </p>
+            </div>
+          )}
+        </div>
+
         {/* Apply to Shopping List Button */}
         <div className="flex justify-center">
           <Button
