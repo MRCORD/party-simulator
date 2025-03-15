@@ -7,7 +7,7 @@ export interface ShoppingItem {
     id: string;
     name: string;
     url?: string; // Optional URL field
-    category: 'spirits' | 'mixers' | 'ice' | 'meat' | 'sides' | 'condiments' | 'supplies' | 'other';
+    category: 'spirits' | 'mixers' | 'ice' | 'meat' | 'sides' | 'condiments' | 'supplies' | 'other' | 'beer' | 'wine';
     cost: number;
     units: number;
     size: string;
