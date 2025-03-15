@@ -184,7 +184,7 @@ const ItemList: React.FC<ItemListProps> = ({
                   </Button>
                   <Button 
                     variant="ghost"
-                    color="error"
+                    color="danger"
                     size="sm"
                     onClick={() => deleteItem(item.id)}
                   >
