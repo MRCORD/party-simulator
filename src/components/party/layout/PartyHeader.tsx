@@ -1,11 +1,7 @@
 import React from 'react';
 import { Sparkles } from 'lucide-react';
 import StatusPills from './StatusPills';
-
-interface ItemRelationship {
-  itemId: string;
-  relatedItems: string[];
-}
+import { ItemRelationship } from '@/types/shopping';
 
 interface PartyHeaderProps {
   attendees: number;

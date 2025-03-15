@@ -1,10 +1,6 @@
 import React from 'react';
 import { Users, CheckCircle, AlertCircle, Utensils, Link } from 'lucide-react';
-
-interface ItemRelationship {
-  itemId: string;
-  relatedItems: string[];
-}
+import { ItemRelationship } from '@/types/shopping';
 
 interface StatusPillsProps {
   attendees: number;
