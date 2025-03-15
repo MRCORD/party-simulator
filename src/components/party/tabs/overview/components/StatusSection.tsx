@@ -53,6 +53,16 @@ const StatusSection: React.FC<StatusSectionProps> = ({
   const viabilityPercentage = isViable ? 100 : 
     Math.min(100, ((ticketPricePercentage + attendancePercentage) / 2));
   
+  const handleDrinkSimClick = () => {
+    setUseAdvancedDrinkSim(!useAdvancedDrinkSim);
+    setActiveTab('drinks');
+  };
+
+  const handleFoodSimClick = () => {
+    setUseAdvancedFoodSim(!useAdvancedFoodSim);
+    setActiveTab('food');
+  };
+
   return (
     <div className="bg-white rounded-lg border border-gray-200 p-4">
       <div className="flex items-center mb-4">
@@ -63,10 +73,13 @@ const StatusSection: React.FC<StatusSectionProps> = ({
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         {/* Drinks Status */}
         <div className="rounded overflow-hidden border border-gray-200">
-          <div className={`${useAdvancedDrinkSim 
-            ? theme.getGradient('primary') 
-            : theme.getGradient('primary')
-          } text-white px-3 py-2 flex items-center justify-between`}>
+          <div 
+            className={`${useAdvancedDrinkSim 
+              ? theme.getGradient('primary') 
+              : theme.getGradient('primary')
+            } text-white px-3 py-2 flex items-center justify-between cursor-pointer hover:opacity-90`}
+            onClick={handleDrinkSimClick}
+          >
             <div className="flex items-center">
               <Wine className="w-4 h-4 mr-2" />
               <span className="font-medium">Estado de Bebidas</span>
@@ -120,10 +133,13 @@ const StatusSection: React.FC<StatusSectionProps> = ({
         
         {/* Food Status */}
         <div className="rounded overflow-hidden border border-gray-200">
-          <div className={`${useAdvancedFoodSim 
-            ? theme.getGradient('warning') 
-            : theme.getGradient('success')
-          } text-white px-3 py-2 flex items-center justify-between`}>
+          <div 
+            className={`${useAdvancedFoodSim 
+              ? theme.getGradient('warning') 
+              : theme.getGradient('success')
+            } text-white px-3 py-2 flex items-center justify-between cursor-pointer hover:opacity-90`}
+            onClick={handleFoodSimClick}
+          >
             <div className="flex items-center">
               <Utensils className="w-4 h-4 mr-2" />
               <span className="font-medium">Estado de Comida</span>
