@@ -3,7 +3,7 @@ import { Link, Trash2, Plus, Info, Zap, ShoppingBag, Coffee } from 'lucide-react
 import Button from '@/components/ui/Button';
 import Badge from '@/components/ui/Badge';
 import Select from '@/components/ui/Select';
-import { ShoppingItem, ItemRelationship } from '../types';
+import { ShoppingItem, ItemRelationship } from '@/types';
 
 // Define props interface
 interface ComplementaryItemsManagerProps {

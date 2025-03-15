@@ -1,4 +1,4 @@
-import { ShoppingItem, EaterProfile } from '../types';
+import { ShoppingItem, EaterProfile } from '@/types';
 
 /**
  * Default values for new shopping items
