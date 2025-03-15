@@ -200,7 +200,7 @@ export default function PartySimulator() {
       drinkerProfiles={drinkerProfiles}
       drinkConfidenceLevel={drinkConfidenceLevel}
       drinkSimulationCount={drinkSimulationCount}
-      eventFactors={eventFactors}
+      eventFactors={eventFactors as EventFactors}
       timePeriods={timePeriods}
       setDrinkConfidenceLevel={setDrinkConfidenceLevel}
       setDrinkSimulationCount={setDrinkSimulationCount}
