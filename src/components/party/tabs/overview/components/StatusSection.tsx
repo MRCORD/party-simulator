@@ -121,7 +121,7 @@ const StatusSection: React.FC<StatusSectionProps> = ({
                 <Button
                   variant="outline"
                   color="primary"
-                  size="xs"
+                  size="sm"
                   className="w-full"
                   onClick={() => {
                     setUseAdvancedDrinkSim(true);
@@ -188,7 +188,7 @@ const StatusSection: React.FC<StatusSectionProps> = ({
                 <Button
                   variant="outline"
                   color="warning"
-                  size="xs"
+                  size="sm"
                   className="w-full"
                   onClick={() => {
                     setUseAdvancedFoodSim(true);
