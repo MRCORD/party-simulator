@@ -13,6 +13,8 @@ interface ParametersCardProps {
   setFoodServingsPerPerson: (value: number) => void;
   useAdvancedFoodSim: boolean;
   setUseAdvancedFoodSim: (value: boolean) => void;
+  useAdvancedDrinkSim: boolean;
+  setUseAdvancedDrinkSim: (value: boolean) => void;
   setActiveTab: (tab: 'overview' | 'shopping' | 'drinks' | 'food' | 'venue' | 'reports') => void;
 }
 
@@ -27,6 +29,8 @@ const ParametersCard: React.FC<ParametersCardProps> = ({
   setFoodServingsPerPerson,
   useAdvancedFoodSim,
   setUseAdvancedFoodSim,
+  useAdvancedDrinkSim,
+  setUseAdvancedDrinkSim,
   setActiveTab
 }) => {
   return (
@@ -104,6 +108,26 @@ const ParametersCard: React.FC<ParametersCardProps> = ({
               +
             </Button>
           </div>
+          
+          {/* Monte Carlo Drink Simulation Button */}
+          <div className="mt-3">
+            <Button
+              variant={useAdvancedDrinkSim ? "gradient" : "outline"}
+              color="primary"
+              size="sm"
+              className="w-full"
+              onClick={() => {
+                setUseAdvancedDrinkSim(!useAdvancedDrinkSim);
+                if (!useAdvancedDrinkSim) {
+                  setTimeout(() => setActiveTab('drinks'), 300);
+                }
+              }}
+            >
+              <Sparkles className="w-4 h-4 mr-1" />
+              {useAdvancedDrinkSim ? 'Simulación de Bebidas Activa' : 'Activar Simulación de Bebidas'} 
+              <ChevronRight className="w-4 h-4 ml-1" />
+            </Button>
+          </div>
         </div>
         
         <div>
@@ -136,8 +160,8 @@ const ParametersCard: React.FC<ParametersCardProps> = ({
               +
             </Button>
           </div>
-
-          {/* Monte Carlo Simulation Button */}
+          
+          {/* Monte Carlo Food Simulation Button */}
           <div className="mt-3">
             <Button
               variant={useAdvancedFoodSim ? "gradient" : "outline"}

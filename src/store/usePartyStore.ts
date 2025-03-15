@@ -4,6 +4,13 @@ import { ShoppingItem, ItemRelationship } from '@/types/shopping';
 import { Category } from '@/types/party'; 
 import { EaterProfile, SimulationResult } from '@/types/simulator';
 import { runMonteCarlo } from '@/utils/simulationUtils';
+import type { 
+  DrinkerProfile, 
+  EventFactors, 
+  TimePeriod, 
+  DrinkSimulationResult,
+  DrinkSimulationConfig
+} from '@/types/drinks';
 
 // Define the store state type
 interface PartyState {
@@ -46,6 +53,16 @@ interface PartyState {
   useAdvancedFoodSim: boolean;
   simulationResults: Record<string, SimulationResult>;
   simulationRun: boolean;
+
+  // Drink Simulator State
+  useAdvancedDrinkSim: boolean;
+  drinkerProfiles: DrinkerProfile[];
+  drinkSimulationCount: number;
+  drinkConfidenceLevel: number;
+  eventFactors: EventFactors;
+  timePeriods: TimePeriod[];
+  drinkSimulationResults: Record<string, DrinkSimulationResult>;
+  drinkSimulationRun: boolean;
 
   // Actions
   setActiveTab: (tab: 'overview' | 'shopping' | 'drinks' | 'food' | 'venue' | 'reports') => void;
@@ -112,6 +129,16 @@ interface PartyState {
   setUseAdvancedFoodSim: (value: boolean) => void;
   runFoodSimulation: (selectedFoodItems?: string[]) => void;
   applySimulationRecommendations: () => void;
+
+  // Drink simulator actions
+  setUseAdvancedDrinkSim: (value: boolean) => void;
+  setDrinkConfidenceLevel: (level: number) => void;
+  setDrinkSimulationCount: (count: number) => void;
+  updateDrinkerProfile: (index: number, field: keyof DrinkerProfile, value: number | boolean) => void;
+  updateEventFactors: (factors: Partial<EventFactors>) => void;
+  updateTimePeriod: (index: number, field: keyof TimePeriod, value: number) => void;
+  runDrinkSimulation: (selectedDrinkItems?: string[]) => void;
+  applyDrinkSimulationRecommendations: () => void;
 }
 
 // Create the store with persist middleware
@@ -206,6 +233,30 @@ export const usePartyStore = create<PartyState>()(
       useAdvancedFoodSim: false,
       simulationResults: {},
       simulationRun: false,
+
+      // Drink Simulator State
+      useAdvancedDrinkSim: false,
+      drinkerProfiles: [
+        { name: "No Bebedor", percentage: 10, alcoholicDrinksMultiplier: 0, nonAlcoholicDrinksMultiplier: 2.0 },
+        { name: "Bebedor Ligero", percentage: 30, alcoholicDrinksMultiplier: 0.7, nonAlcoholicDrinksMultiplier: 1.5 },
+        { name: "Bebedor Social", percentage: 40, alcoholicDrinksMultiplier: 1.0, nonAlcoholicDrinksMultiplier: 1.0 },
+        { name: "Bebedor Intenso", percentage: 20, alcoholicDrinksMultiplier: 1.5, nonAlcoholicDrinksMultiplier: 0.7 }
+      ],
+      drinkSimulationCount: 1000,
+      drinkConfidenceLevel: 95,
+      eventFactors: {
+        duration: 5,
+        temperature: 'cool',
+        eventType: 'casual',
+        isOutdoor: false
+      },
+      timePeriods: [
+        { name: "Inicio", durationPercentage: 25, consumptionFactor: 0.7 },
+        { name: "Pico", durationPercentage: 50, consumptionFactor: 1.3 },
+        { name: "Final", durationPercentage: 25, consumptionFactor: 0.8 }
+      ],
+      drinkSimulationResults: {},
+      drinkSimulationRun: false,
 
       // UI Actions
       setActiveTab: (tab) => set({ activeTab: tab }),
@@ -588,7 +639,29 @@ export const usePartyStore = create<PartyState>()(
             ],
             useAdvancedFoodSim: false,
             simulationResults: {},
-            simulationRun: false
+            simulationRun: false,
+            useAdvancedDrinkSim: false,
+            drinkerProfiles: [
+              { name: "No Bebedor", percentage: 10, alcoholicDrinksMultiplier: 0, nonAlcoholicDrinksMultiplier: 2.0 },
+              { name: "Bebedor Ligero", percentage: 30, alcoholicDrinksMultiplier: 0.7, nonAlcoholicDrinksMultiplier: 1.5 },
+              { name: "Bebedor Social", percentage: 40, alcoholicDrinksMultiplier: 1.0, nonAlcoholicDrinksMultiplier: 1.0 },
+              { name: "Bebedor Intenso", percentage: 20, alcoholicDrinksMultiplier: 1.5, nonAlcoholicDrinksMultiplier: 0.7 }
+            ],
+            drinkConfidenceLevel: 95,
+            drinkSimulationCount: 1000,
+            eventFactors: {
+              duration: 5,
+              temperature: 'cool',
+              eventType: 'casual',
+              isOutdoor: false
+            },
+            timePeriods: [
+              { name: "Inicio", durationPercentage: 25, consumptionFactor: 0.7 },
+              { name: "Pico", durationPercentage: 50, consumptionFactor: 1.3 },
+              { name: "Final", durationPercentage: 25, consumptionFactor: 0.8 }
+            ],
+            drinkSimulationResults: {},
+            drinkSimulationRun: false
           });
           get().updateFinancials();
         }
@@ -662,6 +735,117 @@ export const usePartyStore = create<PartyState>()(
         // Update the units for each item that has a simulation result
         const updatedItems = shoppingItems.map(item => {
           const result = simulationResults[item.id];
+          if (!result) return item;
+          
+          return {
+            ...item,
+            units: result.recommendedUnits,
+            totalCost: result.totalCost
+          };
+        });
+        
+        set({ shoppingItems: updatedItems });
+        get().updateFinancials();
+      },
+
+      // Drink simulator actions
+      setUseAdvancedDrinkSim: (value) => set({ useAdvancedDrinkSim: value }),
+
+      setDrinkConfidenceLevel: (level) => set({ drinkConfidenceLevel: level }),
+
+      setDrinkSimulationCount: (count) => set({ drinkSimulationCount: count }),
+
+      updateDrinkerProfile: (index, field, value) => {
+        const profiles = [...get().drinkerProfiles];
+        if (profiles[index]) {
+          profiles[index] = { 
+            ...profiles[index], 
+            [field]: value 
+          };
+          set({ drinkerProfiles: profiles });
+        }
+      },
+
+      updateEventFactors: (factors) => {
+        set({
+          eventFactors: {
+            ...get().eventFactors,
+            ...factors
+          }
+        });
+      },
+
+      updateTimePeriod: (index, field, value) => {
+        const periods = [...get().timePeriods];
+        if (periods[index]) {
+          periods[index] = {
+            ...periods[index],
+            [field]: value
+          };
+          set({ timePeriods: periods });
+        }
+      },
+
+      runDrinkSimulation: (selectedDrinkItems) => {
+        const { 
+          attendees, 
+          drinkerProfiles, 
+          drinkConfidenceLevel, 
+          drinkSimulationCount,
+          shoppingItems,
+          eventFactors,
+          timePeriods,
+          itemRelationships
+        } = get();
+        
+        // Filter drink items if a specific selection is provided
+        let drinkItems = shoppingItems.filter(item => 
+          ['spirits', 'mixers', 'ice', 'supplies', 'beer', 'wine'].includes(item.category)
+        );
+        
+        if (selectedDrinkItems && selectedDrinkItems.length > 0) {
+          drinkItems = drinkItems.filter(item => selectedDrinkItems.includes(item.id));
+        }
+        
+        // Filter relationships to only include selected items
+        const relevantRelationships = itemRelationships.filter(rel => {
+          const isPrimarySelected = drinkItems.some(item => item.id === rel.primaryItemId);
+          const isSecondarySelected = drinkItems.some(item => item.id === rel.secondaryItemId);
+          return isPrimarySelected || isSecondarySelected;
+        });
+        
+        // Prepare the simulation config
+        const config = {
+          attendees,
+          drinkerProfiles,
+          drinkItems,
+          eventFactors,
+          timePeriods,
+          itemRelationships: relevantRelationships,
+          confidenceLevel: drinkConfidenceLevel,
+          simulationCount: drinkSimulationCount
+        };
+        
+        // Run the Monte Carlo simulation
+        // Import the simulation function
+        import('@/utils/drinkSimulationUtils').then(({ runDrinkMonteCarlo }) => {
+          const results = runDrinkMonteCarlo(config);
+          
+          set({ 
+            drinkSimulationResults: results,
+            drinkSimulationRun: true
+          });
+        });
+      },
+
+      applyDrinkSimulationRecommendations: () => {
+        const { drinkSimulationResults, shoppingItems } = get();
+        
+        if (Object.keys(drinkSimulationResults).length === 0) return;
+        
+        // Update the units for each item that has a simulation result
+        const updatedItems = shoppingItems.map(item => {
+          const result = drinkSimulationResults[item.id];
           if (!result) return item;
           
           return {

@@ -26,6 +26,8 @@ interface StatusSectionProps {
   getCategoryServings: (category: string) => number;
   useAdvancedFoodSim: boolean;
   setUseAdvancedFoodSim: (value: boolean) => void;
+  useAdvancedDrinkSim: boolean;
+  setUseAdvancedDrinkSim: (value: boolean) => void;
   setActiveTab: (tab: 'overview' | 'shopping' | 'drinks' | 'food' | 'venue' | 'reports') => void;
 }
 
@@ -40,6 +42,8 @@ const StatusSection: React.FC<StatusSectionProps> = ({
   getCategoryServings,
   useAdvancedFoodSim,
   setUseAdvancedFoodSim,
+  useAdvancedDrinkSim,
+  setUseAdvancedDrinkSim,
   setActiveTab
 }) => {
   const theme = useTheme();
@@ -60,9 +64,20 @@ const StatusSection: React.FC<StatusSectionProps> = ({
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         {/* Drinks Status */}
         <div className="rounded overflow-hidden border border-gray-200">
-          <div className={`${theme.getGradient('primary')} text-white px-3 py-2 flex items-center`}>
-            <Wine className="w-4 h-4 mr-2" />
-            <span className="font-medium">Estado de Bebidas</span>
+          <div className={`${useAdvancedDrinkSim 
+            ? theme.getGradient('primary') 
+            : theme.getGradient('primary')
+          } text-white px-3 py-2 flex items-center justify-between`}>
+            <div className="flex items-center">
+              <Wine className="w-4 h-4 mr-2" />
+              <span className="font-medium">Estado de Bebidas</span>
+            </div>
+            {useAdvancedDrinkSim && (
+              <span className="text-xs bg-white/20 px-2 py-0.5 rounded-full flex items-center">
+                <Sparkles className="w-3 h-3 mr-1" />
+                Monte Carlo
+              </span>
+            )}
           </div>
           <div className="p-3">
             <StatusRow 
@@ -93,6 +108,31 @@ const StatusSection: React.FC<StatusSectionProps> = ({
               total={drinkRequirements.totalDrinks} 
               isOk={drinkRequirements.hasEnoughSupplies} 
             />
+            {useAdvancedDrinkSim && (
+              <div className="mt-2 bg-primary-light/50 p-2 rounded text-xs text-primary-dark">
+                <div className="flex items-center">
+                  <Sparkles className="w-3 h-3 mr-1 flex-shrink-0" />
+                  <span>La simulación Monte Carlo está activa. Ver pestaña Bebidas.</span>
+                </div>
+              </div>
+            )}
+            {!useAdvancedDrinkSim && (
+              <div className="mt-2">
+                <Button
+                  variant="outline"
+                  color="primary"
+                  size="xs"
+                  className="w-full"
+                  onClick={() => {
+                    setUseAdvancedDrinkSim(true);
+                    setTimeout(() => setActiveTab('drinks'), 300);
+                  }}
+                >
+                  <Sparkles className="w-3 h-3 mr-1" />
+                  Activar Simulación Monte Carlo
+                </Button>
+              </div>
+            )}
           </div>
         </div>
         
@@ -141,6 +181,23 @@ const StatusSection: React.FC<StatusSectionProps> = ({
                   <Sparkles className="w-3 h-3 mr-1 flex-shrink-0" />
                   <span>La simulación Monte Carlo está activa. Ver pestaña Comida.</span>
                 </div>
+              </div>
+            )}
+            {!useAdvancedFoodSim && (
+              <div className="mt-2">
+                <Button
+                  variant="outline"
+                  color="warning"
+                  size="xs"
+                  className="w-full"
+                  onClick={() => {
+                    setUseAdvancedFoodSim(true);
+                    setTimeout(() => setActiveTab('food'), 300);
+                  }}
+                >
+                  <Sparkles className="w-3 h-3 mr-1" />
+                  Activar Simulación Monte Carlo
+                </Button>
               </div>
             )}
           </div>

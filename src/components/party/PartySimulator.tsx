@@ -56,6 +56,25 @@ export default function PartySimulator() {
     setUseAdvancedFoodSim,
     simulationResults,
 
+    // Drink Simulator state
+    useAdvancedDrinkSim,
+    drinkerProfiles,
+    drinkConfidenceLevel,
+    drinkSimulationCount,
+    eventFactors,
+    timePeriods,
+    drinkSimulationResults,
+    
+    // Drink simulator actions
+    setUseAdvancedDrinkSim,
+    setDrinkConfidenceLevel,
+    setDrinkSimulationCount,
+    updateDrinkerProfile,
+    updateEventFactors,
+    updateTimePeriod,
+    runDrinkSimulation,
+    applyDrinkSimulationRecommendations,
+
     // Constants
     categories,
     sizeUnits,
@@ -138,6 +157,8 @@ export default function PartySimulator() {
       getCategoryServings={getCategoryServings}
       useAdvancedFoodSim={useAdvancedFoodSim}
       setUseAdvancedFoodSim={setUseAdvancedFoodSim}
+      useAdvancedDrinkSim={useAdvancedDrinkSim}
+      setUseAdvancedDrinkSim={setUseAdvancedDrinkSim}
       setActiveTab={setActiveTab}
     />,
     
@@ -172,6 +193,10 @@ export default function PartySimulator() {
       calculateDrinkRequirements={calculateDrinkRequirements}
       getCategoryServings={getCategoryServings}
       getRecommendedUnits={getRecommendedUnits}
+      useAdvancedDrinkSim={useAdvancedDrinkSim}
+      setUseAdvancedDrinkSim={setUseAdvancedDrinkSim}
+      drinkSimulationResults={drinkSimulationResults}
+      setActiveTab={setActiveTab}
     />,
     
     // Food Tab
@@ -246,6 +271,7 @@ export default function PartySimulator() {
           ticketPrice={ticketPrice}
           isViable={isViable}
           useAdvancedFoodSim={useAdvancedFoodSim}
+          useAdvancedDrinkSim={useAdvancedDrinkSim}
           itemRelationships={itemRelationships}
           resetAllData={resetAllData}
         />

@@ -8,6 +8,7 @@ interface PartyHeaderProps {
   ticketPrice: number;
   isViable: boolean;
   useAdvancedFoodSim: boolean;
+  useAdvancedDrinkSim: boolean;
   itemRelationships: ItemRelationship[];
   resetAllData: () => void;
 }
@@ -17,6 +18,7 @@ const PartyHeader: React.FC<PartyHeaderProps> = ({
   ticketPrice,
   isViable,
   useAdvancedFoodSim,
+  useAdvancedDrinkSim,
   itemRelationships,
   resetAllData
 }) => {
@@ -55,6 +57,7 @@ const PartyHeader: React.FC<PartyHeaderProps> = ({
           ticketPrice={ticketPrice}
           isViable={isViable}
           useAdvancedFoodSim={useAdvancedFoodSim}
+          useAdvancedDrinkSim={useAdvancedDrinkSim}
           itemRelationships={itemRelationships}
         />
       </div>

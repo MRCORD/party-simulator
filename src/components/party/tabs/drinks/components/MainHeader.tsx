@@ -1,6 +1,7 @@
 import React from 'react';
-import { Wine, Users } from 'lucide-react';
+import { Wine, Users, Sparkles } from 'lucide-react';
 import { useTheme } from '@/components/ui/ThemeProvider';
+import Button from '@/components/ui/Button';
 
 interface MainHeaderProps {
   attendees: number;
@@ -9,21 +10,36 @@ interface MainHeaderProps {
     totalDrinks: number;
     totalCost: number;
   };
+  toggleView: () => void;
 }
 
 const MainHeader: React.FC<MainHeaderProps> = ({
   attendees,
   drinksPerPerson,
-  drinkRequirements
+  drinkRequirements,
+  toggleView
 }) => {
   const theme = useTheme();
   
   return (
     <div className="bg-white rounded-xl shadow-lg overflow-hidden">
       <div className={`${theme.getGradient('primary')} p-5 text-white`}>
-        <div className="flex items-center">
-          <Wine className="w-6 h-6 mr-3" />
-          <h2 className="text-xl font-bold">Planificación de Bebidas</h2>
+        <div className="flex items-center justify-between">
+          <div className="flex items-center">
+            <Wine className="w-6 h-6 mr-3" />
+            <h2 className="text-xl font-bold">Planificación de Bebidas</h2>
+          </div>
+          
+          {/* Toggle button to switch to advanced simulation */}
+          <Button 
+            variant="outline" 
+            color="primary"
+            onClick={toggleView}
+            className="bg-white/10 hover:bg-white/20 text-white border-white/30"
+          >
+            <Sparkles size={18} className="mr-2" />
+            Usar Simulación Avanzada
+          </Button>
         </div>
         
         {/* Key metrics */}

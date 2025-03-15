@@ -1,5 +1,5 @@
 import React from 'react';
-import { Users, CheckCircle, AlertCircle, Utensils, Link } from 'lucide-react';
+import { Users, CheckCircle, AlertCircle, Utensils, Link, Wine } from 'lucide-react';
 import { ItemRelationship } from '@/types/shopping';
 
 interface StatusPillsProps {
@@ -7,6 +7,7 @@ interface StatusPillsProps {
   ticketPrice: number;
   isViable: boolean;
   useAdvancedFoodSim: boolean;
+  useAdvancedDrinkSim: boolean;
   itemRelationships: ItemRelationship[];
 }
 
@@ -15,6 +16,7 @@ const StatusPills: React.FC<StatusPillsProps> = ({
   ticketPrice,
   isViable,
   useAdvancedFoodSim,
+  useAdvancedDrinkSim,
   itemRelationships
 }) => {
   return (
@@ -44,6 +46,14 @@ const StatusPills: React.FC<StatusPillsProps> = ({
         <div className="bg-warning/80 px-4 py-2 rounded-full flex items-center">
           <Utensils size={16} className="mr-2" />
           <span>Simulación de Comida Avanzada</span>
+        </div>
+      )}
+      
+      {/* Advanced drink simulation pill - conditionally shown */}
+      {useAdvancedDrinkSim && (
+        <div className="bg-primary/80 px-4 py-2 rounded-full flex items-center">
+          <Wine size={16} className="mr-2" />
+          <span>Simulación de Bebidas Avanzada</span>
         </div>
       )}
       

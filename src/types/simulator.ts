@@ -82,7 +82,7 @@ export interface SimulationCountOption {
 }
 
 /**
- * Props for the simulator component
+ * Props for the food simulator component
  */
 export interface FoodSimulatorProps {
   attendees: number;
@@ -102,4 +102,79 @@ export interface FoodSimulatorProps {
   toggleView: () => void;
   setActiveTab: (tab: 'overview' | 'shopping' | 'drinks' | 'food' | 'venue' | 'reports') => void;
   integratedMode?: boolean;
+}
+
+/**
+ * Represents a drinker profile for drink simulation
+ */
+export interface DrinkerProfile {
+  name: string;
+  percentage: number;
+  alcoholicDrinksMultiplier: number;
+  nonAlcoholicDrinksMultiplier: number;
+  prefersBeer?: boolean;
+  prefersSpirits?: boolean;
+  prefersWine?: boolean;
+}
+
+/**
+ * Event factors that affect drink consumption
+ */
+export interface EventFactors {
+  duration: number; // hours
+  temperature: 'cold' | 'moderate' | 'hot';
+  eventType: 'casual' | 'formal' | 'party';
+  isOutdoor: boolean;
+}
+
+/**
+ * Time period during the event with its own consumption characteristics
+ */
+export interface TimePeriod {
+  name: string;
+  durationPercentage: number; // percentage of total duration
+  consumptionFactor: number; // multiplier for consumption rate
+}
+
+/**
+ * Configuration for a Monte Carlo drink simulation run
+ */
+export interface DrinkSimulationConfig {
+  attendees: number;
+  drinkerProfiles: DrinkerProfile[];
+  drinkItems: ShoppingItem[];
+  eventFactors: EventFactors;
+  timePeriods: TimePeriod[];
+  itemRelationships: ItemRelationship[];
+  confidenceLevel: number;
+  simulationCount: number;
+}
+
+/**
+ * Results of a Monte Carlo simulation for a drink item
+ */
+export interface DrinkSimulationResult {
+  // Statistical results
+  mean: number;
+  median: number;
+  min: number;
+  max: number;
+  
+  // Recommendations
+  recommendedServings: number;
+  recommendedUnits: number;
+  totalCost: number;
+  
+  // Risk assessment
+  stockoutRisk: number;
+  
+  // Time-based consumption pattern
+  timePeriodConsumption: {
+    periodName: string;
+    meanConsumption: number;
+    peakConsumption: number;
+  }[];
+  
+  // Distribution data for visualization
+  distribution: DistributionBin[];
 }

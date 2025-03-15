@@ -7,6 +7,7 @@ import FinancialSummary from './components/FinancialSummary';
 import CostBreakdown from './components/CostBreakdown';
 import StatusSection from './components/StatusSection';
 import SimulationCallout from './components/SimulationCallout';
+import DrinkSimulationCallout from './components/DrinkSimulationCallout';
 
 import { DrinkRequirements, FoodRequirements } from '@/types/food';
 
@@ -42,6 +43,11 @@ interface OverviewTabProps {
   // Food simulator props
   useAdvancedFoodSim: boolean;
   setUseAdvancedFoodSim: (value: boolean) => void;
+  
+  // Drink simulator props
+  useAdvancedDrinkSim: boolean;
+  setUseAdvancedDrinkSim: (value: boolean) => void;
+  
   setActiveTab: (tab: 'overview' | 'shopping' | 'drinks' | 'food' | 'venue' | 'reports') => void;
 }
 
@@ -69,6 +75,8 @@ const OverviewTab: React.FC<OverviewTabProps> = ({
   getCategoryServings,
   useAdvancedFoodSim,
   setUseAdvancedFoodSim,
+  useAdvancedDrinkSim,
+  setUseAdvancedDrinkSim,
   setActiveTab
 }) => {
   const drinkRequirements = calculateDrinkRequirements();
@@ -88,6 +96,8 @@ const OverviewTab: React.FC<OverviewTabProps> = ({
           setFoodServingsPerPerson={setFoodServingsPerPerson}
           useAdvancedFoodSim={useAdvancedFoodSim}
           setUseAdvancedFoodSim={setUseAdvancedFoodSim}
+          useAdvancedDrinkSim={useAdvancedDrinkSim}
+          setUseAdvancedDrinkSim={setUseAdvancedDrinkSim}
           setActiveTab={setActiveTab}
         />
         <FinancialSummary 
@@ -127,15 +137,27 @@ const OverviewTab: React.FC<OverviewTabProps> = ({
         getCategoryServings={getCategoryServings}
         useAdvancedFoodSim={useAdvancedFoodSim}
         setUseAdvancedFoodSim={setUseAdvancedFoodSim}
+        useAdvancedDrinkSim={useAdvancedDrinkSim}
+        setUseAdvancedDrinkSim={setUseAdvancedDrinkSim}
         setActiveTab={setActiveTab}
       />
       
-      {!useAdvancedFoodSim && (
-        <SimulationCallout 
-          setUseAdvancedFoodSim={setUseAdvancedFoodSim}
-          setActiveTab={setActiveTab}
-        />
-      )}
+      {/* Display simulation callouts only if their respective advanced mode is not enabled */}
+      <div className="space-y-4">
+        {!useAdvancedFoodSim && (
+          <SimulationCallout 
+            setUseAdvancedFoodSim={setUseAdvancedFoodSim}
+            setActiveTab={setActiveTab}
+          />
+        )}
+        
+        {!useAdvancedDrinkSim && (
+          <DrinkSimulationCallout
+            setUseAdvancedDrinkSim={setUseAdvancedDrinkSim}
+            setActiveTab={setActiveTab}
+          />
+        )}
+      </div>
     </div>
   );
 };
