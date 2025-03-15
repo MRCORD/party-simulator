@@ -177,7 +177,12 @@ export const usePartyStore = create<PartyState>()(
 
       // Initial item relationships
       itemRelationships: [
-        { primaryItemId: '1', secondaryItemId: '2', ratio: 1 } // Example: 1 bun per hamburger
+        // Ron Cartavio (id: 5) with Coca Cola (id: 7) - ratio 1:3 for cuba libre
+        { primaryItemId: '5', secondaryItemId: '7', ratio: 3 },
+        // Ron Cartavio (id: 5) with Ice (id: 6) - ratio 1:2 for proper drink service
+        { primaryItemId: '5', secondaryItemId: '6', ratio: 2 },
+        // Hamburguesas (id: 1) with Pan (id: 2) - ratio 1:1 for hamburger-bun relationship
+        { primaryItemId: '1', secondaryItemId: '2', ratio: 1 }
       ],
 
       // Initial parameters
