@@ -1,4 +1,4 @@
-import { Category } from '../types';
+import { Category } from '@/types';
 
 /**
  * Define all available shopping categories
