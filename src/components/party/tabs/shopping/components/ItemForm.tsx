@@ -1,7 +1,7 @@
 "use client";
 
 import React from 'react';
-import { PlusCircle, Type, Link as LinkIcon, Layers, Box, Ruler, DollarSign, Hash, Save } from 'lucide-react';
+import { PlusCircle, Type, Link as LinkIcon, Layers, Box, Ruler, DollarSign, Hash } from 'lucide-react';
 import Button from '@/components/ui/Button';
 import Input from '@/components/ui/Input';
 import Select from '@/components/ui/Select';

@@ -1,7 +1,6 @@
 import React from 'react';
 import { Info, Target, Wine, Utensils, Sparkles } from 'lucide-react';
 import StatusRow from '@/components/party/shared/status/StatusRow';
-import Button from '@/components/ui/Button';
 import { useTheme } from '@/components/ui/ThemeProvider';
 
 interface StatusSectionProps {
@@ -25,10 +24,7 @@ interface StatusSectionProps {
   };
   getCategoryServings: (category: string) => number;
   useAdvancedFoodSim: boolean;
-  setUseAdvancedFoodSim: (value: boolean) => void;
   useAdvancedDrinkSim: boolean;
-  setUseAdvancedDrinkSim: (value: boolean) => void;
-  setActiveTab: (tab: 'overview' | 'shopping' | 'drinks' | 'food' | 'venue' | 'reports') => void;
 }
 
 const StatusSection: React.FC<StatusSectionProps> = ({
@@ -41,10 +37,7 @@ const StatusSection: React.FC<StatusSectionProps> = ({
   foodRequirements,
   getCategoryServings,
   useAdvancedFoodSim,
-  setUseAdvancedFoodSim,
   useAdvancedDrinkSim,
-  setUseAdvancedDrinkSim,
-  setActiveTab
 }) => {
   const theme = useTheme();
   
