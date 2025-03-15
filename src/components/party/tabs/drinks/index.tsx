@@ -12,6 +12,7 @@ import DrinkSimulator from './simulation/DrinkSimulator';
 
 // Import types
 import { ShoppingItem } from '@/types';
+import { DrinkerProfile, DrinkSimulationResult, EventFactors, TimePeriod } from '@/types/drinks';
 import { usePartyStore } from '@/store/usePartyStore';
 
 interface DrinkRequirements {
@@ -30,6 +31,22 @@ interface DrinksTabProps {
   calculateDrinkRequirements: () => DrinkRequirements;
   getCategoryServings: (category: string) => number;
   getRecommendedUnits: (category: string, totalDrinks: number) => number;
+  useAdvancedDrinkSim: boolean;
+  setUseAdvancedDrinkSim: (value: boolean) => void;
+  drinkSimulationResults: Record<string, DrinkSimulationResult>;
+  drinkerProfiles: DrinkerProfile[];
+  drinkConfidenceLevel: number;
+  drinkSimulationCount: number;
+  eventFactors: EventFactors;
+  timePeriods: TimePeriod[];
+  setDrinkConfidenceLevel: (level: number) => void;
+  setDrinkSimulationCount: (count: number) => void;
+  updateDrinkerProfile: (index: number, field: keyof DrinkerProfile, value: number | boolean) => void;
+  updateEventFactors: (factors: Partial<EventFactors>) => void;
+  updateTimePeriod: (index: number, field: keyof TimePeriod, value: number) => void;
+  runDrinkSimulation: (selectedItems?: string[]) => void;
+  applyDrinkSimulationRecommendations: () => void;
+  setActiveTab: (tab: 'overview' | 'shopping' | 'drinks' | 'food' | 'venue' | 'reports') => void;
 }
 
 const DrinksTab: React.FC<DrinksTabProps> = ({
@@ -38,12 +55,25 @@ const DrinksTab: React.FC<DrinksTabProps> = ({
   shoppingItems,
   calculateDrinkRequirements,
   getCategoryServings,
-  getRecommendedUnits
+  getRecommendedUnits,
+  useAdvancedDrinkSim,
+  setUseAdvancedDrinkSim,
+  drinkSimulationResults,
+  drinkerProfiles,
+  drinkConfidenceLevel,
+  drinkSimulationCount,
+  eventFactors,
+  timePeriods,
+  setDrinkConfidenceLevel,
+  setDrinkSimulationCount,
+  updateDrinkerProfile,
+  updateEventFactors,
+  updateTimePeriod,
+  runDrinkSimulation,
+  applyDrinkSimulationRecommendations,
+  setActiveTab
 }) => {
   const drinkRequirements = calculateDrinkRequirements();
-  
-  // Get advanced drink simulation state from store
-  const { useAdvancedDrinkSim, setUseAdvancedDrinkSim, setActiveTab } = usePartyStore();
   
   // Local state to manage view toggle
   const [showSimpleView, setShowSimpleView] = useState(true);
@@ -111,6 +141,19 @@ const DrinksTab: React.FC<DrinksTabProps> = ({
           shoppingItems={shoppingItems}
           toggleView={toggleView}
           setActiveTab={setActiveTab}
+          drinkerProfiles={drinkerProfiles}
+          drinkConfidenceLevel={drinkConfidenceLevel}
+          drinkSimulationCount={drinkSimulationCount}
+          eventFactors={eventFactors}
+          timePeriods={timePeriods}
+          setDrinkConfidenceLevel={setDrinkConfidenceLevel}
+          setDrinkSimulationCount={setDrinkSimulationCount}
+          updateDrinkerProfile={updateDrinkerProfile}
+          updateEventFactors={updateEventFactors}
+          updateTimePeriod={updateTimePeriod}
+          runDrinkSimulation={runDrinkSimulation}
+          drinkSimulationResults={drinkSimulationResults}
+          applyDrinkSimulationRecommendations={applyDrinkSimulationRecommendations}
         />
       )}
     </div>

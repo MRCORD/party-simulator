@@ -26,48 +26,52 @@ interface DrinkSimulatorProps {
   toggleView: () => void;
   setActiveTab: (tab: 'overview' | 'shopping' | 'drinks' | 'food' | 'venue' | 'reports') => void;
   integratedMode?: boolean;
+  drinkerProfiles: DrinkerProfile[];
+  drinkConfidenceLevel: number;
+  drinkSimulationCount: number;
+  eventFactors: EventFactors;
+  timePeriods: TimePeriod[];
+  drinkSimulationResults: Record<string, DrinkSimulationResult>;
+  setDrinkConfidenceLevel: (level: number) => void;
+  setDrinkSimulationCount: (count: number) => void;
+  updateDrinkerProfile: (index: number, field: keyof DrinkerProfile, value: number | boolean) => void;
+  updateEventFactors: (factors: Partial<EventFactors>) => void;
+  updateTimePeriod: (index: number, field: keyof TimePeriod, value: number) => void;
+  runDrinkSimulation: (selectedItems?: string[]) => void;
+  applyDrinkSimulationRecommendations: () => void;
 }
 
 const DrinkSimulator: React.FC<DrinkSimulatorProps> = ({
   attendees,
   shoppingItems,
   toggleView,
-  setActiveTab
+  setActiveTab,
+  drinkerProfiles,
+  drinkConfidenceLevel,
+  drinkSimulationCount,
+  eventFactors,
+  timePeriods,
+  drinkSimulationResults,
+  setDrinkConfidenceLevel,
+  setDrinkSimulationCount,
+  updateDrinkerProfile,
+  updateEventFactors,
+  updateTimePeriod,
+  runDrinkSimulation,
+  applyDrinkSimulationRecommendations
 }) => {
   const theme = useTheme();
+  const { itemRelationships, drinkSimulationRun } = usePartyStore();
   
   // Local state for selected drink items
   const [selectedDrinkItems, setSelectedDrinkItems] = useState<string[]>([]);
 
-  // Get data from store
-  const {
-    drinkConfidenceLevel,
-    drinkerProfiles,
-    drinkSimulationCount,
-    drinkSimulationResults,
-    drinkSimulationRun,
-    eventFactors,
-    timePeriods,
-    itemRelationships,
-    
-    // Actions
-    setDrinkConfidenceLevel,
-    setDrinkSimulationCount,
-    updateDrinkerProfile,
-    updateEventFactors,
-    updateTimePeriod,
-    runDrinkSimulation,
-    applyDrinkSimulationRecommendations
-  } = usePartyStore();
-
   // Function to run the simulation with selected drink items
   const runSimulation = () => {
     if (selectedDrinkItems.length === 0) {
-      // Maybe show an alert or toast that no drink items are selected
       alert('Por favor selecciona al menos una bebida para simular');
       return;
     }
-    
     runDrinkSimulation(selectedDrinkItems);
   };
 

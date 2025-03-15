@@ -196,6 +196,18 @@ export default function PartySimulator() {
       useAdvancedDrinkSim={useAdvancedDrinkSim}
       setUseAdvancedDrinkSim={setUseAdvancedDrinkSim}
       drinkSimulationResults={drinkSimulationResults}
+      drinkerProfiles={drinkerProfiles}
+      drinkConfidenceLevel={drinkConfidenceLevel}
+      drinkSimulationCount={drinkSimulationCount}
+      eventFactors={eventFactors}
+      timePeriods={timePeriods}
+      setDrinkConfidenceLevel={setDrinkConfidenceLevel}
+      setDrinkSimulationCount={setDrinkSimulationCount}
+      updateDrinkerProfile={updateDrinkerProfile}
+      updateEventFactors={updateEventFactors}
+      updateTimePeriod={updateTimePeriod}
+      runDrinkSimulation={runDrinkSimulation}
+      applyDrinkSimulationRecommendations={applyDrinkSimulationRecommendations}
       setActiveTab={setActiveTab}
     />,
     
