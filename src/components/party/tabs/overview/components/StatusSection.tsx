@@ -25,6 +25,9 @@ interface StatusSectionProps {
   getCategoryServings: (category: string) => number;
   useAdvancedFoodSim: boolean;
   useAdvancedDrinkSim: boolean;
+  setUseAdvancedFoodSim: (value: boolean) => void;
+  setUseAdvancedDrinkSim: (value: boolean) => void;
+  setActiveTab: (tab: "overview" | "drinks" | "food" | "shopping" | "reports") => void;
 }
 
 const StatusSection: React.FC<StatusSectionProps> = ({
@@ -38,6 +41,9 @@ const StatusSection: React.FC<StatusSectionProps> = ({
   getCategoryServings,
   useAdvancedFoodSim,
   useAdvancedDrinkSim,
+  setUseAdvancedFoodSim,
+  setUseAdvancedDrinkSim,
+  setActiveTab,
 }) => {
   const theme = useTheme();
   
