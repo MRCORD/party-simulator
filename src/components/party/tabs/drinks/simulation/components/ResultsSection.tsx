@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { 
   BarChart4, Info, Save, Wine, 
   Droplet, Snowflake, Package,
-  ChevronDown, AlertCircle, Clock
+  ChevronDown, Clock
 } from 'lucide-react';
 import Badge from '@/components/ui/Badge';
 import Button from '@/components/ui/Button';

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Sparkles, ChevronRight, Wine } from 'lucide-react';
+import { Wine, ChevronRight } from 'lucide-react';
 import Button from '@/components/ui/Button';
 
 interface DrinkSimulationCalloutProps {

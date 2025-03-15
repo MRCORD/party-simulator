@@ -34,11 +34,6 @@ const EventFactorsSection: React.FC<EventFactorsSectionProps> = ({
     updateEventFactors({ temperature: temp });
   };
   
-  // Handle outdoor toggle
-  const handleOutdoorToggle = () => {
-    updateEventFactors({ isOutdoor: !eventFactors.isOutdoor });
-  };
-  
   // Handle duration change
   const handleDurationChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const duration = parseFloat(e.target.value);

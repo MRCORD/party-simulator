@@ -14,7 +14,6 @@ interface SimulationFormProps {
   shoppingItems: ShoppingItem[];
   runDrinkSimulation: (selectedDrinkItems?: string[]) => void;
   simulationRun: boolean;
-  showItemSelection?: boolean;
   showRunButton?: boolean;
   itemRelationships?: ItemRelationship[];
 }
@@ -25,8 +24,7 @@ const SimulationForm: React.FC<SimulationFormProps> = ({
   setConfidenceLevel,
   setSimulationCount,
   runDrinkSimulation,
-  showRunButton = false,
-  showItemSelection = false
+  showRunButton = false
 }) => {
   const [isSimulating, setIsSimulating] = useState(false);
 

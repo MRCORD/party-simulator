@@ -9,13 +9,6 @@ interface DistributionChartProps {
   data: DrinkDistributionBin[];
 }
 
-interface ChartDataPoint {
-  range: string;
-  frequency: number;
-  isRecommended: boolean;
-  x: number;
-}
-
 const DistributionChart: React.FC<DistributionChartProps> = ({ data }) => {
   // Format data for the chart
   const chartData = data.map((bin) => ({

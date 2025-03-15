@@ -8,8 +8,7 @@ import type {
   DrinkerProfile, 
   EventFactors, 
   TimePeriod, 
-  DrinkSimulationResult,
-  DrinkSimulationConfig
+  DrinkSimulationResult
 } from '@/types/drinks';
 
 // Define the store state type

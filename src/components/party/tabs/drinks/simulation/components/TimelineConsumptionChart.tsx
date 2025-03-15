@@ -1,6 +1,6 @@
 import React from 'react';
 import {
-  LineChart, Line, XAxis, YAxis, CartesianGrid, 
+  Line, XAxis, YAxis, CartesianGrid, 
   Tooltip, ResponsiveContainer, Area, AreaChart
 } from 'recharts';
 import { TimelineConsumptionPoint } from '@/types/drinks';
