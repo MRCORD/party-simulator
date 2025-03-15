@@ -8,6 +8,8 @@ import { useTheme } from '@/components/ui/ThemeProvider';
 import { usePartyStore } from '@/store/usePartyStore';
 import Button from '@/components/ui/Button';
 import Alert from '@/components/ui/Alert';
+import { DrinkerProfile, DrinkSimulationResult, EventFactors, TimePeriod } from '@/types/drinks';
+import { ShoppingItem } from '@/types';
 
 // Import simulator components
 import SimulationForm from './components/SimulationForm';
@@ -15,11 +17,9 @@ import DrinkerProfileSection from './components/DrinkerProfileSection';
 import DrinkSelectionSection from './components/DrinkSelectionSection';
 import EventFactorsSection from './components/EventFactorsSection';
 import ResultsSection from './components/ResultsSection';
-import ShoppingActions from './components/ShoppingActions';
+import ShoppingActions from '@/components/party/tabs/drinks/simulation/components/ShoppingActions';
 
 // Types
-import { ShoppingItem } from '@/types';
-
 interface DrinkSimulatorProps {
   attendees: number;
   shoppingItems: ShoppingItem[];
@@ -155,7 +155,7 @@ const DrinkSimulator: React.FC<DrinkSimulatorProps> = ({
           </div>
         </div>
         
-        {/* Simulation Form - Dropdowns Only */}
+        {/* Simulation Form */}
         <SimulationForm 
           confidenceLevel={drinkConfidenceLevel}
           simulationCount={drinkSimulationCount}
@@ -164,8 +164,6 @@ const DrinkSimulator: React.FC<DrinkSimulatorProps> = ({
           shoppingItems={shoppingItems}
           runDrinkSimulation={runDrinkSimulation}
           simulationRun={drinkSimulationRun}
-          showItemSelection={false}
-          showRunButton={false}
           itemRelationships={itemRelationships}
         />
         

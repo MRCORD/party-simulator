@@ -3,6 +3,7 @@
 import React, { useEffect } from 'react';
 import { usePartyStore } from '@/store/usePartyStore';
 import { CostBreakdownItem, FinancialOverviewItem } from '@/types/party';
+import { DrinkerProfile, EventFactors, TimePeriod } from '@/types/drinks';
 
 // Import refactored components
 import PartyHeader from './layout/PartyHeader';
@@ -203,9 +204,9 @@ export default function PartySimulator() {
       timePeriods={timePeriods}
       setDrinkConfidenceLevel={setDrinkConfidenceLevel}
       setDrinkSimulationCount={setDrinkSimulationCount}
-      updateDrinkerProfile={updateDrinkerProfile}
+      updateDrinkerProfile={updateDrinkerProfile as (index: number, field: keyof DrinkerProfile, value: number | boolean) => void}
       updateEventFactors={updateEventFactors}
-      updateTimePeriod={updateTimePeriod}
+      updateTimePeriod={updateTimePeriod as (index: number, field: keyof TimePeriod, value: number) => void}
       runDrinkSimulation={runDrinkSimulation}
       applyDrinkSimulationRecommendations={applyDrinkSimulationRecommendations}
       setActiveTab={setActiveTab}

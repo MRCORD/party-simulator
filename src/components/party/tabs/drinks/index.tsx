@@ -40,9 +40,9 @@ interface DrinksTabProps {
   timePeriods: TimePeriod[];
   setDrinkConfidenceLevel: (level: number) => void;
   setDrinkSimulationCount: (count: number) => void;
-  updateDrinkerProfile: (index: number, field: string | number | symbol, value: number | boolean) => void;
+  updateDrinkerProfile: (index: number, field: keyof DrinkerProfile, value: number | boolean) => void;
   updateEventFactors: (factors: Partial<EventFactors>) => void;
-  updateTimePeriod: (index: number, field: string | number | symbol, value: number) => void;
+  updateTimePeriod: (index: number, field: keyof TimePeriod, value: number) => void;
   runDrinkSimulation: (selectedItems?: string[]) => void;
   applyDrinkSimulationRecommendations: () => void;
   setActiveTab: (tab: 'overview' | 'shopping' | 'drinks' | 'food' | 'venue' | 'reports') => void;
