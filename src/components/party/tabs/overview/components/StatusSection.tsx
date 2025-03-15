@@ -116,23 +116,6 @@ const StatusSection: React.FC<StatusSectionProps> = ({
                 </div>
               </div>
             )}
-            {!useAdvancedDrinkSim && (
-              <div className="mt-2">
-                <Button
-                  variant="outline"
-                  color="primary"
-                  size="sm"
-                  className="w-full"
-                  onClick={() => {
-                    setUseAdvancedDrinkSim(true);
-                    setTimeout(() => setActiveTab('drinks'), 300);
-                  }}
-                >
-                  <Sparkles className="w-3 h-3 mr-1" />
-                  Activar Simulación Monte Carlo
-                </Button>
-              </div>
-            )}
           </div>
         </div>
         
@@ -181,23 +164,6 @@ const StatusSection: React.FC<StatusSectionProps> = ({
                   <Sparkles className="w-3 h-3 mr-1 flex-shrink-0" />
                   <span>La simulación Monte Carlo está activa. Ver pestaña Comida.</span>
                 </div>
-              </div>
-            )}
-            {!useAdvancedFoodSim && (
-              <div className="mt-2">
-                <Button
-                  variant="outline"
-                  color="warning"
-                  size="sm"
-                  className="w-full"
-                  onClick={() => {
-                    setUseAdvancedFoodSim(true);
-                    setTimeout(() => setActiveTab('food'), 300);
-                  }}
-                >
-                  <Sparkles className="w-3 h-3 mr-1" />
-                  Activar Simulación Monte Carlo
-                </Button>
               </div>
             )}
           </div>
@@ -254,26 +220,6 @@ const StatusSection: React.FC<StatusSectionProps> = ({
                 ></div>
               </div>
             </div>
-            
-            {/* Monte Carlo Simulation Button */}
-            {!useAdvancedFoodSim && (
-              <div className="mt-4">
-                <Button
-                  variant="outline"
-                  color="warning"
-                  size="sm"
-                  className="w-full"
-                  onClick={() => {
-                    setUseAdvancedFoodSim(true);
-                    // Navigate to food tab
-                    setTimeout(() => setActiveTab('food'), 300);
-                  }}
-                >
-                  <Sparkles className="w-4 h-4 mr-1" />
-                  Activar Simulación Monte Carlo
-                </Button>
-              </div>
-            )}
           </div>
         </div>
       </div>
