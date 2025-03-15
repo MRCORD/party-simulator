@@ -9,6 +9,13 @@ interface DistributionChartProps {
   data: DrinkDistributionBin[];
 }
 
+interface ChartDataPoint {
+  range: string;
+  frequency: number;
+  isRecommended: boolean;
+  x: number;
+}
+
 const DistributionChart: React.FC<DistributionChartProps> = ({ data }) => {
   // Format data for the chart
   const chartData = data.map((bin) => ({
@@ -53,8 +60,10 @@ const DistributionChart: React.FC<DistributionChartProps> = ({ data }) => {
               labelFormatter={(value: number) => `${value} porciones`}
             />
             <Bar 
-              dataKey="frequency" 
-              fill={(entry) => entry.isRecommended ? '#4f86f7' : '#63b3ed'}
+              dataKey="frequency"
+              fill="#63b3ed"
+              fillOpacity={1}
+              stroke="none"
               radius={[4, 4, 0, 0]}
             />
             {chartData.some(d => d.isRecommended) && (
