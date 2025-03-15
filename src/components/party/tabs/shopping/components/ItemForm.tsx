@@ -157,43 +157,22 @@ const ItemForm: React.FC<ItemFormProps> = ({
         </div>
       </div>
       
-      <div className="mt-5 flex justify-end">
-        <Button
-          variant="outline"
-          color="primary"
+      <div className="flex justify-end mt-4">
+        <Button 
+          variant="outline" 
+          color="secondary"
           onClick={onCancel}
-          className="mr-3"
+          className="mr-2"
         >
           Cancelar
         </Button>
-        
-        {editingItem ? (
-          <Button
-            variant="gradient"
-            color="primary"
-            onClick={() => {
-              saveEdit();
-              onCancel();
-            }}
-            className="flex items-center"
-          >
-            <Save className="w-4 h-4 mr-2" />
-            Guardar Cambios
-          </Button>
-        ) : (
-          <Button
-            variant="gradient"
-            color="success"
-            onClick={() => {
-              addItem();
-              onCancel();
-            }}
-            className="flex items-center"
-          >
-            <PlusCircle className="w-4 h-4 mr-2" />
-            Agregar Artículo
-          </Button>
-        )}
+        <Button 
+          variant="solid" 
+          color="success"
+          onClick={editingItem ? saveEdit : addItem}
+        >
+          {editingItem ? 'Actualizar' : 'Agregar'}
+        </Button>
       </div>
       
       {/* Info about complementary items */}

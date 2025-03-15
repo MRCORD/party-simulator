@@ -84,27 +84,28 @@ const ShoppingTab: React.FC<ShoppingTabProps> = ({
             <div className="flex space-x-3">
               <Button 
                 onClick={() => setShowComplementary(!showComplementary)}
-                variant={showComplementary ? "solid" : "outline"}
-                color="primary"
-                className={showComplementary ? "bg-indigo-600" : "bg-white"}
+                variant="gradient"
+                color={showComplementary ? "success" : "primary"}
+                className="rounded-lg font-medium shadow-sm"
               >
-                <Link size={18} className="mr-2" />
+                <Link size={16} className="mr-2" />
                 <span>Artículos Complementarios</span>
               </Button>
               
               <Button 
                 onClick={() => setShowForm(!showForm)}
-                variant={showForm ? "outline" : "solid"}
-                color="primary"
+                variant="gradient"
+                color={showForm ? "warning" : "success"}
+                className="rounded-lg font-medium shadow-sm"
               >
                 {showForm ? (
                   <>
-                    <X size={18} className="mr-2" />
+                    <X size={16} className="mr-2" />
                     <span>Cerrar</span>
                   </>
                 ) : (
                   <>
-                    <PlusCircle size={18} className="mr-2" />
+                    <PlusCircle size={16} className="mr-2" />
                     <span>Agregar Artículo</span>
                   </>
                 )}

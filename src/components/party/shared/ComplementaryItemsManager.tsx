@@ -105,7 +105,7 @@ const ComplementaryItemsManager: React.FC<ComplementaryItemsManagerProps> = ({
           </div>
           <Button
             variant={showForm ? "outline" : "solid"}
-            color="primary"
+            color="secondary"
             size="sm"
             className={showForm ? "bg-white/20 text-white border-white/30" : ""}
             onClick={() => setShowForm(!showForm)}
@@ -195,7 +195,7 @@ const ComplementaryItemsManager: React.FC<ComplementaryItemsManagerProps> = ({
             <div className="flex justify-end">
               <Button 
                 variant="outline" 
-                color="primary" 
+                color="secondary" 
                 onClick={() => setShowForm(false)}
                 className="mr-2"
               >
@@ -203,11 +203,11 @@ const ComplementaryItemsManager: React.FC<ComplementaryItemsManagerProps> = ({
               </Button>
               <Button 
                 variant="solid" 
-                color="primary" 
+                color="success" 
                 onClick={handleAddRelationship}
                 disabled={!selectedPrimaryItem || !selectedSecondaryItem}
               >
-                Guardar Relación
+                Agregar
               </Button>
             </div>
           </div>
@@ -224,7 +224,7 @@ const ComplementaryItemsManager: React.FC<ComplementaryItemsManagerProps> = ({
             </p>
             <Button
               variant="outline"
-              color="primary"
+              color="secondary"
               onClick={() => setShowForm(true)}
             >
               <Plus size={16} className="mr-1" />
@@ -254,10 +254,10 @@ const ComplementaryItemsManager: React.FC<ComplementaryItemsManagerProps> = ({
                   </div>
                   <Button
                     variant="ghost"
-                    color="primary"
+                    color="danger"
                     size="sm"
                     onClick={() => removeItemRelationship(index)}
-                    className="p-1 text-indigo-400 hover:text-indigo-600 hover:bg-indigo-100 rounded-full"
+                    className="p-1 hover:text-red-600 hover:bg-red-100 rounded-full"
                   >
                     <Trash2 size={16} />
                   </Button>
