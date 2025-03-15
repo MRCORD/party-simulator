@@ -126,8 +126,78 @@ const ResultsSection: React.FC<ResultsSectionProps> = ({
 
   if (isLoading) {
     return (
-      <div className="animate-pulse">
-        {/* Loading skeleton UI omitted for brevity */}
+      <div className="bg-white rounded-xl shadow-lg overflow-hidden animate-pulse">
+        <div className="bg-gradient-to-r from-primary to-primary-secondary p-5 text-white">
+          {/* Header Skeleton */}
+          <div className="flex items-center mb-4">
+            <div className="w-8 h-8 bg-white/20 rounded-full mr-3"></div>
+            <div className="h-8 w-64 bg-white/20 rounded"></div>
+          </div>
+
+          {/* Info Box Skeleton */}
+          <div className="bg-blue-50/50 rounded-lg p-4 mt-4">
+            <div className="flex">
+              <div className="w-5 h-5 bg-white/20 rounded-full mr-3 flex-shrink-0"></div>
+              <div className="flex-1 space-y-2">
+                <div className="h-4 bg-white/20 rounded w-3/4"></div>
+                <div className="h-4 bg-white/20 rounded w-1/2"></div>
+              </div>
+            </div>
+          </div>
+
+          {/* Event Factors Skeleton */}
+          <div className="mt-4 bg-white/10 backdrop-blur-sm rounded-lg p-3">
+            <div className="flex items-center mb-2">
+              <div className="w-4 h-4 bg-white/20 rounded-full mr-1"></div>
+              <div className="h-4 w-32 bg-white/20 rounded"></div>
+            </div>
+            <div className="grid grid-cols-4 gap-2">
+              {[1, 2, 3, 4].map((i) => (
+                <div key={i} className="h-4 bg-white/20 rounded"></div>
+              ))}
+            </div>
+          </div>
+
+          {/* Summary Cards Skeleton */}
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-4">
+            {[1, 2, 3].map((i) => (
+              <div key={i} className="bg-white/20 backdrop-blur-sm rounded-lg p-3">
+                <div className="h-4 bg-white/20 rounded w-32 mx-auto mb-2"></div>
+                <div className="h-8 bg-white/20 rounded w-24 mx-auto"></div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Table Skeleton */}
+        <div className="p-6">
+          <div className="overflow-x-auto mb-6">
+            <div className="bg-white rounded-lg shadow">
+              {[1, 2, 3].map((i) => (
+                <div key={i} className="border-b border-gray-200 p-4">
+                  <div className="flex justify-between items-center">
+                    <div className="flex items-center space-x-3">
+                      <div className="w-8 h-8 bg-gray-200 rounded-full"></div>
+                      <div className="space-y-2">
+                        <div className="h-4 bg-gray-200 rounded w-48"></div>
+                        <div className="h-3 bg-gray-200 rounded w-32"></div>
+                      </div>
+                    </div>
+                    <div className="space-y-2">
+                      <div className="h-4 bg-gray-200 rounded w-24"></div>
+                      <div className="h-3 bg-gray-200 rounded w-16"></div>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Action Button Skeleton */}
+          <div className="flex justify-center">
+            <div className="h-12 bg-gray-200 rounded w-64"></div>
+          </div>
+        </div>
       </div>
     );
   }
