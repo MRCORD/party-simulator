@@ -22,17 +22,10 @@ const TimelineConsumptionChart: React.FC<TimelineConsumptionChartProps> = ({ dat
     );
   }
 
-  // Sort data by time period label if not already sorted
+  // Sort data by time period in chronological order
   const sortedData = [...data].sort((a, b) => {
-    // Try to sort by numeric indicators if they exist
-    const numA = parseInt(a.timePeriod.replace(/\D/g, ''));
-    const numB = parseInt(b.timePeriod.replace(/\D/g, ''));
-    if (!isNaN(numA) && !isNaN(numB)) {
-      return numA - numB;
-    }
-    
-    // Fallback to string comparison
-    return a.timePeriod.localeCompare(b.timePeriod);
+    const order = { "Inicio": 1, "Pico": 2, "Final": 3 };
+    return order[a.timePeriod as keyof typeof order] - order[b.timePeriod as keyof typeof order];
   });
 
   return (
