@@ -44,6 +44,9 @@ interface OverviewTabProps {
   // Food simulator props
   useAdvancedFoodSim: boolean;
   setUseAdvancedFoodSim: (value: boolean) => void;
+  // Drink simulator props
+  useAdvancedDrinkSim: boolean;
+  setUseAdvancedDrinkSim: (value: boolean) => void;
   setActiveTab: (tab: 'overview' | 'shopping' | 'drinks' | 'food' | 'venue' | 'reports') => void;
 }
 
@@ -71,6 +74,8 @@ const OverviewTab: React.FC<OverviewTabProps> = ({
   getCategoryServings,
   useAdvancedFoodSim,
   setUseAdvancedFoodSim,
+  useAdvancedDrinkSim,
+  setUseAdvancedDrinkSim,
   setActiveTab
 }) => {
   const drinkRequirements = calculateDrinkRequirements();
@@ -90,6 +95,8 @@ const OverviewTab: React.FC<OverviewTabProps> = ({
           setFoodServingsPerPerson={setFoodServingsPerPerson}
           useAdvancedFoodSim={useAdvancedFoodSim}
           setUseAdvancedFoodSim={setUseAdvancedFoodSim}
+          useAdvancedDrinkSim={useAdvancedDrinkSim}
+          setUseAdvancedDrinkSim={setUseAdvancedDrinkSim}
           setActiveTab={setActiveTab}
         />
         <FinancialSummary 
@@ -129,6 +136,8 @@ const OverviewTab: React.FC<OverviewTabProps> = ({
         getCategoryServings={getCategoryServings}
         useAdvancedFoodSim={useAdvancedFoodSim}
         setUseAdvancedFoodSim={setUseAdvancedFoodSim}
+        useAdvancedDrinkSim={useAdvancedDrinkSim}
+        setUseAdvancedDrinkSim={setUseAdvancedDrinkSim}
         setActiveTab={setActiveTab}
       />
       
