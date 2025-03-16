@@ -34,21 +34,14 @@ interface TooltipProps {
   }>;
 }
 
-interface CustomLabelProps {
-  cx: number;
-  cy: number;
-  midAngle: number;
-  outerRadius: number;
-  name: string;
-  value: number;
-  index: number;
-}
-
 const ExpenseDistribution: React.FC<ExpenseDistributionProps> = ({ expenseCategories }) => {
   const [activeIndex, setActiveIndex] = useState<number | null>(null);
 
   // Calculate total for percentages
   const total = expenseCategories.reduce((sum, item) => sum + item.value, 0);
+  
+  // Sort categories from highest to lowest cost
+  const sortedCategories = [...expenseCategories].sort((a, b) => b.value - a.value);
   
   // Custom active shape for pie chart with better hover effect
   const renderActiveShape = (props: unknown) => {
@@ -86,8 +79,8 @@ const ExpenseDistribution: React.FC<ExpenseDistributionProps> = ({ expenseCatego
       
       return (
         <div className="bg-white p-3 border border-gray-200 shadow-lg rounded-md">
-          <p className="font-medium text-primary">{data.name}</p>
-          <p className="text-primary">
+          <p className="font-medium text-gray-800">{data.name}</p>
+          <p className="text-gray-700">
             <span className="font-medium">S/ {data.value.toFixed(2)}</span>
           </p>
           <p className="text-gray-600 text-sm">{percentage}% del total</p>
@@ -97,95 +90,109 @@ const ExpenseDistribution: React.FC<ExpenseDistributionProps> = ({ expenseCatego
     return null;
   };
   
-  // Custom label renderer for pie chart (outside labels with lines)
-  const renderCustomizedLabel = (props: CustomLabelProps) => {
-    const { cx, cy, midAngle, outerRadius, name, value, index } = props;
-    const RADIAN = Math.PI / 180;
-    // Position the label further from the pie
-    const radius = outerRadius * 1.25;
-    const x = cx + radius * Math.cos(-midAngle * RADIAN);
-    const y = cy + radius * Math.sin(-midAngle * RADIAN);
-    
-    // For labels on the left side, align right, and for right side, align left
-    const textAnchor = x > cx ? 'start' : 'end';
-    
-    // Line from pie to label
-    const lineEnd = {
-      x: cx + (outerRadius + 10) * Math.cos(-midAngle * RADIAN),
-      y: cy + (outerRadius + 10) * Math.sin(-midAngle * RADIAN),
-    };
-    
-    return (
-      <g>
-        {/* Line from pie to label */}
-        <path 
-          d={`M${cx + outerRadius * Math.cos(-midAngle * RADIAN)},${cy + outerRadius * Math.sin(-midAngle * RADIAN)}L${lineEnd.x},${lineEnd.y}L${x},${y}`} 
-          stroke={expenseCategories[index].color}
-          fill="none"
-        />
-        
-        {/* Label text */}
-        <text 
-          x={x}
-          y={y} 
-          textAnchor={textAnchor} 
-          fill={expenseCategories[index].color}
-          dominantBaseline="central"
-          className="text-xs font-medium"
-        >
-          {name} (S/ {value.toFixed(0)})
-        </text>
-      </g>
-    );
-  };
-  
-  const onPieEnter = (_: unknown, index: number) => {
-    setActiveIndex(index);
-  };
-  
-  const onPieLeave = () => {
-    setActiveIndex(null);
-  };
-  
   return (
-    <div className="bg-white rounded-xl border border-gray-200 p-4">
-      <div className="flex items-center mb-4">
-        <PieChartIcon className="w-5 h-5 text-primary mr-2" />
-        <h3 className="text-lg font-medium">Distribución de Gastos</h3>
+    <div className="bg-white rounded-md border border-gray-300 overflow-hidden">
+      <div className="border-b border-gray-300 bg-gray-100 p-4">
+        <div className="flex items-center">
+          <PieChartIcon className="h-5 w-5 text-gray-700 mr-2" />
+          <h3 className="text-lg font-semibold text-gray-800">Distribución de Costos</h3>
+        </div>
       </div>
       
-      <div className="w-full h-64">
-        <ResponsiveContainer width="100%" height="100%">
-          <PieChart>
-            <Pie
-              activeIndex={activeIndex !== null ? [activeIndex] : []}
-              activeShape={renderActiveShape}
-              data={expenseCategories}
-              cx="50%"
-              cy="50%"
-              innerRadius={60}
-              outerRadius={80}
-              paddingAngle={2}
-              dataKey="value"
-              labelLine={true}
-              label={renderCustomizedLabel}
-              onMouseEnter={onPieEnter}
-              onMouseLeave={onPieLeave}
-              isAnimationActive={true}
-            >
-              {expenseCategories.map((entry, index) => (
-                <Cell key={`cell-${index}`} fill={entry.color} />
-              ))}
-            </Pie>
-            <Tooltip content={<CustomTooltip />} />
+      <div className="p-5">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {/* Pie Chart Visualization */}
+          <div className="h-64">
+            <ResponsiveContainer width="100%" height="100%">
+              <PieChart>
+                <Pie
+                  activeIndex={activeIndex !== null ? [activeIndex] : []}
+                  activeShape={renderActiveShape}
+                  data={expenseCategories}
+                  cx="50%"
+                  cy="50%"
+                  innerRadius={60}
+                  outerRadius={80}
+                  paddingAngle={2}
+                  dataKey="value"
+                  onMouseEnter={(_, index) => setActiveIndex(index)}
+                  onMouseLeave={() => setActiveIndex(null)}
+                >
+                  {expenseCategories.map((entry, index) => (
+                    <Cell key={`cell-${index}`} fill={entry.color} />
+                  ))}
+                </Pie>
+                <Tooltip content={<CustomTooltip />} />
+                
+                {/* Center Label */}
+                <text x="50%" y="50%" textAnchor="middle" dominantBaseline="middle">
+                  <tspan x="50%" dy="-0.5em" fontSize="16" fontWeight="bold">S/ {total.toFixed(0)}</tspan>
+                  <tspan x="50%" dy="1.5em" fontSize="12" fill="#666">Total</tspan>
+                </text>
+              </PieChart>
+            </ResponsiveContainer>
+          </div>
+          
+          {/* Cost Breakdown Table */}
+          <div>
+            <h4 className="text-sm font-semibold text-gray-700 mb-3">Desglose Detallado</h4>
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm border-collapse">
+                <thead>
+                  <tr className="bg-gray-50">
+                    <th className="text-left py-2 px-3 font-medium text-gray-700 border-b border-gray-300">Categoría</th>
+                    <th className="text-right py-2 px-3 font-medium text-gray-700 border-b border-gray-300">Monto (S/)</th>
+                    <th className="text-right py-2 px-3 font-medium text-gray-700 border-b border-gray-300">% del Total</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {sortedCategories.map((category, index) => (
+                    <tr 
+                      key={index} 
+                      className={`border-b border-gray-200 hover:bg-gray-50 ${
+                        activeIndex === expenseCategories.findIndex(c => c.name === category.name) ? 'bg-gray-50' : ''
+                      }`}
+                      onMouseEnter={() => setActiveIndex(expenseCategories.findIndex(c => c.name === category.name))}
+                      onMouseLeave={() => setActiveIndex(null)}
+                    >
+                      <td className="py-2 px-3 text-gray-700">
+                        <div className="flex items-center">
+                          <div 
+                            className="w-3 h-3 rounded-sm mr-2" 
+                            style={{ backgroundColor: category.color }}
+                          ></div>
+                          {category.name}
+                        </div>
+                      </td>
+                      <td className="py-2 px-3 text-right font-mono text-gray-700">
+                        {category.value.toFixed(2)}
+                      </td>
+                      <td className="py-2 px-3 text-right text-gray-600">
+                        {((category.value / total) * 100).toFixed(1)}%
+                      </td>
+                    </tr>
+                  ))}
+                  
+                  <tr className="bg-gray-50 font-medium">
+                    <td className="py-2 px-3 text-gray-700">TOTAL</td>
+                    <td className="py-2 px-3 text-right font-mono text-gray-700">{total.toFixed(2)}</td>
+                    <td className="py-2 px-3 text-right text-gray-700">100.0%</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
             
-            {/* Center label */}
-            <text x="50%" y="50%" textAnchor="middle" dominantBaseline="middle">
-              <tspan x="50%" dy="-0.5em" fontSize="16" fontWeight="bold">S/ {total.toFixed(0)}</tspan>
-              <tspan x="50%" dy="1.5em" fontSize="12" fill="#666">Total</tspan>
-            </text>
-          </PieChart>
-        </ResponsiveContainer>
+            {/* Highlight Top Expenses */}
+            {sortedCategories.length > 0 && (
+              <div className="mt-4 text-sm text-gray-600">
+                <p>
+                  La categoría de mayor gasto es <span className="font-medium">{sortedCategories[0].name}</span> (
+                  {((sortedCategories[0].value / total) * 100).toFixed(1)}% del total).
+                </p>
+              </div>
+            )}
+          </div>
+        </div>
       </div>
     </div>
   );
