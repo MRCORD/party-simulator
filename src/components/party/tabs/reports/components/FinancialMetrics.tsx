@@ -7,9 +7,6 @@ interface FinancialMetricsProps {
   perPersonCost: number;
   breakEvenAttendees: number;
   recommendedTicketPrice: number;
-  totalRevenue: number;
-  totalCosts: number;
-  netProfit: number;
 }
 
 const FinancialMetrics: React.FC<FinancialMetricsProps> = ({
@@ -18,9 +15,6 @@ const FinancialMetrics: React.FC<FinancialMetricsProps> = ({
   perPersonCost,
   breakEvenAttendees,
   recommendedTicketPrice,
-  totalRevenue,
-  totalCosts,
-  netProfit
 }) => {
   // Recalculate key values to ensure consistency
   const recalculatedTotalRevenue = attendees * ticketPrice;
