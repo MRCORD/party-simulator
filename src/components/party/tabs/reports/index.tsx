@@ -156,9 +156,6 @@ const ReportsTab: React.FC<ReportsTabProps> = ({
         perPersonCost={perPersonCost}
         breakEvenAttendees={breakEvenAttendees}
         recommendedTicketPrice={recommendedTicketPrice}
-        profitMargin={profitMargin}
-        costRevenue={costRevenue}
-        roi={roi}
       />
       
       {/* Recommendations Section */}
