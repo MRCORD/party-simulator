@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { FileText, Download, Printer, Mail, Share2 } from 'lucide-react';
+import { FileText, Download, Printer, Mail } from 'lucide-react';
 
 interface ExportOptionsProps {
   reportTitle?: string;
