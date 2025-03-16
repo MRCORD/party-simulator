@@ -17,9 +17,7 @@ const FinancialMetrics: React.FC<FinancialMetricsProps> = ({
   recommendedTicketPrice,
 }) => {
   // Recalculate key values to ensure consistency
-  const recalculatedTotalRevenue = attendees * ticketPrice;
-  const recalculatedTotalCosts = attendees * perPersonCost;
-  
+
   // Per-attendee metrics
   const revenuePerAttendee = ticketPrice; // This is always the ticket price
   const costPerAttendee = perPersonCost;
