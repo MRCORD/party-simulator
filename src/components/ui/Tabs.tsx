@@ -4,7 +4,7 @@ import { useTheme } from './ThemeProvider';
 
 interface Tab {
   label: string;
-  icon?: ReactNode;
+  icon?: (props?: { size?: number }) => ReactNode;
   content?: ReactNode;
 }
 
@@ -145,7 +145,7 @@ const Tabs = ({
             role="tab"
           >
             {tab.icon && (
-              <span className={`${tab.label ? 'mr-2' : ''} transition-transform`}>{tab.icon}</span>
+              <span className={`${tab.label ? 'mr-2' : ''} transition-transform`}>{tab.icon({ size: 18 })}</span>
             )}
             {tab.label}
           </button>

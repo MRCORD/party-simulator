@@ -2,9 +2,10 @@
 import React, { ReactNode } from 'react';
 import { useTheme } from './ThemeProvider';
 
-type ButtonVariant = 'solid' | 'outline' | 'ghost' | 'gradient';
-type ButtonColor = 'primary' | 'success' | 'warning' | 'error';
+type ButtonVariant = 'solid' | 'outline' | 'ghost' | 'gradient' | 'link';
+type ButtonColor = 'primary' | 'secondary' | 'success' | 'danger' | 'warning';
 type ButtonSize = 'sm' | 'md' | 'lg';
+type ThemeGradientType = 'primary' | 'success' | 'warning';
 
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: ButtonVariant;
@@ -37,28 +38,39 @@ const Button = ({
   
   const variantClasses = {
     solid: {
-      primary: 'bg-primary hover:bg-primary-dark text-white',
-      success: 'bg-success hover:bg-success-dark text-white',
-      warning: 'bg-warning hover:bg-warning-dark text-white',
-      error: 'bg-error hover:bg-error-dark text-white',
+      primary: 'bg-blue-600 hover:bg-blue-700 text-white',
+      secondary: 'bg-indigo-600 hover:bg-indigo-700 text-white',
+      success: 'bg-green-600 hover:bg-green-700 text-white',
+      danger: 'bg-red-600 hover:bg-red-700 text-white',
+      warning: 'bg-yellow-500 hover:bg-yellow-600 text-white',
     },
     outline: {
-      primary: 'border-2 border-primary text-primary hover:bg-primary hover:text-white',
-      success: 'border-2 border-success text-success hover:bg-success hover:text-white',
-      warning: 'border-2 border-warning text-warning hover:bg-warning hover:text-white',
-      error: 'border-2 border-error text-error hover:bg-error hover:text-white',
+      primary: 'border-2 border-blue-600 text-blue-600 hover:bg-blue-50',
+      secondary: 'border-2 border-indigo-600 text-indigo-600 hover:bg-indigo-50',
+      success: 'border-2 border-green-600 text-green-600 hover:bg-green-50',
+      danger: 'border-2 border-red-600 text-red-600 hover:bg-red-50',
+      warning: 'border-2 border-yellow-500 text-yellow-600 hover:bg-yellow-50',
     },
     ghost: {
-      primary: 'text-primary hover:bg-primary-light',
-      success: 'text-success hover:bg-success-light',
-      warning: 'text-warning hover:bg-warning-light',
-      error: 'text-error hover:bg-error-light',
+      primary: 'text-blue-600 hover:bg-blue-50',
+      secondary: 'text-indigo-600 hover:bg-indigo-50',
+      success: 'text-green-600 hover:bg-green-50',
+      danger: 'text-red-600 hover:bg-red-50',
+      warning: 'text-yellow-600 hover:bg-yellow-50',
+    },
+    link: {
+      primary: 'text-blue-600 hover:underline',
+      secondary: 'text-indigo-600 hover:underline',
+      success: 'text-green-600 hover:underline',
+      danger: 'text-red-600 hover:underline',
+      warning: 'text-yellow-600 hover:underline',
     },
     gradient: {
-      primary: theme.getGradient('primary'),
-      success: theme.getGradient('success'),
-      warning: theme.getGradient('warning'),
-      error: theme.getGradient('error'),
+      primary: theme.getGradient('primary' as ThemeGradientType),
+      success: theme.getGradient('success' as ThemeGradientType),
+      warning: theme.getGradient('warning' as ThemeGradientType),
+      danger: 'bg-gradient-to-r from-red-500 to-red-600 text-white hover:from-red-600 hover:to-red-700',
+      secondary: 'bg-gradient-to-r from-indigo-500 to-indigo-600 text-white hover:from-indigo-600 hover:to-indigo-700'
     }
   } as const;
 
