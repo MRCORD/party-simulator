@@ -55,8 +55,6 @@ const ReportsTab: React.FC<ReportsTabProps> = ({
   const foodRequirements = calculateFoodRequirements();
   const miscCosts = totalCosts - venueCost - drinkRequirements.totalCost - foodRequirements.totalCost;
   const profitMargin = netProfit !== 0 && totalRevenue !== 0 ? (netProfit / totalRevenue) * 100 : 0;
-  const costRevenue = totalRevenue !== 0 ? (totalCosts / totalRevenue) * 100 : 0;
-  const roi = totalCosts !== 0 ? (netProfit / totalCosts) * 100 : 0;
   
   // Expense categories for visualizations
   const expenseCategories = [
