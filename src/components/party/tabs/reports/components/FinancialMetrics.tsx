@@ -135,28 +135,6 @@ const FinancialMetrics: React.FC<FinancialMetricsProps> = ({
               </div>
             </div>
           </div>
-
-          {/* Add Total Profit Card */}
-          <div className="bg-gray-50 rounded p-4 border border-gray-200">
-            <h4 className="text-sm font-medium text-gray-600 mb-1">Beneficio Total</h4>
-            <p className={`text-xl font-semibold ${recalculatedNetProfit >= 0 ? 'text-green-700' : 'text-red-700'}`}>
-              S/ {formatCurrency(recalculatedNetProfit)}
-            </p>
-            <div className="mt-2 text-sm">
-              <div className="flex justify-between items-center">
-                <span className="text-gray-600">Ingresos</span>
-                <span className="text-gray-700 font-medium">
-                  S/ {formatCurrency(recalculatedTotalRevenue)}
-                </span>
-              </div>
-              <div className="flex justify-between items-center mt-1">
-                <span className="text-gray-600">Costos</span>
-                <span className="text-gray-700 font-medium">
-                  S/ {formatCurrency(recalculatedTotalCosts)}
-                </span>
-              </div>
-            </div>
-          </div>
         </div>
         
         {/* Financial Indicators Section */}
